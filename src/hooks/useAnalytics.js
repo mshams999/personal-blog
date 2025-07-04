@@ -1,6 +1,16 @@
 import { useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
-import { trackPageView, isGAConfigured } from '../config/analytics'
+import {
+    trackPageView,
+    isGAConfigured,
+    trackEvent,
+    trackBlogPost,
+    trackNewsletter,
+    trackCV,
+    trackSearch,
+    trackExternalLink,
+    trackDownload
+} from '../config/analytics'
 
 /**
  * Custom hook for Google Analytics tracking
@@ -28,10 +38,15 @@ export const useAnalytics = () => {
 
     // Track page views automatically on route changes
     useEffect(() => {
+        console.log('useAnalytics: Route changed to', location.pathname)
+        console.log('useAnalytics: GA configured?', isGAConfigured())
+
         if (isGAConfigured() && typeof window !== 'undefined') {
             const page_title = document.title
             const page_location = window.location.href
             const page_path = location.pathname + location.search
+
+            console.log('useAnalytics: Tracking page view', { page_title, page_location, page_path })
 
             // Small delay to ensure the page has loaded
             const timer = setTimeout(() => {
@@ -39,6 +54,8 @@ export const useAnalytics = () => {
             }, 100)
 
             return () => clearTimeout(timer)
+        } else {
+            console.log('useAnalytics: GA not configured, skipping page view tracking')
         }
     }, [location])
 
@@ -46,33 +63,12 @@ export const useAnalytics = () => {
         isConfigured: isGAConfigured(),
         // Re-export tracking functions for convenience
         trackPageView,
-        trackEvent: (action, parameters) => {
-            const { trackEvent } = require('../config/analytics')
-            trackEvent(action, parameters)
-        },
-        trackBlogPost: (action, post) => {
-            const { trackBlogPost } = require('../config/analytics')
-            trackBlogPost(action, post)
-        },
-        trackNewsletter: (action, data) => {
-            const { trackNewsletter } = require('../config/analytics')
-            trackNewsletter(action, data)
-        },
-        trackCV: (action, data) => {
-            const { trackCV } = require('../config/analytics')
-            trackCV(action, data)
-        },
-        trackSearch: (query, results_count) => {
-            const { trackSearch } = require('../config/analytics')
-            trackSearch(query, results_count)
-        },
-        trackExternalLink: (url, text) => {
-            const { trackExternalLink } = require('../config/analytics')
-            trackExternalLink(url, text)
-        },
-        trackDownload: (filename, url) => {
-            const { trackDownload } = require('../config/analytics')
-            trackDownload(filename, url)
-        }
+        trackEvent,
+        trackBlogPost,
+        trackNewsletter,
+        trackCV,
+        trackSearch,
+        trackExternalLink,
+        trackDownload
     }
 }

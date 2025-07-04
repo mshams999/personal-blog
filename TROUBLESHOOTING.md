@@ -55,3 +55,26 @@ If the test version works, we can restore the full application step by step.
 - Check that the post URLs are consistent and accessible
 
 For detailed Disqus setup instructions, see `DISQUS_SETUP.md`.
+
+## Google Analytics Issues
+
+### Analytics Not Tracking
+- **Check Configuration**: Verify `VITE_GA_MEASUREMENT_ID` is set correctly in `.env`
+- **Measurement ID Format**: Must be in format `G-XXXXXXXXXX`
+- **Restart Server**: Always restart development server after changing `.env` file
+- **Browser Console**: Check for Google Analytics initialization messages
+- **Ad Blockers**: Disable ad blockers that might block Google Analytics
+
+### No Real-Time Data in Google Analytics
+- **Network Tab**: Check browser dev tools for requests to `googletagmanager.com` and `google-analytics.com`
+- **Incognito Mode**: Try browsing in incognito/private mode
+- **Wait Time**: Allow 24-48 hours for data to appear in reports
+- **Verify ID**: Ensure measurement ID matches your Google Analytics property
+
+### Debug Google Analytics
+1. Open browser console (F12)
+2. Look for "Google Analytics initialized" message
+3. Check for any gtag-related errors
+4. Use Google Analytics Debugger Chrome extension for detailed info
+
+See `GOOGLE_ANALYTICS_TROUBLESHOOTING.md` for detailed troubleshooting steps.

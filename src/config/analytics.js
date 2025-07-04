@@ -34,10 +34,21 @@ export const gaConfig = {
  * Check if Google Analytics is properly configured
  */
 export const isGAConfigured = () => {
-    return gaConfig.measurementId &&
-        gaConfig.measurementId !== 'G-XXXXXXXXXX' &&
-        typeof window !== 'undefined' &&
-        typeof window.gtag === 'function'
+    const hasId = gaConfig.measurementId && gaConfig.measurementId !== 'G-XXXXXXXXXX'
+    const hasWindow = typeof window !== 'undefined'
+    const hasGtag = typeof window !== 'undefined' && typeof window.gtag === 'function'
+
+    if (gaConfig.debug) {
+        console.log('GA Configuration Check:', {
+            measurementId: gaConfig.measurementId,
+            hasId,
+            hasWindow,
+            hasGtag,
+            isConfigured: hasId && hasWindow && hasGtag
+        })
+    }
+
+    return hasId && hasWindow && hasGtag
 }
 
 /**

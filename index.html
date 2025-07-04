@@ -16,10 +16,18 @@
         function gtag() { dataLayer.push(arguments); }
         gtag('js', new Date());
 
-        // Only initialize if GA ID is provided
-        const GA_ID = '%VITE_GA_MEASUREMENT_ID%' !== '%VITE_GA_MEASUREMENT_ID%' ? '%VITE_GA_MEASUREMENT_ID%' : null;
-        if (GA_ID && GA_ID !== 'G-XXXXXXXXXX') {
-            gtag('config', GA_ID);
+        // Only initialize if GA ID is provided and valid
+        const GA_ID = '%VITE_GA_MEASUREMENT_ID%';
+        if (GA_ID && GA_ID !== 'G-XXXXXXXXXX' && GA_ID.startsWith('G-')) {
+            gtag('config', GA_ID, {
+                send_page_view: true,
+                anonymize_ip: true,
+                allow_google_signals: true,
+                allow_ad_personalization_signals: false
+            });
+            console.log('Google Analytics initialized with ID:', GA_ID);
+        } else {
+            console.log('Google Analytics not initialized - invalid or missing measurement ID:', GA_ID);
         }
     </script>
     <!-- End Google Analytics -->
