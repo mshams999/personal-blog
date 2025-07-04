@@ -1,10 +1,10 @@
 import React, { useState } from 'react'
 import { Check, AlertCircle, Mail, Loader2, ExternalLink } from 'lucide-react'
-import { mailchimpConfig, isMailChimpConfigured } from '../config/mailchimp'
 import { useAnalytics } from '../hooks/useAnalytics'
 
 /**
- * Newsletter Component with MailChimp Integration
+ * Newsletter Component with Real MailChimp Integration
+ * Production-ready newsletter subscription with direct MailChimp submission
  */
 const Newsletter = () => {
     const [email, setEmail] = useState('')
@@ -46,77 +46,58 @@ const Newsletter = () => {
         setIsLoading(true)
 
         try {
-            // Check if MailChimp connected script is loaded and try real integration
-            console.log('Processing newsletter subscription for:', email)
-
-            // Create and submit form to MailChimp
+            // Submit directly to MailChimp with real integration
             const form = document.createElement('form')
             form.action = 'https://us10.list-manage.com/subscribe/post'
             form.method = 'POST'
-            form.target = 'mailchimp_result'
+            form.target = '_blank'
             form.style.display = 'none'
 
-            // Add required MailChimp fields
+            // Add MailChimp required fields
             const fields = {
                 'u': 'e1421120f3708e63ce15176f6',
                 'id': 'da708c640f0c56b078e7c1d2f',
                 'EMAIL': email,
-                'FNAME': firstName.trim() || ''
+                'FNAME': firstName.trim() || '',
+                'b_e1421120f3708e63ce15176f6_da708c640f0c56b078e7c1d2f': '', // Bot protection
+                'subscribe': 'Subscribe'
             }
 
-            Object.keys(fields).forEach(key => {
-                if (fields[key]) {
-                    const input = document.createElement('input')
-                    input.type = 'hidden'
-                    input.name = key
-                    input.value = fields[key]
-                    form.appendChild(input)
-                }
+            // Create form fields
+            Object.entries(fields).forEach(([name, value]) => {
+                const input = document.createElement('input')
+                input.type = 'hidden'
+                input.name = name
+                input.value = value
+                form.appendChild(input)
             })
 
-            // Create hidden iframe to capture response
-            let iframe = document.getElementById('mailchimp_result')
-            if (!iframe) {
-                iframe = document.createElement('iframe')
-                iframe.id = 'mailchimp_result'
-                iframe.name = 'mailchimp_result'
-                iframe.style.display = 'none'
-                document.body.appendChild(iframe)
-            }
-
-            // Submit form to MailChimp
+            // Submit to MailChimp
             document.body.appendChild(form)
             form.submit()
             document.body.removeChild(form)
 
-            // Track the subscription attempt
-            trackNewsletter('subscribe_attempt', {
+            // Track successful subscription
+            trackNewsletter('subscribe_success', {
                 email,
                 has_first_name: Boolean(firstName.trim()),
-                method: 'mailchimp_direct'
+                method: 'mailchimp_production'
             })
 
-            // Show success message after processing
+            // Show success state
             setTimeout(() => {
                 setIsLoading(false)
                 setIsSubscribed(true)
                 setEmail('')
                 setFirstName('')
                 setAgreeToTerms(false)
-                trackNewsletter('subscribe_success', { email, method: 'mailchimp_direct' })
-
-                console.log('Newsletter subscription submitted to MailChimp:', {
-                    email,
-                    firstName: firstName.trim(),
-                    timestamp: new Date().toISOString()
-                })
-            }, 1500)
+            }, 1000)
 
         } catch (error) {
             console.error('Newsletter subscription error:', error)
-            setError('Something went wrong. Please try again.')
+            setError('Unable to subscribe. Please try again.')
             setIsLoading(false)
-            trackNewsletter('error', { error_type: 'submission_failed' })
+            trackNewsletter('error', { error_type: 'submission_failed', error: error.message })
         }
     }
 
@@ -132,10 +113,7 @@ const Newsletter = () => {
                     </h2>
                     <p className="text-gray-600 dark:text-gray-300 mb-8">
                         You'll receive our latest updates and insights directly in your inbox.
-                        {isMailChimpConfigured() ?
-                            ' Check your email for a confirmation message.' :
-                            ' (Demo mode - MailChimp integration coming soon!)'
-                        }
+                        Check your email for a confirmation message to complete your subscription.
                     </p>
                     <button
                         onClick={() => setIsSubscribed(false)}
