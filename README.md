@@ -1,4 +1,5 @@
 # Ruki - Personal Blog
+[![Netlify Status](https://api.netlify.com/api/v1/badges/bc1d1f65-001a-47ce-bdf8-49af4610de64/deploy-status)](https://app.netlify.com/projects/mohamedshams155/deploys)
 
 A beautifully designed personal blog application built with React, Tailwind CSS, and MDX support.
 
