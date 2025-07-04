@@ -11,17 +11,25 @@
  */
 
 export const mailchimpConfig = {
-    // Replace with your MailChimp API key
-    apiKey: process.env.REACT_APP_MAILCHIMP_API_KEY || 'your-mailchimp-api-key',
+    // Replace with your MailChimp API key (for backend use only)
+    apiKey: import.meta.env.VITE_MAILCHIMP_API_KEY ||
+        import.meta.env.REACT_APP_MAILCHIMP_API_KEY ||
+        'your-mailchimp-api-key',
 
     // Replace with your MailChimp server prefix (e.g., 'us1', 'us2', etc.)
-    serverPrefix: process.env.REACT_APP_MAILCHIMP_SERVER_PREFIX || 'us1',
+    serverPrefix: import.meta.env.VITE_MAILCHIMP_SERVER_PREFIX ||
+        import.meta.env.REACT_APP_MAILCHIMP_SERVER_PREFIX ||
+        'us1',
 
-    // Replace with your MailChimp audience ID
-    audienceId: process.env.REACT_APP_MAILCHIMP_AUDIENCE_ID || 'your-audience-id',
+    // Replace with your MailChimp audience ID (for backend use only)
+    audienceId: import.meta.env.VITE_MAILCHIMP_AUDIENCE_ID ||
+        import.meta.env.REACT_APP_MAILCHIMP_AUDIENCE_ID ||
+        'your-audience-id',
 
     // Newsletter signup form endpoint (MailChimp hosted form)
-    signupUrl: process.env.REACT_APP_MAILCHIMP_SIGNUP_URL || 'your-mailchimp-signup-url'
+    signupUrl: import.meta.env.VITE_MAILCHIMP_SIGNUP_URL ||
+        import.meta.env.REACT_APP_MAILCHIMP_SIGNUP_URL ||
+        'your-mailchimp-signup-url'
 }
 
 /**
@@ -29,11 +37,21 @@ export const mailchimpConfig = {
  * @returns {boolean} True if all required fields are set
  */
 export const isMailChimpConfigured = () => {
-    return (
+    const isConfigured = (
         mailchimpConfig.apiKey !== 'your-mailchimp-api-key' &&
         mailchimpConfig.audienceId !== 'your-audience-id' &&
         mailchimpConfig.signupUrl !== 'your-mailchimp-signup-url'
     )
+
+    // Debug logging
+    console.log('MailChimp Configuration Check:', {
+        apiKey: mailchimpConfig.apiKey?.substring(0, 10) + '...',
+        audienceId: mailchimpConfig.audienceId,
+        signupUrl: mailchimpConfig.signupUrl?.substring(0, 50) + '...',
+        isConfigured
+    })
+
+    return isConfigured
 }
 
 /**

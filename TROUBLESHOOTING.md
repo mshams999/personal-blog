@@ -78,3 +78,25 @@ For detailed Disqus setup instructions, see `DISQUS_SETUP.md`.
 4. Use Google Analytics Debugger Chrome extension for detailed info
 
 See `GOOGLE_ANALYTICS_TROUBLESHOOTING.md` for detailed troubleshooting steps.
+
+## Newsletter Issues
+
+### Newsletter Not Working / Only Simulating
+- **Check Configuration**: Verify MailChimp environment variables are set in `.env`
+- **Restart Server**: Always restart development server after changing `.env` file
+- **Check Status**: Look for "MailChimp Status" section in newsletter component
+- **Test Form**: Use the "Test Form" button to verify MailChimp integration
+- **Browser Console**: Check for JavaScript errors or validation messages
+
+### MailChimp Integration Problems
+- **Environment Variables**: Ensure `REACT_APP_MAILCHIMP_*` variables are set
+- **Signup URL**: Verify the MailChimp signup URL is correct and accessible
+- **Audience Settings**: Check MailChimp audience is properly configured
+- **Double Opt-in**: Verify confirmation emails are being sent
+
+### No Confirmation Emails
+- **Check Spam Folder**: MailChimp confirmation emails might be filtered
+- **Audience Settings**: Verify double opt-in is enabled in MailChimp
+- **Email Validation**: Ensure email addresses are valid format
+
+See `NEWSLETTER_TROUBLESHOOTING.md` for detailed troubleshooting steps.

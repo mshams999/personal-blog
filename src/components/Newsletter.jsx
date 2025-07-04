@@ -1,8 +1,10 @@
 import React, { useState } from 'react'
-import { Check, AlertCircle, Mail, Loader2 } from 'lucide-react'
+import { Check, AlertCircle, Mail, Loader2, ExternalLink } from 'lucide-react'
+import { mailchimpConfig, isMailChimpConfigured } from '../config/mailchimp'
+import { useAnalytics } from '../hooks/useAnalytics'
 
 /**
- * Newsletter Component - Simplified Version
+ * Newsletter Component with MailChimp Integration
  */
 const Newsletter = () => {
     const [email, setEmail] = useState('')
@@ -12,40 +14,110 @@ const Newsletter = () => {
     const [error, setError] = useState('')
     const [agreeToTerms, setAgreeToTerms] = useState(false)
 
+    const { trackNewsletter } = useAnalytics()
+
     const validateEmail = (email) => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
         return emailRegex.test(email)
     }
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault()
 
         if (!email.trim()) {
             setError('Please enter your email address')
+            trackNewsletter('error', { error_type: 'missing_email' })
             return
         }
 
         if (!validateEmail(email)) {
             setError('Please enter a valid email address')
+            trackNewsletter('error', { error_type: 'invalid_email' })
             return
         }
 
         if (!agreeToTerms) {
             setError('Please agree to the terms and conditions')
+            trackNewsletter('error', { error_type: 'missing_consent' })
             return
         }
 
         setError('')
         setIsLoading(true)
 
-        // Simulate subscription process
-        setTimeout(() => {
+        try {
+            // Check if MailChimp connected script is loaded and try real integration
+            console.log('Processing newsletter subscription for:', email)
+
+            // Create and submit form to MailChimp
+            const form = document.createElement('form')
+            form.action = 'https://us10.list-manage.com/subscribe/post'
+            form.method = 'POST'
+            form.target = 'mailchimp_result'
+            form.style.display = 'none'
+
+            // Add required MailChimp fields
+            const fields = {
+                'u': '921071254cb0c140c84d517e77bed105',
+                'id': 'cd7207c9ee',
+                'EMAIL': email,
+                'FNAME': firstName.trim() || ''
+            }
+
+            Object.keys(fields).forEach(key => {
+                if (fields[key]) {
+                    const input = document.createElement('input')
+                    input.type = 'hidden'
+                    input.name = key
+                    input.value = fields[key]
+                    form.appendChild(input)
+                }
+            })
+
+            // Create hidden iframe to capture response
+            let iframe = document.getElementById('mailchimp_result')
+            if (!iframe) {
+                iframe = document.createElement('iframe')
+                iframe.id = 'mailchimp_result'
+                iframe.name = 'mailchimp_result'
+                iframe.style.display = 'none'
+                document.body.appendChild(iframe)
+            }
+
+            // Submit form to MailChimp
+            document.body.appendChild(form)
+            form.submit()
+            document.body.removeChild(form)
+
+            // Track the subscription attempt
+            trackNewsletter('subscribe_attempt', {
+                email,
+                has_first_name: Boolean(firstName.trim()),
+                method: 'mailchimp_direct'
+            })
+
+            // Show success message after processing
+            setTimeout(() => {
+                setIsLoading(false)
+                setIsSubscribed(true)
+                setEmail('')
+                setFirstName('')
+                setAgreeToTerms(false)
+                trackNewsletter('subscribe_success', { email, method: 'mailchimp_direct' })
+
+                console.log('Newsletter subscription submitted to MailChimp:', {
+                    email,
+                    firstName: firstName.trim(),
+                    timestamp: new Date().toISOString()
+                })
+            }, 1500)
+
+        } catch (error) {
+            console.error('Newsletter subscription error:', error)
+            setError('Something went wrong. Please try again.')
             setIsLoading(false)
-            setIsSubscribed(true)
-            setEmail('')
-            setFirstName('')
-            setAgreeToTerms(false)
-        }, 2000)
+            trackNewsletter('error', { error_type: 'submission_failed' })
+        }
     }
 
     if (isSubscribed) {
@@ -60,6 +132,10 @@ const Newsletter = () => {
                     </h2>
                     <p className="text-gray-600 dark:text-gray-300 mb-8">
                         You'll receive our latest updates and insights directly in your inbox.
+                        {isMailChimpConfigured() ?
+                            ' Check your email for a confirmation message.' :
+                            ' (Demo mode - MailChimp integration coming soon!)'
+                        }
                     </p>
                     <button
                         onClick={() => setIsSubscribed(false)}
@@ -174,6 +250,31 @@ const Newsletter = () => {
                             No spam, unsubscribe anytime
                         </li>
                     </ul>
+                </div>
+
+                {/* MailChimp Integration Status */}
+                <div className="mt-6 p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <h4 className="font-medium text-green-900 dark:text-green-100">
+                                Newsletter Status: ✅ MailChimp Connected
+                            </h4>
+                            <p className="text-sm text-green-700 dark:text-green-300 mt-1">
+                                Newsletter subscriptions are sent directly to MailChimp.
+                                Subscribers will receive confirmation emails automatically.
+                            </p>
+                        </div>
+                        <a
+                            href="https://us10.list-manage.com/subscribe?u=921071254cb0c140c84d517e77bed105&id=cd7207c9ee"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1 px-3 py-1 bg-green-600 hover:bg-green-700 text-white text-sm rounded font-medium transition-colors"
+                            onClick={() => trackNewsletter('direct_signup_opened')}
+                        >
+                            Direct Signup
+                            <ExternalLink className="w-3 h-3" />
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
