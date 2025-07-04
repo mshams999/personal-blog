@@ -158,6 +158,50 @@ Components are built with responsive design principles:
 - Flexible grid systems
 - Smooth animations and transitions
 
+## 📖 Documentation
+
+- **[GitHub Setup Guide](GITHUB_SETUP.md)** - Publishing your project to GitHub
+- **[Deployment Guide](DEPLOYMENT_GUIDE.md)** - Deploy to custom domain (Netlify, Vercel, GitHub Pages)
+- **[Disqus Setup](DISQUS_SETUP.md)** - Configure comments system
+- **[MailChimp Setup](MAILCHIMP_SETUP.md)** - Newsletter integration
+- **[Google Analytics Setup](GOOGLE_ANALYTICS_SETUP.md)** - Analytics integration
+- **[Troubleshooting](TROUBLESHOOTING.md)** - Common issues and solutions
+
+## 🎨 Design & Customization
+
+### Colors
+
+Edit `tailwind.config.js` to customize the color palette:
+
+```javascript
+colors: {
+  primary: {
+    50: '#FFF9F9',
+    500: '#F43F5E',
+    // ... other shades
+  }
+}
+```
+
+### Fonts
+
+Update the font imports in `src/index.css` and modify the Tailwind config:
+
+```javascript
+fontFamily: {
+  'sans': ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+  'heading': ['Nunito', 'system-ui', '-apple-system', 'sans-serif'],
+}
+```
+
+### Layout
+
+Components are built with responsive design principles:
+
+- Mobile-first approach
+- Flexible grid systems
+- Smooth animations and transitions
+
 ## Contributing
 
 1. Fork the repository
