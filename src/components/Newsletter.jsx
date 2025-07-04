@@ -58,8 +58,8 @@ const Newsletter = () => {
 
             // Add required MailChimp fields
             const fields = {
-                'u': '921071254cb0c140c84d517e77bed105',
-                'id': 'cd7207c9ee',
+                'u': 'e1421120f3708e63ce15176f6',
+                'id': 'da708c640f0c56b078e7c1d2f',
                 'EMAIL': email,
                 'FNAME': firstName.trim() || ''
             }
@@ -265,7 +265,7 @@ const Newsletter = () => {
                             </p>
                         </div>
                         <a
-                            href="https://us10.list-manage.com/subscribe?u=921071254cb0c140c84d517e77bed105&id=cd7207c9ee"
+                            href="https://us10.list-manage.com/subscribe?u=e1421120f3708e63ce15176f6&id=da708c640f0c56b078e7c1d2f"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="inline-flex items-center gap-1 px-3 py-1 bg-green-600 hover:bg-green-700 text-white text-sm rounded font-medium transition-colors"
