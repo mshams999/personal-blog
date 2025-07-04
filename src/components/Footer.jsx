@@ -5,7 +5,8 @@ import { useData } from '../contexts/DataContext'
 import { format } from 'date-fns'
 
 /**
- * Footer component matching the screenshot design
+ * Footer component with modern design and social links
+ * Last updated: July 4, 2025
  * 
  * Features:
  * - Horizontal layout with three sections
