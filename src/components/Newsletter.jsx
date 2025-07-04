@@ -2,6 +2,9 @@ import React, { useState } from 'react'
 import { Check, AlertCircle, Mail, Loader2, ExternalLink } from 'lucide-react'
 import { useAnalytics } from '../hooks/useAnalytics'
 
+const MAILCHIMP_URL = import.meta.env.VITE_MAILCHIMP_SIGNUP_URL
+
+
 /**
  * Newsletter Component with Real MailChimp Integration
  * Production-ready newsletter subscription with direct MailChimp submission
@@ -23,6 +26,8 @@ const Newsletter = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault()
+
+
 
         if (!email.trim()) {
             setError('Please enter your email address')
@@ -48,7 +53,7 @@ const Newsletter = () => {
         try {
             // Submit directly to MailChimp with real integration
             const form = document.createElement('form')
-            form.action = 'https://us10.list-manage.com/subscribe/post'
+            form.action = MAILCHIMP_URL
             form.method = 'POST'
             form.target = '_blank'
             form.style.display = 'none'

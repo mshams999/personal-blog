@@ -15,7 +15,7 @@ const Newsletter = () => {
 
     // MailChimp configuration - can be moved to environment variables later
     const mailchimpConfig = {
-        signupUrl: 'https://gmail.us10.list-manage.com/subscribe/post?u=921071254cb0c140c84d517e77bed105&id=cd7207c9ee'
+        signupUrl: 'https://us10.list-manage.com/subscribe/post?u=921071254cb0c140c84d517e77bed105&id=cd7207c9ee'
     }
 
     const validateEmail = (email) => {
