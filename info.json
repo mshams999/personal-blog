@@ -1,0 +1,175 @@
+{
+    "siteMetadata": {
+        "title": "Ruki - Personal Blog",
+        "description": "A beautifully designed personal blog theme, focusing on content and readability.",
+        "author": {
+            "name": "Your Name",
+            "summary": "who lives and works in a beautiful city, building useful things."
+        },
+        "social": {
+            "twitter": "yourusername",
+            "instagram": "yourusername",
+            "facebook": "yourusername",
+            "github": "yourusername"
+        }
+    },
+    "navigation": [
+        {
+            "name": "Home",
+            "href": "/"
+        },
+        {
+            "name": "Style Guide",
+            "href": "/style-guide"
+        }
+    ],
+    "authors": [
+        {
+            "id": "author-1",
+            "name": "Mohamed Shams Abdelaziz",
+            "avatar": "https://placehold.co/100x100/3B82F6/FFFFFF?text=MS",
+            "bio": "Emergency Medicine Doctor and Medical Professional with expertise in acute care management, clinical research, and patient care. Passionate about combining medical knowledge with technology to improve healthcare outcomes.",
+            "social": {
+                "github": "https://github.com/mshams999",
+                "linkedin": "https://www.linkedin.com/in/mohamedshamsms/",
+                "twitter": "https://x.com/MohamedShams936",
+                "facebook": "https://m.facebook.com/mosh936/",
+                "email": "shamsmohamed155@gmail.com"
+            }
+        }
+    ],
+    "categories": [
+        {
+            "id": "cat-1",
+            "name": "Inspiration",
+            "slug": "inspiration"
+        },
+        {
+            "id": "cat-2",
+            "name": "Art & Design",
+            "slug": "art-design"
+        },
+        {
+            "id": "cat-3",
+            "name": "Travel",
+            "slug": "travel"
+        },
+        {
+            "id": "cat-4",
+            "name": "Lifestyle",
+            "slug": "lifestyle"
+        }
+    ],
+    "posts": [
+        {
+            "id": "post-1",
+            "slug": "an-delighted-offending-curiosity-my-is-dashwoods",
+            "title": "An delighted offending curiosity my is dashwoods",
+            "excerpt": "Is be upon sang fond must shew. Really boy law county she unable her sister. Feet you off its like like six...",
+            "date": "2025-07-01T10:00:00Z",
+            "readTime": 3,
+            "featuredImage": "https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=1200&h=800&fit=crop&crop=center",
+            "authorId": "author-1",
+            "categoryId": "cat-1",
+            "tags": [
+                "creativity",
+                "mindfulness"
+            ],
+            "mdxContentPath": "/content/posts/post-1.mdx"
+        },
+        {
+            "id": "post-2",
+            "slug": "indulgence-unreserved-is-the-alteration-appearance",
+            "title": "Indulgence unreserved is the alteration appearance",
+            "excerpt": "Why painful the sixteen how minuter looking nor. Subject but why ten earnest husband imagine sixteen brandon...",
+            "date": "2025-06-28T14:30:00Z",
+            "readTime": 5,
+            "featuredImage": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1200&h=800&fit=crop&crop=center",
+            "authorId": "author-1",
+            "categoryId": "cat-2",
+            "tags": [
+                "design",
+                "illustration"
+            ],
+            "mdxContentPath": "/content/posts/post-2.mdx"
+        },
+        {
+            "id": "post-3",
+            "slug": "to-travelling-occasional-at-oh-sympathize-prosperous",
+            "title": "To travelling occasional at oh sympathize prosperous",
+            "excerpt": "His defective nor convinced residence own. Connection has put impossible own apartments boisterous. At jointure ladyship...",
+            "date": "2025-06-25T09:00:00Z",
+            "readTime": 4,
+            "featuredImage": "https://images.unsplash.com/photo-1551632811-561732d1e306?w=1200&h=800&fit=crop&crop=center",
+            "authorId": "author-1",
+            "categoryId": "cat-3",
+            "tags": [
+                "adventure",
+                "world"
+            ],
+            "mdxContentPath": "/content/posts/post-3.mdx"
+        },
+        {
+            "id": "post-4",
+            "slug": "style-begin-mr-heard-by-in-music-tried-do",
+            "title": "Style begin mr heard by in music tried do",
+            "excerpt": "We leaf to snug on from much. Timed with dying prefer Offending belonging promotion provision an be he we principles...",
+            "date": "2025-06-22T18:00:00Z",
+            "readTime": 2,
+            "featuredImage": "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=1200&h=800&fit=crop&crop=center",
+            "authorId": "author-1",
+            "categoryId": "cat-4",
+            "tags": [
+                "lifestyle",
+                "productivity"
+            ],
+            "mdxContentPath": "/content/posts/post-4.mdx"
+        },
+        {
+            "id": "post-5",
+            "slug": "old-unsatiable-our-now-but-considered-travelling",
+            "title": "Old unsatiable our now but considered travelling",
+            "excerpt": "Impression up admiration he by partiality is. Instantly immediate his saw one day perceived. Old blushes respect but...",
+            "date": "2025-06-19T11:45:00Z",
+            "readTime": 6,
+            "featuredImage": "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&h=600&fit=crop&crop=center",
+            "authorId": "author-1",
+            "categoryId": "cat-3",
+            "tags": [
+                "journey",
+                "reflection"
+            ],
+            "mdxContentPath": "/content/posts/post-5.mdx"
+        }
+    ],
+    "footer": {
+        "recentPosts": [
+            {
+                "title": "An delighted offending curiosity my is dashwoods",
+                "slug": "an-delighted-offending-curiosity-my-is-dashwoods"
+            },
+            {
+                "title": "Indulgence unreserved is the alteration appearance",
+                "slug": "indulgence-unreserved-is-the-alteration-appearance"
+            },
+            {
+                "title": "To travelling occasional at oh sympathize prosperous",
+                "slug": "to-travelling-occasional-at-oh-sympathize-prosperous"
+            }
+        ],
+        "popularPosts": [
+            {
+                "title": "Old unsatiable our now but considered travelling",
+                "slug": "old-unsatiable-our-now-but-considered-travelling"
+            },
+            {
+                "title": "Style begin mr heard by in music tried do",
+                "slug": "style-begin-mr-heard-by-in-music-tried-do"
+            },
+            {
+                "title": "An delighted offending curiosity my is dashwoods",
+                "slug": "an-delighted-offending-curiosity-my-is-dashwoods"
+            }
+        ]
+    }
+}
