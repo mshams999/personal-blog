@@ -7,6 +7,7 @@ import Newsletter from '../components/Newsletter'
 import Carousel from '../components/Carousel'
 import Hero from '../components/Hero'
 import DisqusCommentCount from '../components/DisqusCommentCount'
+import ViewCounter from '../components/ViewCounter'
 import { useFirebaseAnalytics, formatViewCount } from '../hooks/useFirebaseAnalytics'
 import { getPostRating, formatRating } from '../utils/ratings'
 import { useDisqusCommentCounts } from '../hooks/useDisqusCommentCounts'
@@ -208,10 +209,13 @@ const HomePage = () => {
                                                         <p className="text-xs text-gray-500 dark:text-gray-400">
                                                             {author?.name} • {format(new Date(post.date), 'MMM dd')}
                                                         </p>
-                                                        <div className="flex items-center space-x-1 text-xs text-gray-500 dark:text-gray-400">
-                                                            <Eye className="w-3 h-3" />
-                                                            <span>{formatViewCount(post.viewCount)}</span>
-                                                        </div>
+                                                        <ViewCounter
+                                                            articleSlug={post.slug}
+                                                            fallbackCount={post.viewCount}
+                                                            shouldIncrement={false}
+                                                            size="sm"
+                                                            variant="minimal"
+                                                        />
                                                     </div>
                                                 </div>
                                             </div>

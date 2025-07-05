@@ -6,9 +6,11 @@ import { useData } from '../contexts/DataContext'
 import AuthorBio from '../components/AuthorBio'
 import DisqusComments from '../components/DisqusComments'
 import DisqusCommentCount from '../components/DisqusCommentCount'
+import ViewCounter from '../components/ViewCounter'
 import { format } from 'date-fns'
 import PostCard from '../components/PostCard'
 import { incrementViewCount } from '../hooks/useFirebaseAnalytics'
+import { useArticleViews } from '../hooks/useFirebaseViews'
 import { getPostRating, savePostRating, getUserRating } from '../utils/ratings'
 
 /**
@@ -35,7 +37,6 @@ const SinglePostPage = () => {
     const [liked, setLiked] = useState(false)
     const [bookmarked, setBookmarked] = useState(false)
     const [showScrollTop, setShowScrollTop] = useState(false)
-    const [viewCount, setViewCount] = useState(0)
     const [userRating, setUserRating] = useState(0)
     const [averageRating, setAverageRating] = useState(0)
     const [totalRatings, setTotalRatings] = useState(0)
@@ -44,6 +45,12 @@ const SinglePostPage = () => {
     const post = getPostBySlug(slug)
     const author = post ? getAuthorById(post.authorId) : null
     const category = post ? getCategoryById(post.categoryId) : null
+
+    // Use Firebase view tracking for this article
+    const { viewCount, loading: viewLoading } = useArticleViews(
+        post?.slug,
+        true // shouldIncrement = true for article pages
+    )
 
     // Handle scroll for parallax effect and scroll-to-top button
     useEffect(() => {
@@ -72,10 +79,6 @@ const SinglePostPage = () => {
             loadMDXContent(post.mdxContentPath)
             // Scroll to top when post changes
             window.scrollTo(0, 0)
-
-            // Increment view count for this article
-            const newViewCount = incrementViewCount(post.slug)
-            setViewCount(newViewCount)
 
             // Load ratings for this post
             loadRatings()
@@ -340,10 +343,12 @@ const SinglePostPage = () => {
                             <span>{post.readTime} min read</span>
                         </div>
 
-                        <div className="flex items-center space-x-1">
-                            <Eye className="h-4 w-4" />
-                            <span>{viewCount} views</span>
-                        </div>
+                        <ViewCounter
+                            articleSlug={post.slug}
+                            shouldIncrement={false} // Don't double-increment, already handled by useArticleViews hook
+                            size="md"
+                            variant="default"
+                        />
                     </div>
 
                     {/* Tags */}

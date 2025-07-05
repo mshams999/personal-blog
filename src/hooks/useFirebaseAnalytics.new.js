@@ -28,10 +28,10 @@ const VIEW_COUNTS_KEY = 'blog_article_views'
 export const useFirebaseAnalytics = (posts = []) => {
     const [localViews, setLocalViews] = useState({})
     const [loading, setLoading] = useState(true)
-    
+
     // Get Firebase Firestore view counts
-    const { 
-        viewCounts: firestoreViews, 
+    const {
+        viewCounts: firestoreViews,
         loading: firestoreLoading,
         getViewCount: getFirestoreViewCount
     } = useBulkArticleViews(posts)
@@ -86,23 +86,23 @@ export const useFirebaseAnalytics = (posts = []) => {
             setLoading(false)
             return
         }
-        
+
         setLoading(firestoreLoading)
     }, [firestoreLoading])
 
     // Combine Firebase and local view counts (Firebase takes priority)
     const views = useCallback(() => {
         const combinedViews = {}
-        
+
         posts.forEach(post => {
             const articlePath = `/post/${post.slug}`
             const firestoreCount = getFirestoreViewCount(post.slug)
             const localCount = localViews[articlePath] || 0
-            
+
             // Use Firestore count if available and greater than local, otherwise use local
             combinedViews[articlePath] = firestoreCount > 0 ? firestoreCount : localCount
         })
-        
+
         return combinedViews
     }, [posts, firestoreViews, localViews, getFirestoreViewCount])
 
