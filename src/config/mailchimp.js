@@ -43,14 +43,6 @@ export const isMailChimpConfigured = () => {
         mailchimpConfig.signupUrl !== 'your-mailchimp-signup-url'
     )
 
-    // Debug logging
-    console.log('MailChimp Configuration Check:', {
-        apiKey: mailchimpConfig.apiKey?.substring(0, 10) + '...',
-        audienceId: mailchimpConfig.audienceId,
-        signupUrl: mailchimpConfig.signupUrl?.substring(0, 50) + '...',
-        isConfigured
-    })
-
     return isConfigured
 }
 

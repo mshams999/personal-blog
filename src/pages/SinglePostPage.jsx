@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import { useParams, Navigate, Link } from 'react-router-dom'
-import { Clock, ArrowLeft, Share2, Bookmark, Heart, ArrowUp, MessageCircle, Star, ChevronDown, X, Facebook, Instagram, Twitter, Globe } from 'lucide-react'
+import { Clock, ArrowLeft, Share2, Bookmark, Heart, ArrowUp, MessageCircle, Star, ChevronDown, X, Facebook, Instagram, Twitter, Globe, Eye } from 'lucide-react'
+import ReactStars from 'react-stars'
 import { useData } from '../contexts/DataContext'
 import AuthorBio from '../components/AuthorBio'
 import DisqusComments from '../components/DisqusComments'
+import DisqusCommentCount from '../components/DisqusCommentCount'
 import { format } from 'date-fns'
 import PostCard from '../components/PostCard'
+import { incrementViewCount } from '../hooks/useFirebaseAnalytics'
+import { getPostRating, savePostRating, getUserRating } from '../utils/ratings'
 
 /**
  * SinglePostPage component for displaying individual blog posts
@@ -20,6 +24,7 @@ import PostCard from '../components/PostCard'
  * - Social sharing buttons
  * - Related posts section
  * - Responsive layout with reading optimizations
+ * - Real-time view count tracking
  */
 const SinglePostPage = () => {
     const { slug } = useParams()
@@ -30,6 +35,11 @@ const SinglePostPage = () => {
     const [liked, setLiked] = useState(false)
     const [bookmarked, setBookmarked] = useState(false)
     const [showScrollTop, setShowScrollTop] = useState(false)
+    const [viewCount, setViewCount] = useState(0)
+    const [userRating, setUserRating] = useState(0)
+    const [averageRating, setAverageRating] = useState(0)
+    const [totalRatings, setTotalRatings] = useState(0)
+    const [showRatingMessage, setShowRatingMessage] = useState(false)
 
     const post = getPostBySlug(slug)
     const author = post ? getAuthorById(post.authorId) : null
@@ -62,6 +72,13 @@ const SinglePostPage = () => {
             loadMDXContent(post.mdxContentPath)
             // Scroll to top when post changes
             window.scrollTo(0, 0)
+
+            // Increment view count for this article
+            const newViewCount = incrementViewCount(post.slug)
+            setViewCount(newViewCount)
+
+            // Load ratings for this post
+            loadRatings()
         }
     }, [post])
 
@@ -78,6 +95,33 @@ const SinglePostPage = () => {
         } finally {
             setLoading(false)
         }
+    }
+
+    // Rating helper functions using utility
+    const loadRatings = () => {
+        if (!post) return
+
+        const { averageRating, totalRatings } = getPostRating(post.slug)
+        const userRating = getUserRating(post.slug)
+
+        setAverageRating(averageRating)
+        setTotalRatings(totalRatings)
+        setUserRating(userRating)
+    }
+
+    const handleRatingChange = (newRating) => {
+        if (!post) return
+
+        const { averageRating, totalRatings } = savePostRating(post.slug, newRating)
+
+        // Update state
+        setUserRating(newRating)
+        setTotalRatings(totalRatings)
+        setAverageRating(averageRating)
+
+        // Show confirmation message
+        setShowRatingMessage(true)
+        setTimeout(() => setShowRatingMessage(false), 3000)
     }
 
     const generateSampleContent = (post) => {
@@ -223,21 +267,29 @@ const SinglePostPage = () => {
                         <span className="text-gray-400">—</span>
 
                         {/* Comments */}
-                        <div className="flex items-center gap-1">
-                            <MessageCircle className="w-4 h-4 text-gray-300" />
-                            <span className="text-gray-300">3</span>
-                        </div>
+                        <DisqusCommentCount
+                            post={post}
+                            currentUrl={window.location.href}
+                            className="text-gray-300"
+                        />
                     </div>
 
                     {/* Star Rating */}
-                    <div className="flex items-center gap-2 animate-fade-in delay-300">
-                        <div className="flex items-center gap-1">
-                            {[1, 2, 3, 4].map((star) => (
-                                <Star key={star} className="w-5 h-5 text-yellow-400 fill-yellow-400" />
-                            ))}
-                            <Star className="w-5 h-5 text-yellow-400 fill-yellow-400/50" />
+                    <div className="flex items-center gap-4 animate-fade-in delay-300">
+                        <div className="flex items-center gap-2">
+                            <ReactStars
+                                count={5}
+                                value={averageRating}
+                                size={24}
+                                color1={'#374151'}
+                                color2={'#FDE047'}
+                                half={true}
+                                edit={false}
+                            />
+                            <span className="text-white font-medium text-lg">
+                                {averageRating.toFixed(1)}/5 ({totalRatings} ratings)
+                            </span>
                         </div>
-                        <span className="text-white font-medium text-lg">4.5/5</span>
                     </div>
                 </div>
             </div>
@@ -287,6 +339,11 @@ const SinglePostPage = () => {
                             <Clock className="h-4 w-4" />
                             <span>{post.readTime} min read</span>
                         </div>
+
+                        <div className="flex items-center space-x-1">
+                            <Eye className="h-4 w-4" />
+                            <span>{viewCount} views</span>
+                        </div>
                     </div>
 
                     {/* Tags */}
@@ -317,6 +374,72 @@ const SinglePostPage = () => {
                     ) : (
                         mdxContent
                     )}
+                </div>
+
+                {/* Interactive Rating Section */}
+                <div className="mt-16 p-8 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-dark-800 dark:to-dark-700 rounded-2xl border border-blue-100 dark:border-dark-600 relative overflow-hidden">
+                    {/* Background decoration */}
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-200/20 to-indigo-200/20 rounded-full -translate-y-16 translate-x-16"></div>
+
+                    <div className="relative z-10">
+                        <div className="text-center mb-6">
+                            <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                                Rate This Article
+                            </h3>
+                            <p className="text-gray-600 dark:text-gray-300">
+                                Your feedback helps us create better content
+                            </p>
+                        </div>
+
+                        <div className="flex flex-col items-center space-y-4">
+                            {/* Current average rating display */}
+                            <div className="text-center">
+                                <div className="flex items-center justify-center gap-2 mb-2">
+                                    <ReactStars
+                                        count={5}
+                                        value={averageRating}
+                                        size={20}
+                                        color1={'#9CA3AF'}
+                                        color2={'#FDE047'}
+                                        half={true}
+                                        edit={false}
+                                    />
+                                    <span className="text-sm text-gray-600 dark:text-gray-400">
+                                        {averageRating.toFixed(1)} average ({totalRatings} ratings)
+                                    </span>
+                                </div>
+                            </div>
+
+                            {/* User rating input */}
+                            <div className="text-center">
+                                <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+                                    {userRating > 0 ? 'Your rating:' : 'Click to rate:'}
+                                </p>
+                                <ReactStars
+                                    count={5}
+                                    value={userRating}
+                                    size={32}
+                                    color1={'#D1D5DB'}
+                                    color2={'#F59E0B'}
+                                    half={false}
+                                    edit={true}
+                                    onChange={handleRatingChange}
+                                />
+                                {userRating > 0 && (
+                                    <p className="text-sm text-green-600 dark:text-green-400 mt-2">
+                                        Thanks for rating! You gave {userRating} star{userRating !== 1 ? 's' : ''}
+                                    </p>
+                                )}
+                            </div>
+
+                            {/* Rating confirmation message */}
+                            {showRatingMessage && (
+                                <div className="bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-200 px-4 py-2 rounded-full text-sm animate-fade-in">
+                                    ✨ Thank you for your rating!
+                                </div>
+                            )}
+                        </div>
+                    </div>
                 </div>
 
                 {/* Comments Section */}
@@ -449,13 +572,7 @@ const SinglePostPage = () => {
                     </div>
                 </div>
 
-                {/* Comments Section */}
-                <div className="mt-16 text-center">
-                    <button className="inline-flex items-center px-6 py-3 bg-pink-100 dark:bg-pink-900/20 text-pink-600 dark:text-pink-400 rounded-full hover:bg-pink-200 dark:hover:bg-pink-900/40 transition-colors font-medium">
-                        3 Comments
-                        <ChevronDown className="h-4 w-4 ml-2" />
-                    </button>
-                </div>
+
 
                 {/* You May Also Like Section - Full Width */}
                 <div className="mt-20 bg-gradient-to-r from-pink-300 to-pink-400 p-8 md:p-12 rounded-2xl text-white w-full">

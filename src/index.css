@@ -49,6 +49,19 @@
     @apply bg-gray-400 dark:bg-dark-500;
 }
 
+/* Ensure article cards are fully clickable */
+.article-card-link {
+    position: relative;
+    display: block;
+    text-decoration: none !important;
+}
+
+.article-card-link:hover {
+    text-decoration: none !important;
+}
+
+/* Remove the pointer-events: none that blocks clicks */
+
 /* Smooth transitions for dark mode */
 * {
     @apply transition-colors duration-300;

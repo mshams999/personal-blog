@@ -1,24 +1,38 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { Clock, MessageCircle, ArrowUp } from 'lucide-react'
+import { Clock, MessageCircle, ArrowUp, Eye } from 'lucide-react'
 import { useData } from '../contexts/DataContext'
 import { format } from 'date-fns'
+import { useFirebaseAnalytics } from '../hooks/useFirebaseAnalytics'
+import { useDisqusCommentCounts } from '../hooks/useDisqusCommentCounts'
+import DisqusCommentCount from './DisqusCommentCount'
 
 /**
  * Footer component with modern design and social links
- * Last updated: July 4, 2025
+ * Last updated: July 5, 2025
  * 
  * Features:
  * - Horizontal layout with three sections
- * - User Favourites with circular thumbnails and ranking
- * - Popular posts with comment counts
- * - Short Reads with read time indicators
+ * - Most Commented: Uses real Disqus comment counts via API
+ * - Popular posts: Sorted by Firebase Analytics view counts
+ * - Short Reads: Posts with ≤3 min read time
  * - Newsletter signup section
  * - Social media icons
  * - Scroll to top button
  */
 const Footer = () => {
     const { posts, getAuthorById } = useData()
+    const { views, sortedPosts } = useFirebaseAnalytics(posts)
+
+    // Use a try-catch to handle potential errors
+    let commentData = { sortedByComments: [], getCommentCount: () => 0, loading: false }
+    try {
+        commentData = useDisqusCommentCounts(posts)
+    } catch (error) {
+        console.error('Error in useDisqusCommentCounts:', error)
+    }
+
+    const { sortedByComments, getCommentCount, loading: commentsLoading } = commentData
 
     const scrollToTop = () => {
         window.scrollTo({
@@ -35,18 +49,39 @@ const Footer = () => {
 
     return (
         <footer className="bg-gray-50 dark:bg-dark-800 py-16">
+            {/* Hidden elements for Disqus comment count calculation - only if posts exist */}
+            {posts && posts.length > 0 && (
+                <div style={{ display: 'none' }}>
+                    {posts.map(post => (
+                        <a
+                            key={`disqus-count-${post.slug}`}
+                            href={`#disqus_thread`}
+                            data-disqus-identifier={post.slug}
+                            data-disqus-url={`${window.location.origin}/post/${post.slug}`}
+                        >
+                            0
+                        </a>
+                    ))}
+                </div>
+            )}
+
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Widget Section */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 mb-16">
-                    {/* User Favourites */}
+                    {/* Most Commented */}
                     <div>
-                        <h3 className="text-xl font-bold mb-6 text-gray-900 dark:text-white">User Favourites</h3>
+                        <h3 className="text-xl font-bold mb-6 text-gray-900 dark:text-white">
+                            Most Commented
+                            {commentsLoading && (
+                                <span className="ml-2 text-sm text-gray-500 dark:text-gray-400">(Loading...)</span>
+                            )}
+                        </h3>
                         <div className="space-y-4">
-                            {posts
-                                .sort((a, b) => new Date(b.date) - new Date(a.date))
+                            {(sortedByComments && sortedByComments.length > 0 ? sortedByComments : posts || [])
                                 .slice(0, 3)
                                 .map((post, index) => {
-                                    const author = getAuthorById(post.authorId)
+                                    if (!post) return null
+                                    const commentCount = getCommentCount ? getCommentCount(post.slug) : 0
                                     return (
                                         <Link
                                             key={post.id}
@@ -59,7 +94,7 @@ const Footer = () => {
                                                     alt={post.title}
                                                     className="w-12 h-12 rounded-full object-cover"
                                                 />
-                                                <span className="absolute -top-1 -left-1 w-6 h-6 bg-gray-800 text-white text-xs rounded-full flex items-center justify-center font-bold">
+                                                <span className="absolute -top-1 -left-1 w-6 h-6 bg-blue-500 text-white text-xs rounded-full flex items-center justify-center font-bold">
                                                     {index + 1}
                                                 </span>
                                             </div>
@@ -67,9 +102,20 @@ const Footer = () => {
                                                 <h4 className="font-medium text-gray-900 dark:text-white text-sm line-clamp-2 group-hover:text-primary-500 transition-colors">
                                                     {post.title}
                                                 </h4>
-                                                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                                                    {author?.name || 'Unknown'} — {format(new Date(post.date), 'MMM dd, yyyy')}
-                                                </p>
+                                                <div className="flex items-center text-xs text-gray-500 dark:text-gray-400 mt-1 space-x-2">
+                                                    <span>{format(new Date(post.date), 'MMM dd, yyyy')}</span>
+                                                    <span>—</span>
+                                                    <div className="flex items-center space-x-1">
+                                                        <MessageCircle className="w-3 h-3" />
+                                                        <span>
+                                                            {commentsLoading ? (
+                                                                <span className="animate-pulse">Loading...</span>
+                                                            ) : (
+                                                                `${commentCount} Comment${commentCount !== 1 ? 's' : ''}`
+                                                            )}
+                                                        </span>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </Link>
                                     )
@@ -81,33 +127,35 @@ const Footer = () => {
                     <div>
                         <h3 className="text-xl font-bold mb-6 text-gray-900 dark:text-white">Popular</h3>
                         <div className="space-y-4">
-                            {posts
-                                .sort(() => Math.random() - 0.5) // Random order for demo
+                            {(sortedPosts && sortedPosts.length > 0 ? sortedPosts : posts || [])
                                 .slice(0, 3)
-                                .map((post, index) => (
-                                    <Link
-                                        key={post.id}
-                                        to={`/post/${post.slug}`}
-                                        className="flex items-start space-x-3 hover:bg-white dark:hover:bg-dark-700 p-3 rounded-lg transition-colors group"
-                                    >
-                                        <span className="flex-shrink-0 w-8 h-8 bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 rounded-full flex items-center justify-center font-bold text-lg">
-                                            {index + 1}
-                                        </span>
-                                        <div className="flex-1">
-                                            <h4 className="font-medium text-gray-900 dark:text-white text-sm line-clamp-2 mb-1 group-hover:text-primary-500 transition-colors">
-                                                {post.title}
-                                            </h4>
-                                            <div className="flex items-center text-xs text-gray-500 dark:text-gray-400 space-x-2">
-                                                <span>{format(new Date(post.date), 'MMM dd, yyyy')}</span>
-                                                <span>—</span>
-                                                <div className="flex items-center space-x-1">
-                                                    <MessageCircle className="w-3 h-3" />
-                                                    <span>{Math.floor(Math.random() * 5) + 1}</span>
+                                .map((post, index) => {
+                                    if (!post) return null
+                                    return (
+                                        <Link
+                                            key={post.id}
+                                            to={`/post/${post.slug}`}
+                                            className="flex items-start space-x-3 hover:bg-white dark:hover:bg-dark-700 p-3 rounded-lg transition-colors group"
+                                        >
+                                            <span className="flex-shrink-0 w-8 h-8 bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 rounded-full flex items-center justify-center font-bold text-lg">
+                                                {index + 1}
+                                            </span>
+                                            <div className="flex-1">
+                                                <h4 className="font-medium text-gray-900 dark:text-white text-sm line-clamp-2 mb-1 group-hover:text-primary-500 transition-colors">
+                                                    {post.title}
+                                                </h4>
+                                                <div className="flex items-center text-xs text-gray-500 dark:text-gray-400 space-x-2">
+                                                    <span>{format(new Date(post.date), 'MMM dd, yyyy')}</span>
+                                                    <span>—</span>
+                                                    <div className="flex items-center space-x-1">
+                                                        <Eye className="w-3 h-3" />
+                                                        <span>{post.viewCount || 0} views</span>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </Link>
-                                ))}
+                                        </Link>
+                                    )
+                                })}
                         </div>
                     </div>
 
@@ -115,11 +163,11 @@ const Footer = () => {
                     <div>
                         <h3 className="text-xl font-bold mb-6 text-gray-900 dark:text-white">Short Reads</h3>
                         <div className="space-y-4">
-                            {posts
-                                .filter(p => p.readTime <= 3)
+                            {(posts || [])
+                                .filter(p => p && p.readTime <= 3)
                                 .slice(0, 3)
                                 .map((post, index) => {
-                                    const author = getAuthorById(post.authorId)
+                                    if (!post) return null
                                     return (
                                         <Link
                                             key={post.id}
@@ -136,7 +184,7 @@ const Footer = () => {
                                                     {post.title}
                                                 </h4>
                                                 <div className="flex items-center text-xs text-gray-500 dark:text-gray-400 space-x-2">
-                                                    <span>by {author?.name || 'Unknown'}</span>
+                                                    <span>{format(new Date(post.date), 'MMM dd, yyyy')}</span>
                                                     <span>—</span>
                                                     <div className="flex items-center space-x-1">
                                                         <Clock className="w-3 h-3" />
@@ -214,14 +262,7 @@ const Footer = () => {
                         </div>
                     </div>
 
-                    {/* Scroll to Top Button */}
-                    <button
-                        onClick={scrollToTop}
-                        className="absolute bottom-8 right-8 p-3 bg-pink-400 hover:bg-pink-500 text-white rounded-full shadow-lg transition-all duration-300"
-                        aria-label="Scroll to top"
-                    >
-                        <ArrowUp className="h-5 w-5" />
-                    </button>
+
                 </div>
             </div>
         </footer>

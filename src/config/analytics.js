@@ -38,16 +38,6 @@ export const isGAConfigured = () => {
     const hasWindow = typeof window !== 'undefined'
     const hasGtag = typeof window !== 'undefined' && typeof window.gtag === 'function'
 
-    if (gaConfig.debug) {
-        console.log('GA Configuration Check:', {
-            measurementId: gaConfig.measurementId,
-            hasId,
-            hasWindow,
-            hasGtag,
-            isConfigured: hasId && hasWindow && hasGtag
-        })
-    }
-
     return hasId && hasWindow && hasGtag
 }
 
@@ -59,9 +49,6 @@ export const isGAConfigured = () => {
  */
 export const trackPageView = (page_title, page_location, page_path) => {
     if (!isGAConfigured()) {
-        if (gaConfig.debug) {
-            console.log('GA: Page view would be tracked:', { page_title, page_location, page_path })
-        }
         return
     }
 
@@ -71,10 +58,6 @@ export const trackPageView = (page_title, page_location, page_path) => {
         page_path,
         ...gaConfig.config
     })
-
-    if (gaConfig.debug) {
-        console.log('GA: Page view tracked:', { page_title, page_location, page_path })
-    }
 }
 
 /**
@@ -84,9 +67,6 @@ export const trackPageView = (page_title, page_location, page_path) => {
  */
 export const trackEvent = (action, parameters = {}) => {
     if (!isGAConfigured()) {
-        if (gaConfig.debug) {
-            console.log('GA: Event would be tracked:', { action, parameters })
-        }
         return
     }
 
@@ -94,10 +74,6 @@ export const trackEvent = (action, parameters = {}) => {
         ...parameters,
         timestamp: new Date().toISOString()
     })
-
-    if (gaConfig.debug) {
-        console.log('GA: Event tracked:', { action, parameters })
-    }
 }
 
 /**

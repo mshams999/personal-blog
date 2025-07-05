@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useData } from '../contexts/DataContext'
 import { Link } from 'react-router-dom'
 import { Clock, MessageCircle, Star, Calendar, Eye } from 'lucide-react'
@@ -8,8 +8,6 @@ import Carousel from '../components/Carousel'
 import Hero from '../components/Hero'
 import DisqusCommentCount from '../components/DisqusCommentCount'
 import { useFirebaseAnalytics, formatViewCount } from '../hooks/useFirebaseAnalytics'
-import { getPostRating, formatRating } from '../utils/ratings'
-import { useDisqusCommentCounts } from '../hooks/useDisqusCommentCounts'
 
 /**
  * HomePage component displaying all blog posts in a masonry layout
@@ -17,7 +15,7 @@ import { useDisqusCommentCounts } from '../hooks/useDisqusCommentCounts'
  * Features:
  * - Masonry-style layout with varying card sizes
  * - Featured posts with larger cards
- * - Sidebar with Top Posts and Most Commented sections
+ * - Sidebar with Top Posts, User Favourites, Popular, and Short Reads
  * - Newsletter signup section
  * - Responsive design matching the provided screenshot
  */
@@ -28,8 +26,18 @@ const HomePage = () => {
     // Fetch article view counts using Firebase Analytics
     const { views, loading: viewsLoading, sortedPosts } = useFirebaseAnalytics(recentPosts)
 
-    // Fetch Disqus comment counts for Most Commented section
-    const { sortedByComments, getCommentCount, loading: commentsLoading } = useDisqusCommentCounts(recentPosts)
+    // Refresh view counts when the page becomes visible (user comes back from reading an article)
+    useEffect(() => {
+        const handleVisibilityChange = () => {
+            if (!document.hidden) {
+                // Force a re-render of view counts when page becomes visible
+                window.dispatchEvent(new Event('storage'))
+            }
+        }
+
+        document.addEventListener('visibilitychange', handleVisibilityChange)
+        return () => document.removeEventListener('visibilitychange', handleVisibilityChange)
+    }, [])
 
     // Define the layout pattern for masonry effect
     const getCardSize = (index) => {
@@ -51,15 +59,16 @@ const HomePage = () => {
     const PostCard = ({ post, index, className = '' }) => {
         const author = getAuthorById(post.authorId)
         const category = getCategoryById(post.categoryId)
+        const formattedDate = format(new Date(post.date), 'MMM dd, yyyy')
         const isLargeCard = className.includes('row-span-2')
-
-        // Get dynamic rating for this post
-        const { averageRating, totalRatings } = getPostRating(post.slug)
 
         return (
             <Link
                 to={`/post/${post.slug}`}
                 className={`block bg-white dark:bg-dark-700 rounded-2xl overflow-hidden shadow-sm border border-gray-100 dark:border-dark-600 hover:shadow-lg transition-all duration-300 group cursor-pointer ${className}`}
+                onClick={(e) => {
+                    console.log('Card clicked, navigating to:', `/post/${post.slug}`)
+                }}
             >
                 <div className={`relative ${isLargeCard ? 'h-64' : 'h-48'} overflow-hidden`}>
                     <img
@@ -114,8 +123,8 @@ const HomePage = () => {
                         <div className="flex items-center space-x-2 text-xs text-gray-500 dark:text-gray-400">
                             <DisqusCommentCount post={post} currentUrl={`${window.location.origin}/post/${post.slug}`} />
                             <div className="flex items-center space-x-1">
-                                <Star className="h-3 w-3 text-yellow-400 fill-yellow-400" />
-                                <span>{formatRating(averageRating)} ({totalRatings})</span>
+                                <Star className="h-3 w-3 text-yellow-400" />
+                                <span>4.{Math.floor((post.slug.charCodeAt(0) % 9) + 1)}</span>
                             </div>
                         </div>
                     </div>
@@ -123,25 +132,10 @@ const HomePage = () => {
             </Link>
         )
     }
+    }
 
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-dark-900">
-            {/* Hidden elements for Disqus comment count calculation - only if posts exist */}
-            {recentPosts && recentPosts.length > 0 && (
-                <div style={{ display: 'none' }}>
-                    {recentPosts.map(post => (
-                        <a
-                            key={`disqus-count-${post.slug}`}
-                            href={`#disqus_thread`}
-                            data-disqus-identifier={post.slug}
-                            data-disqus-url={`${window.location.origin}/post/${post.slug}`}
-                        >
-                            0
-                        </a>
-                    ))}
-                </div>
-            )}
-
             {/* Hero Section */}
             <Hero />
 
@@ -221,54 +215,99 @@ const HomePage = () => {
                             </div>
                         </div>
 
-                        {/* Most Commented */}
+                        {/* User Favourites */}
                         <div className="bg-white dark:bg-dark-700 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-dark-600">
-                            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">
-                                Most Commented
-                                {commentsLoading && (
-                                    <span className="ml-2 text-sm text-gray-500 dark:text-gray-400">(Loading...)</span>
-                                )}
-                            </h3>
+                            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">User Favourites</h3>
                             <div className="space-y-4">
-                                {(sortedByComments && sortedByComments.length > 0 ? sortedByComments : recentPosts || [])
-                                    .slice(0, 3)
-                                    .map((post, index) => {
-                                        if (!post) return null
-                                        const commentCount = getCommentCount ? getCommentCount(post.slug) : 0
-                                        return (
-                                            <Link key={post.id} to={`/post/${post.slug}`} className="flex items-center space-x-3 group">
-                                                <div className="relative">
-                                                    <img
-                                                        src={post.featuredImage}
-                                                        alt={post.title}
-                                                        className="w-12 h-12 rounded-full object-cover"
-                                                    />
-                                                    <span className="absolute -top-1 -left-1 w-6 h-6 bg-blue-500 text-white text-xs rounded-full flex items-center justify-center font-bold">
-                                                        {index + 1}
-                                                    </span>
-                                                </div>
-                                                <div className="flex-1 min-w-0">
-                                                    <h4 className="text-sm font-medium text-gray-900 dark:text-white line-clamp-2 group-hover:text-primary-500 transition-colors">
-                                                        {post.title}
-                                                    </h4>
-                                                    <div className="flex items-center text-xs text-gray-500 dark:text-gray-400 mt-1 space-x-2">
+                                {recentPosts.slice(0, 3).map((post, index) => {
+                                    const author = getAuthorById(post.authorId)
+                                    return (
+                                        <Link key={post.id} to={`/post/${post.slug}`} className="flex items-center space-x-3 group">
+                                            <div className="relative">
+                                                <img
+                                                    src={post.featuredImage}
+                                                    alt={post.title}
+                                                    className="w-12 h-12 rounded-full object-cover"
+                                                />
+                                                <span className="absolute -top-1 -left-1 w-6 h-6 bg-primary-500 text-white text-xs rounded-full flex items-center justify-center font-bold">
+                                                    {index + 1}
+                                                </span>
+                                            </div>
+                                            <div className="flex-1 min-w-0">
+                                                <h4 className="text-sm font-medium text-gray-900 dark:text-white line-clamp-2 group-hover:text-primary-500 transition-colors">
+                                                    {post.title}
+                                                </h4>
+                                                <p className="text-xs text-gray-500 dark:text-gray-400">
+                                                    {author?.name} • {format(new Date(post.date), 'MMM dd')}
+                                                </p>
+                                            </div>
+                                        </Link>
+                                    )
+                                })}
+                            </div>
+                        </div>
+
+                        {/* Popular */}
+                        <div className="bg-white dark:bg-dark-700 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-dark-600">
+                            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Popular</h3>
+                            <div className="space-y-3">
+                                {sortedPosts.slice(0, 3).map((post, index) => (
+                                    <Link key={post.id} to={`/post/${post.slug}`} className="block group">
+                                        <div className="flex items-start space-x-2">
+                                            <span className="flex-shrink-0 w-6 h-6 bg-gray-100 dark:bg-dark-600 text-gray-600 dark:text-gray-400 rounded-full flex items-center justify-center text-xs font-bold">
+                                                {index + 1}
+                                            </span>
+                                            <div className="flex-1 min-w-0">
+                                                <h4 className="text-sm font-medium text-gray-900 dark:text-white line-clamp-2 group-hover:text-primary-500 transition-colors">
+                                                    {post.title}
+                                                </h4>
+                                                <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                                    <div className="flex items-center space-x-2">
                                                         <span>{format(new Date(post.date), 'MMM dd')}</span>
                                                         <span>—</span>
-                                                        <div className="flex items-center space-x-1">
-                                                            <MessageCircle className="w-3 h-3" />
-                                                            <span>
-                                                                {commentsLoading ? (
-                                                                    <span className="animate-pulse">Loading...</span>
-                                                                ) : (
-                                                                    `${commentCount} Comment${commentCount !== 1 ? 's' : ''}`
-                                                                )}
-                                                            </span>
-                                                        </div>
+                                                        <DisqusCommentCount post={post} currentUrl={`${window.location.origin}/post/${post.slug}`} />
+                                                    </div>
+                                                    <div className="flex items-center space-x-1">
+                                                        <Eye className="w-3 h-3" />
+                                                        <span>{formatViewCount(post.viewCount)}</span>
                                                     </div>
                                                 </div>
-                                            </Link>
-                                        )
-                                    })}
+                                            </div>
+                                        </div>
+                                    </Link>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Short Reads */}
+                        <div className="bg-white dark:bg-dark-700 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-dark-600">
+                            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Short Reads</h3>
+                            <div className="space-y-4">
+                                {recentPosts.filter(p => p.readTime <= 3).slice(0, 3).map((post, index) => {
+                                    const author = getAuthorById(post.authorId)
+                                    return (
+                                        <Link key={post.id} to={`/post/${post.slug}`} className="flex items-center space-x-3 group">
+                                            <img
+                                                src={post.featuredImage}
+                                                alt={post.title}
+                                                className="w-12 h-12 rounded-full object-cover"
+                                            />
+                                            <div className="flex-1 min-w-0">
+                                                <h4 className="text-sm font-medium text-gray-900 dark:text-white line-clamp-2 group-hover:text-primary-500 transition-colors">
+                                                    {post.title}
+                                                </h4>
+                                                <div className="flex items-center text-xs text-gray-500 dark:text-gray-400 mt-1 space-x-2">
+                                                    <span>by {author?.name}</span>
+                                                    <span>—</span>
+                                                    <div className="flex items-center space-x-1">
+                                                        <Clock className="w-3 h-3" />
+                                                        <span>{post.readTime} min</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </Link>
+                                    )
+                                })}
                             </div>
                         </div>
                     </div>

@@ -3,6 +3,7 @@ import { Routes, Route, useLocation } from 'react-router-dom'
 import { ThemeProvider } from './contexts/ThemeContext'
 import { DataProvider } from './contexts/DataContext'
 import Layout from './components/Layout'
+import AnalyticsProvider from './components/AnalyticsProvider'
 import HomePage from './pages/HomePage'
 import SinglePostPage from './pages/SinglePostPage'
 import CVPage from './pages/CVPage'
@@ -37,16 +38,18 @@ function App() {
     return (
         <ThemeProvider>
             <DataProvider>
-                <div className="min-h-screen bg-primary-50 dark:bg-dark-800 transition-colors duration-300">
-                    <ScrollToTop />
-                    <Layout>
-                        <Routes>
-                            <Route path="/" element={<HomePage />} />
-                            <Route path="/post/:slug" element={<SinglePostPage />} />
-                            <Route path="/cv" element={<CVPage />} />
-                        </Routes>
-                    </Layout>
-                </div>
+                <AnalyticsProvider>
+                    <div className="min-h-screen bg-primary-50 dark:bg-dark-800 transition-colors duration-300">
+                        <ScrollToTop />
+                        <Layout>
+                            <Routes>
+                                <Route path="/" element={<HomePage />} />
+                                <Route path="/post/:slug" element={<SinglePostPage />} />
+                                <Route path="/cv" element={<CVPage />} />
+                            </Routes>
+                        </Layout>
+                    </div>
+                </AnalyticsProvider>
             </DataProvider>
         </ThemeProvider>
     )

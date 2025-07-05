@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { Menu, X, Sun, Moon, Search } from 'lucide-react'
+import { Menu, X, Sun, Moon, Search, Github, Linkedin, Twitter, Facebook, Mail } from 'lucide-react'
 import { useTheme } from '../contexts/ThemeContext'
 import { useData } from '../contexts/DataContext'
 import SearchBox from './SearchBox'
@@ -20,7 +20,7 @@ const Header = () => {
     const [isSearchOpen, setIsSearchOpen] = useState(false)
     const [isScrolled, setIsScrolled] = useState(false)
     const { theme, toggleTheme } = useTheme()
-    const { siteMetadata, navigation } = useData()
+    const { siteMetadata = {}, navigation = [] } = useData() || {}
     const location = useLocation()
 
     // Handle scroll effect
@@ -50,11 +50,24 @@ const Header = () => {
                 } border-b border-gray-200 dark:border-dark-600`}>
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex items-center justify-between h-16">
-
+                        {/* Left: Mobile menu button */}
+                        <div className="md:hidden">
+                            <button
+                                onClick={toggleMobileMenu}
+                                className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-dark-700 transition-colors"
+                                aria-label="Toggle menu"
+                            >
+                                {isMobileMenuOpen ? (
+                                    <X className="h-5 w-5 text-gray-700 dark:text-gray-300" />
+                                ) : (
+                                    <Menu className="h-5 w-5 text-gray-700 dark:text-gray-300" />
+                                )}
+                            </button>
+                        </div>
 
                         {/* Center: Navigation */}
                         <nav className="hidden md:flex items-center space-x-8">
-                            {navigation.map((item) => (
+                            {navigation?.map((item) => (
                                 <div key={item.name} className="relative group">
                                     <Link
                                         to={item.href}
@@ -115,6 +128,67 @@ const Header = () => {
                                 )}
                             </button>
 
+                            {/* Social Media Icons */}
+                            <div className="hidden lg:flex items-center space-x-2">
+                                {siteMetadata?.authors?.[0]?.social && (
+                                    <>
+                                        {siteMetadata.authors[0].social.github && (
+                                            <a
+                                                href={siteMetadata.authors[0].social.github}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-dark-700 transition-colors group"
+                                                aria-label="GitHub"
+                                            >
+                                                <Github className="h-4 w-4 text-gray-600 dark:text-gray-400 group-hover:text-primary-500" />
+                                            </a>
+                                        )}
+                                        {siteMetadata.authors[0].social.linkedin && (
+                                            <a
+                                                href={siteMetadata.authors[0].social.linkedin}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-dark-700 transition-colors group"
+                                                aria-label="LinkedIn"
+                                            >
+                                                <Linkedin className="h-4 w-4 text-gray-600 dark:text-gray-400 group-hover:text-blue-600" />
+                                            </a>
+                                        )}
+                                        {siteMetadata.authors[0].social.twitter && (
+                                            <a
+                                                href={siteMetadata.authors[0].social.twitter}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-dark-700 transition-colors group"
+                                                aria-label="Twitter"
+                                            >
+                                                <Twitter className="h-4 w-4 text-gray-600 dark:text-gray-400 group-hover:text-blue-400" />
+                                            </a>
+                                        )}
+                                        {siteMetadata.authors[0].social.facebook && (
+                                            <a
+                                                href={siteMetadata.authors[0].social.facebook}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-dark-700 transition-colors group"
+                                                aria-label="Facebook"
+                                            >
+                                                <Facebook className="h-4 w-4 text-gray-600 dark:text-gray-400 group-hover:text-blue-500" />
+                                            </a>
+                                        )}
+                                        {siteMetadata.authors[0].social.email && (
+                                            <a
+                                                href={`mailto:${siteMetadata.authors[0].social.email}`}
+                                                className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-dark-700 transition-colors group"
+                                                aria-label="Email"
+                                            >
+                                                <Mail className="h-4 w-4 text-gray-600 dark:text-gray-400 group-hover:text-green-500" />
+                                            </a>
+                                        )}
+                                    </>
+                                )}
+                            </div>
+
                             {/* Subscribe Button */}
                             <button className="bg-orange-400 hover:bg-orange-500 text-white px-4 py-2 rounded-full text-sm font-medium transition-colors">
                                 Subscribe
@@ -155,7 +229,7 @@ const Header = () => {
                                 </button>
                             </div>
                             <nav className="space-y-2">
-                                {navigation.map((item) => (
+                                {navigation?.map((item) => (
                                     <Link
                                         key={item.name}
                                         to={item.href}
@@ -168,6 +242,70 @@ const Header = () => {
                                         {item.name}
                                     </Link>
                                 ))}
+
+                                {/* Mobile Social Media Icons */}
+                                <div className="pt-4 mt-4 border-t border-gray-200 dark:border-dark-600">
+                                    <h4 className="px-4 text-sm font-medium text-gray-500 dark:text-gray-400 mb-3">Connect</h4>
+                                    <div className="flex items-center justify-center space-x-4 px-4">
+                                        {siteMetadata?.authors?.[0]?.social && (
+                                            <>
+                                                {siteMetadata.authors[0].social.github && (
+                                                    <a
+                                                        href={siteMetadata.authors[0].social.github}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="p-3 rounded-lg bg-gray-100 dark:bg-dark-700 hover:bg-gray-200 dark:hover:bg-dark-600 transition-colors group"
+                                                        aria-label="GitHub"
+                                                    >
+                                                        <Github className="h-5 w-5 text-gray-600 dark:text-gray-400 group-hover:text-primary-500" />
+                                                    </a>
+                                                )}
+                                                {siteMetadata.authors[0].social.linkedin && (
+                                                    <a
+                                                        href={siteMetadata.authors[0].social.linkedin}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="p-3 rounded-lg bg-gray-100 dark:bg-dark-700 hover:bg-gray-200 dark:hover:bg-dark-600 transition-colors group"
+                                                        aria-label="LinkedIn"
+                                                    >
+                                                        <Linkedin className="h-5 w-5 text-gray-600 dark:text-gray-400 group-hover:text-blue-600" />
+                                                    </a>
+                                                )}
+                                                {siteMetadata.authors[0].social.twitter && (
+                                                    <a
+                                                        href={siteMetadata.authors[0].social.twitter}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="p-3 rounded-lg bg-gray-100 dark:bg-dark-700 hover:bg-gray-200 dark:hover:bg-dark-600 transition-colors group"
+                                                        aria-label="Twitter"
+                                                    >
+                                                        <Twitter className="h-5 w-5 text-gray-600 dark:text-gray-400 group-hover:text-blue-400" />
+                                                    </a>
+                                                )}
+                                                {siteMetadata.authors[0].social.facebook && (
+                                                    <a
+                                                        href={siteMetadata.authors[0].social.facebook}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="p-3 rounded-lg bg-gray-100 dark:bg-dark-700 hover:bg-gray-200 dark:hover:bg-dark-600 transition-colors group"
+                                                        aria-label="Facebook"
+                                                    >
+                                                        <Facebook className="h-5 w-5 text-gray-600 dark:text-gray-400 group-hover:text-blue-500" />
+                                                    </a>
+                                                )}
+                                                {siteMetadata.authors[0].social.email && (
+                                                    <a
+                                                        href={`mailto:${siteMetadata.authors[0].social.email}`}
+                                                        className="p-3 rounded-lg bg-gray-100 dark:bg-dark-700 hover:bg-gray-200 dark:hover:bg-dark-600 transition-colors group"
+                                                        aria-label="Email"
+                                                    >
+                                                        <Mail className="h-5 w-5 text-gray-600 dark:text-gray-400 group-hover:text-green-500" />
+                                                    </a>
+                                                )}
+                                            </>
+                                        )}
+                                    </div>
+                                </div>
                             </nav>
                         </div>
                     </div>

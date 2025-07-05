@@ -1,0 +1,6 @@
+// Hero images placeholder
+// Replace these with your actual photos
+// hero-workspace.jpg - The workspace/desk photo
+// hero-selfie-outdoor.jpg - Outdoor selfie photo
+// hero-plane-selfie.jpg - Airplane selfie photo  
+// hero-travel-selfie.jpg - Travel selfie photo

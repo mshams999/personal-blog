@@ -38,15 +38,10 @@ export const useAnalytics = () => {
 
     // Track page views automatically on route changes
     useEffect(() => {
-        console.log('useAnalytics: Route changed to', location.pathname)
-        console.log('useAnalytics: GA configured?', isGAConfigured())
-
         if (isGAConfigured() && typeof window !== 'undefined') {
             const page_title = document.title
             const page_location = window.location.href
             const page_path = location.pathname + location.search
-
-            console.log('useAnalytics: Tracking page view', { page_title, page_location, page_path })
 
             // Small delay to ensure the page has loaded
             const timer = setTimeout(() => {
@@ -54,8 +49,6 @@ export const useAnalytics = () => {
             }, 100)
 
             return () => clearTimeout(timer)
-        } else {
-            console.log('useAnalytics: GA not configured, skipping page view tracking')
         }
     }, [location])
 

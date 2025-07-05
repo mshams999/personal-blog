@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useData } from '../contexts/DataContext'
 import { Link } from 'react-router-dom'
 import { Clock, MessageCircle, Star, Calendar, Eye } from 'lucide-react'
@@ -8,7 +8,6 @@ import Carousel from '../components/Carousel'
 import Hero from '../components/Hero'
 import DisqusCommentCount from '../components/DisqusCommentCount'
 import { useFirebaseAnalytics, formatViewCount } from '../hooks/useFirebaseAnalytics'
-import { getPostRating, formatRating } from '../utils/ratings'
 import { useDisqusCommentCounts } from '../hooks/useDisqusCommentCounts'
 
 /**
@@ -31,6 +30,19 @@ const HomePage = () => {
     // Fetch Disqus comment counts for Most Commented section
     const { sortedByComments, getCommentCount, loading: commentsLoading } = useDisqusCommentCounts(recentPosts)
 
+    // Refresh view counts when the page becomes visible (user comes back from reading an article)
+    useEffect(() => {
+        const handleVisibilityChange = () => {
+            if (!document.hidden) {
+                // Force a re-render of view counts when page becomes visible
+                window.dispatchEvent(new Event('storage'))
+            }
+        }
+
+        document.addEventListener('visibilitychange', handleVisibilityChange)
+        return () => document.removeEventListener('visibilitychange', handleVisibilityChange)
+    }, [])
+
     // Define the layout pattern for masonry effect
     const getCardSize = (index) => {
         const patterns = [
@@ -51,15 +63,16 @@ const HomePage = () => {
     const PostCard = ({ post, index, className = '' }) => {
         const author = getAuthorById(post.authorId)
         const category = getCategoryById(post.categoryId)
+        const formattedDate = format(new Date(post.date), 'MMM dd, yyyy')
         const isLargeCard = className.includes('row-span-2')
-
-        // Get dynamic rating for this post
-        const { averageRating, totalRatings } = getPostRating(post.slug)
 
         return (
             <Link
                 to={`/post/${post.slug}`}
                 className={`block bg-white dark:bg-dark-700 rounded-2xl overflow-hidden shadow-sm border border-gray-100 dark:border-dark-600 hover:shadow-lg transition-all duration-300 group cursor-pointer ${className}`}
+                onClick={(e) => {
+                    console.log('Card clicked, navigating to:', `/post/${post.slug}`)
+                }}
             >
                 <div className={`relative ${isLargeCard ? 'h-64' : 'h-48'} overflow-hidden`}>
                     <img
@@ -114,8 +127,8 @@ const HomePage = () => {
                         <div className="flex items-center space-x-2 text-xs text-gray-500 dark:text-gray-400">
                             <DisqusCommentCount post={post} currentUrl={`${window.location.origin}/post/${post.slug}`} />
                             <div className="flex items-center space-x-1">
-                                <Star className="h-3 w-3 text-yellow-400 fill-yellow-400" />
-                                <span>{formatRating(averageRating)} ({totalRatings})</span>
+                                <Star className="h-3 w-3 text-yellow-400" />
+                                <span>4.{Math.floor((post.slug.charCodeAt(0) % 9) + 1)}</span>
                             </div>
                         </div>
                     </div>
@@ -126,22 +139,6 @@ const HomePage = () => {
 
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-dark-900">
-            {/* Hidden elements for Disqus comment count calculation - only if posts exist */}
-            {recentPosts && recentPosts.length > 0 && (
-                <div style={{ display: 'none' }}>
-                    {recentPosts.map(post => (
-                        <a
-                            key={`disqus-count-${post.slug}`}
-                            href={`#disqus_thread`}
-                            data-disqus-identifier={post.slug}
-                            data-disqus-url={`${window.location.origin}/post/${post.slug}`}
-                        >
-                            0
-                        </a>
-                    ))}
-                </div>
-            )}
-
             {/* Hero Section */}
             <Hero />
 
