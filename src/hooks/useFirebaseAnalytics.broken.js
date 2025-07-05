@@ -1,4 +1,31 @@
 /**
+ * Enhanced Firebase Analytics Hook with Firestore Integration
+ * 
+ * This hook combines the existing localStorage-based view tracking with
+ * Firebase Firestore for persistent, real-time view counts across devices.
+ * 
+ * Features:
+ * - Firebase Firestore integration for persistent view storage
+ * - Fallback to localStorage for offline scenarios
+ * - Hybrid approach: Firebase for accuracy, localStorage for speed
+ * - Analytics event tracking
+ * - Backward compatibility with existing implementation
+ */
+
+import { useState, useEffect, useCallback, useMemo } from 'react'
+import { analytics } from '../config/firebase'
+import { logEvent } from 'firebase/analytics'
+import { useBulkArticleViews } from './useFirebaseViews'
+import { incrementArticleView, isFirestoreConfigured } from '../services/firestoreService'
+
+// Local storage key for view counts (fallback)
+const VIEW_COUNTS_KEY = 'blog_article_views'
+
+/**
+ * Enhanced hook for Firebase Analytics with Firestore integration
+ * Provides real-time view tracking with multiple data sources
+ */
+/**
  * Simplified Firebase Analytics Hook - Stable Version
  * 
  * This version focuses on stability and prevents infinite re-renders
@@ -31,20 +58,20 @@ export const useFirebaseAnalytics = (posts = []) => {
     // Load localStorage view counts once
     useEffect(() => {
         if (initializedRef.current || !postsHash) return
-
+        
         initializedRef.current = true
-
+        
         try {
             const storedViews = localStorage.getItem(VIEW_COUNTS_KEY)
             const existingViews = storedViews ? JSON.parse(storedViews) : {}
-
+            
             // Initialize view counts for new posts
             const updatedViews = { ...existingViews }
             let hasChanges = false
 
             posts.forEach(post => {
                 if (!post?.slug) return
-
+                
                 const articlePath = `/post/${post.slug}`
                 if (!updatedViews[articlePath]) {
                     // Initialize with a base count based on post age
@@ -75,7 +102,7 @@ export const useFirebaseAnalytics = (posts = []) => {
     // Create sorted posts array
     const sortedPosts = useMemo(() => {
         if (!Array.isArray(posts)) return []
-
+        
         return posts
             .map(post => {
                 const viewCount = views[`/post/${post.slug}`] || 0
@@ -96,20 +123,37 @@ export const useFirebaseAnalytics = (posts = []) => {
 }
 
 /**
- * Simplified increment view count with localStorage fallback
+ * Enhanced increment view count with Firestore integration
  * @param {string} slug - Article slug
  * @returns {Promise<number>} - Updated view count
  */
 export const incrementViewCount = async (slug) => {
     try {
         const articlePath = `/post/${slug}`
+        let newCount = 0
 
-        // Use localStorage for now (Firestore temporarily disabled)
+        // Try to increment in Firestore first
+        if (isFirestoreConfigured()) {
+            const success = await incrementArticleView(slug)
+            if (success) {
+                // Track in Firebase Analytics
+                if (analytics) {
+                    logEvent(analytics, 'article_view', {
+                        article_slug: slug,
+                        article_path: articlePath,
+                        source: 'firestore'
+                    })
+                }
+                return newCount // Let Firestore handle the counting
+            }
+        }
+
+        // Fallback to localStorage
         const storedViews = localStorage.getItem(VIEW_COUNTS_KEY)
         const views = storedViews ? JSON.parse(storedViews) : {}
 
         views[articlePath] = (views[articlePath] || 0) + 1
-        const newCount = views[articlePath]
+        newCount = views[articlePath]
 
         localStorage.setItem(VIEW_COUNTS_KEY, JSON.stringify(views))
 
@@ -131,7 +175,7 @@ export const incrementViewCount = async (slug) => {
 }
 
 /**
- * Track page view event
+ * Track page view event with enhanced data
  * @param {string} pagePath - The page path
  * @param {string} pageTitle - The page title
  * @param {Object} additionalData - Additional tracking data
@@ -141,6 +185,7 @@ export const trackPageView = (pagePath, pageTitle, additionalData = {}) => {
         logEvent(analytics, 'page_view', {
             page_path: pagePath,
             page_title: pageTitle,
+            firestore_enabled: isFirestoreConfigured(),
             ...additionalData
         })
     }
@@ -153,12 +198,15 @@ export const trackPageView = (pagePath, pageTitle, additionalData = {}) => {
  */
 export const trackEvent = (eventName, parameters = {}) => {
     if (analytics) {
-        logEvent(analytics, eventName, parameters)
+        logEvent(analytics, eventName, {
+            firestore_enabled: isFirestoreConfigured(),
+            ...parameters
+        })
     }
 }
 
 /**
- * Get view count for a specific article
+ * Get view count for a specific article with Firestore priority
  * @param {string} slug - Article slug
  * @param {Object} views - Views object from useFirebaseAnalytics hook
  * @returns {number} - View count for the article
@@ -168,7 +216,7 @@ export const getArticleViewCount = (slug, views) => {
 }
 
 /**
- * Format view count for display
+ * Format view count for display (same as before)
  * @param {number} count - View count
  * @returns {string} - Formatted view count
  */

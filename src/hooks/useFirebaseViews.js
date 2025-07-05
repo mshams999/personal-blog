@@ -12,7 +12,7 @@
  * - Debouncing to prevent rapid increments
  */
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import {
     incrementArticleView,
     getViewCount,
@@ -31,42 +31,100 @@ export const useArticleViews = (articleSlug, shouldIncrement = true) => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const hasIncrementedRef = useRef(false);
+    const hasInitializedRef = useRef(false);
 
-    // Increment view count (called once per article visit)
+    // Stable memoized slug to prevent unnecessary re-runs
+    const stableSlug = useRef(articleSlug);
+
+    // Update stable slug only when it actually changes
+    useEffect(() => {
+        if (stableSlug.current !== articleSlug) {
+            stableSlug.current = articleSlug;
+            hasIncrementedRef.current = false;
+            hasInitializedRef.current = false;
+        }
+    }, [articleSlug]);
+
+    // Effect to handle view tracking on mount - with stable dependencies
+    useEffect(() => {
+        if (!articleSlug || hasInitializedRef.current) {
+            return;
+        }
+
+        hasInitializedRef.current = true;
+
+        const trackView = async () => {
+            try {
+                setLoading(true);
+                setError(null);
+
+                // First, fetch the current count
+                const count = await getViewCount(articleSlug);
+                setViewCount(count);
+
+                // Then increment if requested and not already done
+                if (shouldIncrement && isFirestoreConfigured() && !hasIncrementedRef.current) {
+                    hasIncrementedRef.current = true;
+
+                    // Small delay to ensure count is fetched first
+                    setTimeout(async () => {
+                        try {
+                            const success = await incrementArticleView(articleSlug);
+                            if (success) {
+                                // Update local count optimistically
+                                setViewCount(prev => prev + 1);
+                            }
+                        } catch (err) {
+                            console.error('Error incrementing view:', err);
+                            setError(err.message);
+                            hasIncrementedRef.current = false; // Allow retry
+                        }
+                    }, 100);
+                }
+            } catch (err) {
+                console.error('Error fetching view count:', err);
+                setError(err.message);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        if (articleSlug) {
+            trackView();
+        } else {
+            setLoading(false);
+        }
+
+    }, [articleSlug, shouldIncrement]); // Only depend on the actual parameters
+
+    // Manual increment function
     const incrementView = useCallback(async () => {
-        if (!articleSlug || hasIncrementedRef.current || !isFirestoreConfigured()) {
+        if (!articleSlug || !isFirestoreConfigured()) {
             return false;
         }
 
         try {
-            hasIncrementedRef.current = true;
             const success = await incrementArticleView(articleSlug);
-
             if (success) {
-                // Optimistically update the local count
                 setViewCount(prev => prev + 1);
             }
-
             return success;
         } catch (err) {
             console.error('Error incrementing view:', err);
             setError(err.message);
-            hasIncrementedRef.current = false; // Allow retry
             return false;
         }
     }, [articleSlug]);
 
-    // Fetch current view count
-    const fetchViewCount = useCallback(async () => {
+    // Manual refresh function
+    const refreshCount = useCallback(async () => {
         if (!articleSlug) {
-            setLoading(false);
             return;
         }
 
         try {
             setLoading(true);
             setError(null);
-
             const count = await getViewCount(articleSlug);
             setViewCount(count);
         } catch (err) {
@@ -77,35 +135,12 @@ export const useArticleViews = (articleSlug, shouldIncrement = true) => {
         }
     }, [articleSlug]);
 
-    // Effect to handle view tracking on mount
-    useEffect(() => {
-        if (!articleSlug) {
-            setLoading(false);
-            return;
-        }
-
-        const trackView = async () => {
-            // First, fetch the current count
-            await fetchViewCount();
-
-            // Then increment if requested (e.g., on article page load)
-            if (shouldIncrement && isFirestoreConfigured()) {
-                // Add a small delay to ensure the count is fetched first
-                setTimeout(() => {
-                    incrementView();
-                }, 100);
-            }
-        };
-
-        trackView();
-    }, [articleSlug, shouldIncrement, fetchViewCount, incrementView]);
-
     return {
         viewCount,
         loading,
         error,
         incrementView,
-        refreshCount: fetchViewCount
+        refreshCount
     };
 };
 
@@ -118,43 +153,92 @@ export const useBulkArticleViews = (articles) => {
     const [viewCounts, setViewCounts] = useState({});
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const processedSlugsRef = useRef('');
 
-    const fetchBulkViews = useCallback(async () => {
-        if (!articles || !Array.isArray(articles) || articles.length === 0) {
-            setLoading(false);
+    // Create stable article slug list to prevent infinite re-renders
+    const articleSlugs = useMemo(() => {
+        if (!articles || !Array.isArray(articles)) return '';
+
+        // Use a more stable approach for memoization
+        const slugs = articles
+            .map(article => article?.slug)
+            .filter(Boolean)
+            .sort()
+            .join(',');
+
+        return slugs;
+    }, [
+        articles?.length,
+        articles?.map(a => a?.slug).join(',') || ''
+    ]);
+
+    useEffect(() => {
+        // Only fetch if articles changed and Firestore is configured
+        if (!articleSlugs || processedSlugsRef.current === articleSlugs) {
+            if (!articleSlugs) setLoading(false);
             return;
         }
+
+        const fetchBulkViews = async () => {
+            try {
+                setLoading(true);
+                setError(null);
+
+                const slugs = articleSlugs.split(',').filter(Boolean);
+
+                if (slugs.length === 0) {
+                    setViewCounts({});
+                    setLoading(false);
+                    processedSlugsRef.current = articleSlugs;
+                    return;
+                }
+
+                const counts = await getBulkViewCounts(slugs);
+
+                setViewCounts(counts);
+                processedSlugsRef.current = articleSlugs;
+            } catch (err) {
+                console.error('Error fetching bulk view counts:', err);
+                setError(err.message);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        if (isFirestoreConfigured()) {
+            fetchBulkViews();
+        } else {
+            setLoading(false);
+            processedSlugsRef.current = articleSlugs;
+        }
+    }, [articleSlugs]);
+
+    const refreshCounts = useCallback(async () => {
+        if (!articleSlugs) return;
 
         try {
             setLoading(true);
             setError(null);
 
-            const slugs = articles.map(article => article.slug).filter(Boolean);
+            const slugs = articleSlugs.split(',').filter(Boolean);
             const counts = await getBulkViewCounts(slugs);
 
             setViewCounts(counts);
+            processedSlugsRef.current = articleSlugs;
         } catch (err) {
-            console.error('Error fetching bulk view counts:', err);
+            console.error('Error refreshing bulk view counts:', err);
             setError(err.message);
         } finally {
             setLoading(false);
         }
-    }, [articles]);
-
-    useEffect(() => {
-        if (isFirestoreConfigured()) {
-            fetchBulkViews();
-        } else {
-            setLoading(false);
-        }
-    }, [fetchBulkViews]);
+    }, [articleSlugs]);
 
     return {
         viewCounts,
         loading,
         error,
-        refreshCounts: fetchBulkViews,
-        getViewCount: (slug) => viewCounts[slug] || 0
+        refreshCounts,
+        getViewCount: useCallback((slug) => viewCounts[slug] || 0, [viewCounts])
     };
 };
 

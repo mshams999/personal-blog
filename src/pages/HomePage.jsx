@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { useData } from '../contexts/DataContext'
 import { Link } from 'react-router-dom'
 import { Clock, MessageCircle, Star, Calendar, Eye } from 'lucide-react'
@@ -24,7 +24,11 @@ import { useDisqusCommentCounts } from '../hooks/useDisqusCommentCounts'
  */
 const HomePage = () => {
     const { siteMetadata, getRecentPosts, getAuthorById, getCategoryById } = useData()
-    const recentPosts = getRecentPosts()
+
+    // Memoize posts to prevent infinite re-renders
+    const recentPosts = useMemo(() => {
+        return getRecentPosts()
+    }, [getRecentPosts])
 
     // Fetch article view counts using Firebase Analytics
     const { views, loading: viewsLoading, sortedPosts } = useFirebaseAnalytics(recentPosts)

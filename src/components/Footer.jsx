@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { Clock, MessageCircle, ArrowUp, Eye } from 'lucide-react'
 import { useData } from '../contexts/DataContext'
 import { format } from 'date-fns'
-import { useFirebaseAnalytics } from '../hooks/useFirebaseAnalytics'
+import { useFirebaseAnalytics, getArticleViewCount, formatViewCount } from '../hooks/useFirebaseAnalytics'
 import { useDisqusCommentCounts } from '../hooks/useDisqusCommentCounts'
 import DisqusCommentCount from './DisqusCommentCount'
 
@@ -149,7 +149,7 @@ const Footer = () => {
                                                     <span>—</span>
                                                     <div className="flex items-center space-x-1">
                                                         <Eye className="w-3 h-3" />
-                                                        <span>{post.viewCount || 0} views</span>
+                                                        <span>{formatViewCount(getArticleViewCount(post.slug, views))} views</span>
                                                     </div>
                                                 </div>
                                             </div>
