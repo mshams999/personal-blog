@@ -1,6 +1,6 @@
 // tina/config.js
 import { defineConfig } from "tinacms";
-var branch = process.env.NEXT_PUBLIC_TINA_BRANCH || process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_REF || process.env.HEAD || "main";
+var branch = process.env.GITHUB_BRANCH || process.env.NEXT_PUBLIC_TINA_BRANCH || process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_REF || process.env.HEAD || "main";
 var config_default = defineConfig({
   branch,
   // Get this from tina.io
