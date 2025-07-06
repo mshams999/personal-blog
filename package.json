@@ -7,11 +7,17 @@
         "dev": "vite",
         "build": "vite build",
         "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
-        "preview": "vite preview"
+        "preview": "vite preview",
+        "tina:dev": "tinacms dev -c \"npm run dev\"",
+        "tina:build": "tinacms build",
+        "tina:admin": "tinacms admin"
     },
     "dependencies": {
         "@mailchimp/mailchimp_marketing": "^3.0.80",
         "@mdx-js/rollup": "^3.0.0",
+        "@tinacms/auth": "^1.0.12",
+        "@tinacms/cli": "^1.9.9",
+        "@tinacms/mdx": "^1.7.0",
         "@types/mdx": "^2.0.10",
         "axios": "^1.10.0",
         "concurrently": "^9.2.0",
@@ -22,7 +28,8 @@
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
         "react-router-dom": "^6.20.1",
-        "react-stars": "^2.2.5"
+        "react-stars": "^2.2.5",
+        "tinacms": "^2.7.9"
     },
     "devDependencies": {
         "@tailwindcss/typography": "^0.5.10",
