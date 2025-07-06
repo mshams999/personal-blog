@@ -29,6 +29,19 @@ dist-ssr
 .env.development.local
 .env.test.local
 .env.production.local
+.env.*.local
+.env.new
+.env.backup
+*.env
+
+# API Keys and sensitive files
+api-keys.json
+credentials.json
+ga-credentials.json
+service-account.json
+
+# TinaCMS sensitive files
+tina-cloud-auth.json
 
 # API keys and sensitive data
 *.key
