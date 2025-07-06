@@ -283,41 +283,113 @@ type AuthorConnection implements Connection {
   edges: [AuthorConnectionEdges]
 }
 
+type SettingsSiteMetadataAuthor {
+  name: String
+  summary: String
+}
+
+type SettingsSiteMetadataSocial {
+  twitter: String
+  instagram: String
+  facebook: String
+  github: String
+}
+
 type SettingsSiteMetadata {
   title: String
   description: String
-  siteUrl: String
+  author: SettingsSiteMetadataAuthor
+  social: SettingsSiteMetadataSocial
 }
 
-type SettingsSocial {
-  twitter: String
+type SettingsNavigation {
+  name: String
+  href: String
+}
+
+type SettingsAuthorsSocial {
   github: String
   linkedin: String
+  twitter: String
+  facebook: String
+  email: String
+}
+
+type SettingsAuthors {
+  id: String
+  name: String
+  avatar: String
+  bio: String
+  social: SettingsAuthorsSocial
+}
+
+type SettingsCategories {
+  id: String
+  name: String
+  slug: String
 }
 
 type Settings implements Node & Document {
   siteMetadata: SettingsSiteMetadata
-  social: SettingsSocial
+  navigation: [SettingsNavigation]
+  authors: [SettingsAuthors]
+  categories: [SettingsCategories]
   id: ID!
   _sys: SystemInfo!
   _values: JSON!
 }
 
+input SettingsSiteMetadataAuthorFilter {
+  name: StringFilter
+  summary: StringFilter
+}
+
+input SettingsSiteMetadataSocialFilter {
+  twitter: StringFilter
+  instagram: StringFilter
+  facebook: StringFilter
+  github: StringFilter
+}
+
 input SettingsSiteMetadataFilter {
   title: StringFilter
   description: StringFilter
-  siteUrl: StringFilter
+  author: SettingsSiteMetadataAuthorFilter
+  social: SettingsSiteMetadataSocialFilter
 }
 
-input SettingsSocialFilter {
-  twitter: StringFilter
+input SettingsNavigationFilter {
+  name: StringFilter
+  href: StringFilter
+}
+
+input SettingsAuthorsSocialFilter {
   github: StringFilter
   linkedin: StringFilter
+  twitter: StringFilter
+  facebook: StringFilter
+  email: StringFilter
+}
+
+input SettingsAuthorsFilter {
+  id: StringFilter
+  name: StringFilter
+  avatar: StringFilter
+  bio: StringFilter
+  social: SettingsAuthorsSocialFilter
+}
+
+input SettingsCategoriesFilter {
+  id: StringFilter
+  name: StringFilter
+  slug: StringFilter
 }
 
 input SettingsFilter {
   siteMetadata: SettingsSiteMetadataFilter
-  social: SettingsSocialFilter
+  navigation: SettingsNavigationFilter
+  authors: SettingsAuthorsFilter
+  categories: SettingsCategoriesFilter
 }
 
 type SettingsConnectionEdges {
@@ -402,21 +474,57 @@ input AuthorMutation {
   social: AuthorSocialMutation
 }
 
+input SettingsSiteMetadataAuthorMutation {
+  name: String
+  summary: String
+}
+
+input SettingsSiteMetadataSocialMutation {
+  twitter: String
+  instagram: String
+  facebook: String
+  github: String
+}
+
 input SettingsSiteMetadataMutation {
   title: String
   description: String
-  siteUrl: String
+  author: SettingsSiteMetadataAuthorMutation
+  social: SettingsSiteMetadataSocialMutation
 }
 
-input SettingsSocialMutation {
-  twitter: String
+input SettingsNavigationMutation {
+  name: String
+  href: String
+}
+
+input SettingsAuthorsSocialMutation {
   github: String
   linkedin: String
+  twitter: String
+  facebook: String
+  email: String
+}
+
+input SettingsAuthorsMutation {
+  id: String
+  name: String
+  avatar: String
+  bio: String
+  social: SettingsAuthorsSocialMutation
+}
+
+input SettingsCategoriesMutation {
+  id: String
+  name: String
+  slug: String
 }
 
 input SettingsMutation {
   siteMetadata: SettingsSiteMetadataMutation
-  social: SettingsSocialMutation
+  navigation: [SettingsNavigationMutation]
+  authors: [SettingsAuthorsMutation]
+  categories: [SettingsCategoriesMutation]
 }
 
 schema {

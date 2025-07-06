@@ -373,7 +373,7 @@ export default defineConfig({
                     },
                 },
                 match: {
-                    include: "settings",
+                    include: "info",
                 },
                 fields: [
                     {
@@ -395,31 +395,152 @@ export default defineConfig({
                                 },
                             },
                             {
-                                type: "string",
-                                name: "siteUrl",
-                                label: "Site URL",
+                                type: "object",
+                                name: "author",
+                                label: "Default Author",
+                                fields: [
+                                    {
+                                        type: "string",
+                                        name: "name",
+                                        label: "Name",
+                                    },
+                                    {
+                                        type: "string",
+                                        name: "summary",
+                                        label: "Summary",
+                                    },
+                                ],
+                            },
+                            {
+                                type: "object",
+                                name: "social",
+                                label: "Social Media",
+                                fields: [
+                                    {
+                                        type: "string",
+                                        name: "twitter",
+                                        label: "Twitter Username",
+                                    },
+                                    {
+                                        type: "string",
+                                        name: "instagram",
+                                        label: "Instagram Username",
+                                    },
+                                    {
+                                        type: "string",
+                                        name: "facebook",
+                                        label: "Facebook Username",
+                                    },
+                                    {
+                                        type: "string",
+                                        name: "github",
+                                        label: "GitHub Username",
+                                    },
+                                ],
                             },
                         ],
                     },
                     {
                         type: "object",
-                        name: "social",
-                        label: "Social Media",
+                        name: "navigation",
+                        label: "Navigation",
+                        list: true,
                         fields: [
                             {
                                 type: "string",
-                                name: "twitter",
-                                label: "Twitter Username",
+                                name: "name",
+                                label: "Name",
                             },
                             {
                                 type: "string",
-                                name: "github",
-                                label: "GitHub Username",
+                                name: "href",
+                                label: "Link",
+                            },
+                        ],
+                    },
+                    {
+                        type: "object",
+                        name: "authors",
+                        label: "Authors",
+                        list: true,
+                        fields: [
+                            {
+                                type: "string",
+                                name: "id",
+                                label: "ID",
                             },
                             {
                                 type: "string",
-                                name: "linkedin",
-                                label: "LinkedIn Username",
+                                name: "name",
+                                label: "Name",
+                            },
+                            {
+                                type: "string",
+                                name: "avatar",
+                                label: "Avatar URL",
+                            },
+                            {
+                                type: "string",
+                                name: "bio",
+                                label: "Bio",
+                                ui: {
+                                    component: "textarea",
+                                },
+                            },
+                            {
+                                type: "object",
+                                name: "social",
+                                label: "Social Links",
+                                fields: [
+                                    {
+                                        type: "string",
+                                        name: "github",
+                                        label: "GitHub",
+                                    },
+                                    {
+                                        type: "string",
+                                        name: "linkedin",
+                                        label: "LinkedIn",
+                                    },
+                                    {
+                                        type: "string",
+                                        name: "twitter",
+                                        label: "Twitter",
+                                    },
+                                    {
+                                        type: "string",
+                                        name: "facebook",
+                                        label: "Facebook",
+                                    },
+                                    {
+                                        type: "string",
+                                        name: "email",
+                                        label: "Email",
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    {
+                        type: "object",
+                        name: "categories",
+                        label: "Categories",
+                        list: true,
+                        fields: [
+                            {
+                                type: "string",
+                                name: "id",
+                                label: "ID",
+                            },
+                            {
+                                type: "string",
+                                name: "name",
+                                label: "Name",
+                            },
+                            {
+                                type: "string",
+                                name: "slug",
+                                label: "Slug",
                             },
                         ],
                     },

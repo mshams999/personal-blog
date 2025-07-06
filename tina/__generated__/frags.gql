@@ -45,12 +45,43 @@ fragment SettingsParts on Settings {
     __typename
     title
     description
-    siteUrl
+    author {
+      __typename
+      name
+      summary
+    }
+    social {
+      __typename
+      twitter
+      instagram
+      facebook
+      github
+    }
   }
-  social {
+  navigation {
     __typename
-    twitter
-    github
-    linkedin
+    name
+    href
+  }
+  authors {
+    __typename
+    id
+    name
+    avatar
+    bio
+    social {
+      __typename
+      github
+      linkedin
+      twitter
+      facebook
+      email
+    }
+  }
+  categories {
+    __typename
+    id
+    name
+    slug
   }
 }

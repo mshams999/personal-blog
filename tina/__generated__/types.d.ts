@@ -417,44 +417,121 @@ export type AuthorConnection = Connection & {
   edges?: Maybe<Array<Maybe<AuthorConnectionEdges>>>;
 };
 
+export type SettingsSiteMetadataAuthor = {
+  __typename?: 'SettingsSiteMetadataAuthor';
+  name?: Maybe<Scalars['String']['output']>;
+  summary?: Maybe<Scalars['String']['output']>;
+};
+
+export type SettingsSiteMetadataSocial = {
+  __typename?: 'SettingsSiteMetadataSocial';
+  twitter?: Maybe<Scalars['String']['output']>;
+  instagram?: Maybe<Scalars['String']['output']>;
+  facebook?: Maybe<Scalars['String']['output']>;
+  github?: Maybe<Scalars['String']['output']>;
+};
+
 export type SettingsSiteMetadata = {
   __typename?: 'SettingsSiteMetadata';
   title?: Maybe<Scalars['String']['output']>;
   description?: Maybe<Scalars['String']['output']>;
-  siteUrl?: Maybe<Scalars['String']['output']>;
+  author?: Maybe<SettingsSiteMetadataAuthor>;
+  social?: Maybe<SettingsSiteMetadataSocial>;
 };
 
-export type SettingsSocial = {
-  __typename?: 'SettingsSocial';
-  twitter?: Maybe<Scalars['String']['output']>;
+export type SettingsNavigation = {
+  __typename?: 'SettingsNavigation';
+  name?: Maybe<Scalars['String']['output']>;
+  href?: Maybe<Scalars['String']['output']>;
+};
+
+export type SettingsAuthorsSocial = {
+  __typename?: 'SettingsAuthorsSocial';
   github?: Maybe<Scalars['String']['output']>;
   linkedin?: Maybe<Scalars['String']['output']>;
+  twitter?: Maybe<Scalars['String']['output']>;
+  facebook?: Maybe<Scalars['String']['output']>;
+  email?: Maybe<Scalars['String']['output']>;
+};
+
+export type SettingsAuthors = {
+  __typename?: 'SettingsAuthors';
+  id?: Maybe<Scalars['String']['output']>;
+  name?: Maybe<Scalars['String']['output']>;
+  avatar?: Maybe<Scalars['String']['output']>;
+  bio?: Maybe<Scalars['String']['output']>;
+  social?: Maybe<SettingsAuthorsSocial>;
+};
+
+export type SettingsCategories = {
+  __typename?: 'SettingsCategories';
+  id?: Maybe<Scalars['String']['output']>;
+  name?: Maybe<Scalars['String']['output']>;
+  slug?: Maybe<Scalars['String']['output']>;
 };
 
 export type Settings = Node & Document & {
   __typename?: 'Settings';
   siteMetadata?: Maybe<SettingsSiteMetadata>;
-  social?: Maybe<SettingsSocial>;
+  navigation?: Maybe<Array<Maybe<SettingsNavigation>>>;
+  authors?: Maybe<Array<Maybe<SettingsAuthors>>>;
+  categories?: Maybe<Array<Maybe<SettingsCategories>>>;
   id: Scalars['ID']['output'];
   _sys: SystemInfo;
   _values: Scalars['JSON']['output'];
 };
 
+export type SettingsSiteMetadataAuthorFilter = {
+  name?: InputMaybe<StringFilter>;
+  summary?: InputMaybe<StringFilter>;
+};
+
+export type SettingsSiteMetadataSocialFilter = {
+  twitter?: InputMaybe<StringFilter>;
+  instagram?: InputMaybe<StringFilter>;
+  facebook?: InputMaybe<StringFilter>;
+  github?: InputMaybe<StringFilter>;
+};
+
 export type SettingsSiteMetadataFilter = {
   title?: InputMaybe<StringFilter>;
   description?: InputMaybe<StringFilter>;
-  siteUrl?: InputMaybe<StringFilter>;
+  author?: InputMaybe<SettingsSiteMetadataAuthorFilter>;
+  social?: InputMaybe<SettingsSiteMetadataSocialFilter>;
 };
 
-export type SettingsSocialFilter = {
-  twitter?: InputMaybe<StringFilter>;
+export type SettingsNavigationFilter = {
+  name?: InputMaybe<StringFilter>;
+  href?: InputMaybe<StringFilter>;
+};
+
+export type SettingsAuthorsSocialFilter = {
   github?: InputMaybe<StringFilter>;
   linkedin?: InputMaybe<StringFilter>;
+  twitter?: InputMaybe<StringFilter>;
+  facebook?: InputMaybe<StringFilter>;
+  email?: InputMaybe<StringFilter>;
+};
+
+export type SettingsAuthorsFilter = {
+  id?: InputMaybe<StringFilter>;
+  name?: InputMaybe<StringFilter>;
+  avatar?: InputMaybe<StringFilter>;
+  bio?: InputMaybe<StringFilter>;
+  social?: InputMaybe<SettingsAuthorsSocialFilter>;
+};
+
+export type SettingsCategoriesFilter = {
+  id?: InputMaybe<StringFilter>;
+  name?: InputMaybe<StringFilter>;
+  slug?: InputMaybe<StringFilter>;
 };
 
 export type SettingsFilter = {
   siteMetadata?: InputMaybe<SettingsSiteMetadataFilter>;
-  social?: InputMaybe<SettingsSocialFilter>;
+  navigation?: InputMaybe<SettingsNavigationFilter>;
+  authors?: InputMaybe<SettingsAuthorsFilter>;
+  categories?: InputMaybe<SettingsCategoriesFilter>;
 };
 
 export type SettingsConnectionEdges = {
@@ -623,21 +700,57 @@ export type AuthorMutation = {
   social?: InputMaybe<AuthorSocialMutation>;
 };
 
+export type SettingsSiteMetadataAuthorMutation = {
+  name?: InputMaybe<Scalars['String']['input']>;
+  summary?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type SettingsSiteMetadataSocialMutation = {
+  twitter?: InputMaybe<Scalars['String']['input']>;
+  instagram?: InputMaybe<Scalars['String']['input']>;
+  facebook?: InputMaybe<Scalars['String']['input']>;
+  github?: InputMaybe<Scalars['String']['input']>;
+};
+
 export type SettingsSiteMetadataMutation = {
   title?: InputMaybe<Scalars['String']['input']>;
   description?: InputMaybe<Scalars['String']['input']>;
-  siteUrl?: InputMaybe<Scalars['String']['input']>;
+  author?: InputMaybe<SettingsSiteMetadataAuthorMutation>;
+  social?: InputMaybe<SettingsSiteMetadataSocialMutation>;
 };
 
-export type SettingsSocialMutation = {
-  twitter?: InputMaybe<Scalars['String']['input']>;
+export type SettingsNavigationMutation = {
+  name?: InputMaybe<Scalars['String']['input']>;
+  href?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type SettingsAuthorsSocialMutation = {
   github?: InputMaybe<Scalars['String']['input']>;
   linkedin?: InputMaybe<Scalars['String']['input']>;
+  twitter?: InputMaybe<Scalars['String']['input']>;
+  facebook?: InputMaybe<Scalars['String']['input']>;
+  email?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type SettingsAuthorsMutation = {
+  id?: InputMaybe<Scalars['String']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  avatar?: InputMaybe<Scalars['String']['input']>;
+  bio?: InputMaybe<Scalars['String']['input']>;
+  social?: InputMaybe<SettingsAuthorsSocialMutation>;
+};
+
+export type SettingsCategoriesMutation = {
+  id?: InputMaybe<Scalars['String']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  slug?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type SettingsMutation = {
   siteMetadata?: InputMaybe<SettingsSiteMetadataMutation>;
-  social?: InputMaybe<SettingsSocialMutation>;
+  navigation?: InputMaybe<Array<InputMaybe<SettingsNavigationMutation>>>;
+  authors?: InputMaybe<Array<InputMaybe<SettingsAuthorsMutation>>>;
+  categories?: InputMaybe<Array<InputMaybe<SettingsCategoriesMutation>>>;
 };
 
 export type PostPartsFragment = { __typename: 'Post', title: string, excerpt: string, date: string, readTime: number, featuredImage: string, authorId: string, categoryId: string, tags?: Array<string | null> | null, slug?: string | null, body?: any | null, seo?: { __typename: 'PostSeo', metaTitle?: string | null, metaDescription?: string | null, keywords?: Array<string | null> | null } | null };
@@ -646,7 +759,7 @@ export type PagePartsFragment = { __typename: 'Page', title: string, description
 
 export type AuthorPartsFragment = { __typename: 'Author', name: string, avatar?: string | null, bio?: string | null, social?: { __typename: 'AuthorSocial', twitter?: string | null, github?: string | null, linkedin?: string | null, email?: string | null } | null };
 
-export type SettingsPartsFragment = { __typename: 'Settings', siteMetadata?: { __typename: 'SettingsSiteMetadata', title?: string | null, description?: string | null, siteUrl?: string | null } | null, social?: { __typename: 'SettingsSocial', twitter?: string | null, github?: string | null, linkedin?: string | null } | null };
+export type SettingsPartsFragment = { __typename: 'Settings', siteMetadata?: { __typename: 'SettingsSiteMetadata', title?: string | null, description?: string | null, author?: { __typename: 'SettingsSiteMetadataAuthor', name?: string | null, summary?: string | null } | null, social?: { __typename: 'SettingsSiteMetadataSocial', twitter?: string | null, instagram?: string | null, facebook?: string | null, github?: string | null } | null } | null, navigation?: Array<{ __typename: 'SettingsNavigation', name?: string | null, href?: string | null } | null> | null, authors?: Array<{ __typename: 'SettingsAuthors', id?: string | null, name?: string | null, avatar?: string | null, bio?: string | null, social?: { __typename: 'SettingsAuthorsSocial', github?: string | null, linkedin?: string | null, twitter?: string | null, facebook?: string | null, email?: string | null } | null } | null> | null, categories?: Array<{ __typename: 'SettingsCategories', id?: string | null, name?: string | null, slug?: string | null } | null> | null };
 
 export type PostQueryVariables = Exact<{
   relativePath: Scalars['String']['input'];
@@ -710,7 +823,7 @@ export type SettingsQueryVariables = Exact<{
 }>;
 
 
-export type SettingsQuery = { __typename?: 'Query', settings: { __typename: 'Settings', id: string, _sys: { __typename?: 'SystemInfo', filename: string, basename: string, hasReferences?: boolean | null, breadcrumbs: Array<string>, path: string, relativePath: string, extension: string }, siteMetadata?: { __typename: 'SettingsSiteMetadata', title?: string | null, description?: string | null, siteUrl?: string | null } | null, social?: { __typename: 'SettingsSocial', twitter?: string | null, github?: string | null, linkedin?: string | null } | null } };
+export type SettingsQuery = { __typename?: 'Query', settings: { __typename: 'Settings', id: string, _sys: { __typename?: 'SystemInfo', filename: string, basename: string, hasReferences?: boolean | null, breadcrumbs: Array<string>, path: string, relativePath: string, extension: string }, siteMetadata?: { __typename: 'SettingsSiteMetadata', title?: string | null, description?: string | null, author?: { __typename: 'SettingsSiteMetadataAuthor', name?: string | null, summary?: string | null } | null, social?: { __typename: 'SettingsSiteMetadataSocial', twitter?: string | null, instagram?: string | null, facebook?: string | null, github?: string | null } | null } | null, navigation?: Array<{ __typename: 'SettingsNavigation', name?: string | null, href?: string | null } | null> | null, authors?: Array<{ __typename: 'SettingsAuthors', id?: string | null, name?: string | null, avatar?: string | null, bio?: string | null, social?: { __typename: 'SettingsAuthorsSocial', github?: string | null, linkedin?: string | null, twitter?: string | null, facebook?: string | null, email?: string | null } | null } | null> | null, categories?: Array<{ __typename: 'SettingsCategories', id?: string | null, name?: string | null, slug?: string | null } | null> | null } };
 
 export type SettingsConnectionQueryVariables = Exact<{
   before?: InputMaybe<Scalars['String']['input']>;
@@ -722,7 +835,7 @@ export type SettingsConnectionQueryVariables = Exact<{
 }>;
 
 
-export type SettingsConnectionQuery = { __typename?: 'Query', settingsConnection: { __typename?: 'SettingsConnection', totalCount: number, pageInfo: { __typename?: 'PageInfo', hasPreviousPage: boolean, hasNextPage: boolean, startCursor: string, endCursor: string }, edges?: Array<{ __typename?: 'SettingsConnectionEdges', cursor: string, node?: { __typename: 'Settings', id: string, _sys: { __typename?: 'SystemInfo', filename: string, basename: string, hasReferences?: boolean | null, breadcrumbs: Array<string>, path: string, relativePath: string, extension: string }, siteMetadata?: { __typename: 'SettingsSiteMetadata', title?: string | null, description?: string | null, siteUrl?: string | null } | null, social?: { __typename: 'SettingsSocial', twitter?: string | null, github?: string | null, linkedin?: string | null } | null } | null } | null> | null } };
+export type SettingsConnectionQuery = { __typename?: 'Query', settingsConnection: { __typename?: 'SettingsConnection', totalCount: number, pageInfo: { __typename?: 'PageInfo', hasPreviousPage: boolean, hasNextPage: boolean, startCursor: string, endCursor: string }, edges?: Array<{ __typename?: 'SettingsConnectionEdges', cursor: string, node?: { __typename: 'Settings', id: string, _sys: { __typename?: 'SystemInfo', filename: string, basename: string, hasReferences?: boolean | null, breadcrumbs: Array<string>, path: string, relativePath: string, extension: string }, siteMetadata?: { __typename: 'SettingsSiteMetadata', title?: string | null, description?: string | null, author?: { __typename: 'SettingsSiteMetadataAuthor', name?: string | null, summary?: string | null } | null, social?: { __typename: 'SettingsSiteMetadataSocial', twitter?: string | null, instagram?: string | null, facebook?: string | null, github?: string | null } | null } | null, navigation?: Array<{ __typename: 'SettingsNavigation', name?: string | null, href?: string | null } | null> | null, authors?: Array<{ __typename: 'SettingsAuthors', id?: string | null, name?: string | null, avatar?: string | null, bio?: string | null, social?: { __typename: 'SettingsAuthorsSocial', github?: string | null, linkedin?: string | null, twitter?: string | null, facebook?: string | null, email?: string | null } | null } | null> | null, categories?: Array<{ __typename: 'SettingsCategories', id?: string | null, name?: string | null, slug?: string | null } | null> | null } | null } | null> | null } };
 
 export const PostPartsFragmentDoc = gql`
     fragment PostParts on Post {
@@ -775,13 +888,44 @@ export const SettingsPartsFragmentDoc = gql`
     __typename
     title
     description
-    siteUrl
+    author {
+      __typename
+      name
+      summary
+    }
+    social {
+      __typename
+      twitter
+      instagram
+      facebook
+      github
+    }
   }
-  social {
+  navigation {
     __typename
-    twitter
-    github
-    linkedin
+    name
+    href
+  }
+  authors {
+    __typename
+    id
+    name
+    avatar
+    bio
+    social {
+      __typename
+      github
+      linkedin
+      twitter
+      facebook
+      email
+    }
+  }
+  categories {
+    __typename
+    id
+    name
+    slug
   }
 }
     `;
@@ -1087,7 +1231,7 @@ export const ExperimentalGetTinaClient = () =>
   getSdk(
     generateRequester(
       createClient({
-        url: "https://content.tinajs.io/1.5/content/faf2e041-206f-4336-9b34-3d515cea46f5/github/main",
+        url: "http://localhost:4001/graphql",
         queries,
       })
     )
