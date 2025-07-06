@@ -1,0 +1,56 @@
+fragment PostParts on Post {
+  __typename
+  title
+  excerpt
+  date
+  readTime
+  featuredImage
+  authorId
+  categoryId
+  tags
+  slug
+  body
+  seo {
+    __typename
+    metaTitle
+    metaDescription
+    keywords
+  }
+}
+
+fragment PageParts on Page {
+  __typename
+  title
+  description
+  body
+}
+
+fragment AuthorParts on Author {
+  __typename
+  name
+  avatar
+  bio
+  social {
+    __typename
+    twitter
+    github
+    linkedin
+    email
+  }
+}
+
+fragment SettingsParts on Settings {
+  __typename
+  siteMetadata {
+    __typename
+    title
+    description
+    siteUrl
+  }
+  social {
+    __typename
+    twitter
+    github
+    linkedin
+  }
+}

@@ -33,5 +33,15 @@ export default defineConfig(({ mode }) => {
             },
         },
         assetsInclude: ['**/*.mdx'],
+        define: {
+            // Make TinaCMS environment variables available to the client
+            'process.env.NEXT_PUBLIC_TINA_CLIENT_ID': JSON.stringify(env.NEXT_PUBLIC_TINA_CLIENT_ID || ''),
+            'process.env.TINA_TOKEN': JSON.stringify(env.TINA_TOKEN || ''),
+            'process.env.NEXT_PUBLIC_TINA_BRANCH': JSON.stringify(env.NEXT_PUBLIC_TINA_BRANCH || 'main'),
+            'process.env.TINA_SEARCH_TOKEN': JSON.stringify(env.TINA_SEARCH_TOKEN || ''),
+        },
+        optimizeDeps: {
+            include: ['tinacms']
+        }
     }
 })

@@ -10,6 +10,7 @@ import SinglePostPage from './pages/SinglePostPage'
 import CategoryPage from './pages/CategoryPage'
 import AllCategoriesPage from './pages/AllCategoriesPage'
 import CVPage from './pages/CVPage'
+import AdminPage from './pages/AdminPage'
 import { useAnalytics } from './hooks/useAnalytics'
 
 /**
@@ -51,6 +52,7 @@ function App() {
                                 <Route path="/category/:categorySlug" element={<CategoryPage />} />
                                 <Route path="/categories" element={<AllCategoriesPage />} />
                                 <Route path="/cv" element={<CVPage />} />
+                                <Route path="/admin" element={<AdminPage />} />
                             </Routes>
                         </Layout>
                     </div>
