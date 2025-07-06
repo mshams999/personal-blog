@@ -1,9 +1,8 @@
 import React, { useMemo } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { useData } from '../contexts/DataContext'
-import { Clock, Calendar, ArrowLeft, Eye, Star } from 'lucide-react'
+import { Clock, Calendar, ArrowLeft } from 'lucide-react'
 import { format } from 'date-fns'
-import ViewCounter from '../components/ViewCounter'
 
 /**
  * CategoryPage component for displaying posts filtered by category
@@ -104,17 +103,6 @@ const CategoryPage = () => {
                     </div>
 
                     <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
-                        <div className="flex items-center space-x-3">
-                            <div className="flex items-center">
-                                <Eye className="h-3 w-3 mr-1" />
-                                <ViewCounter slug={post.slug} />
-                            </div>
-                            <div className="flex items-center">
-                                <Star className="h-3 w-3 mr-1 text-yellow-400" />
-                                <span>4.5 (12)</span>
-                            </div>
-                        </div>
-
                         {author && (
                             <div className="flex items-center">
                                 <img

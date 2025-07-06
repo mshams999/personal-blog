@@ -7,6 +7,8 @@ import AnalyticsProvider from './components/AnalyticsProvider'
 import HomePage from './pages/HomePage'
 import HomePageTest from './pages/HomePageTest'
 import SinglePostPage from './pages/SinglePostPage'
+import CategoryPage from './pages/CategoryPage'
+import AllCategoriesPage from './pages/AllCategoriesPage'
 import CVPage from './pages/CVPage'
 import { useAnalytics } from './hooks/useAnalytics'
 
@@ -46,6 +48,8 @@ function App() {
                             <Routes>
                                 <Route path="/" element={<HomePage />} />
                                 <Route path="/post/:slug" element={<SinglePostPage />} />
+                                <Route path="/category/:categorySlug" element={<CategoryPage />} />
+                                <Route path="/categories" element={<AllCategoriesPage />} />
                                 <Route path="/cv" element={<CVPage />} />
                             </Routes>
                         </Layout>

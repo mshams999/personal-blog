@@ -18,6 +18,7 @@ import { useArticleViews, useFormatViewCount } from '../hooks/useFirebaseViews';
  * @param {string} props.size - Size variant: 'sm', 'md', 'lg'
  * @param {string} props.variant - Style variant: 'default', 'badge', 'minimal'
  * @param {string} props.className - Additional CSS classes
+ * @param {string} props.articleDate - Article publication date for consistent fallback
  */
 const ViewCounter = ({
     articleSlug,
@@ -25,9 +26,10 @@ const ViewCounter = ({
     shouldIncrement = false,
     size = 'sm',
     variant = 'default',
-    className = ''
+    className = '',
+    articleDate = null
 }) => {
-    const { viewCount, loading, error } = useArticleViews(articleSlug, shouldIncrement);
+    const { viewCount, loading, error } = useArticleViews(articleSlug, shouldIncrement, articleDate);
 
     // Use Firebase count if available, otherwise fallback
     const displayCount = !loading && !error && viewCount > 0 ? viewCount : fallbackCount;

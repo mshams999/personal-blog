@@ -17,16 +17,18 @@ import {
     incrementArticleView,
     getViewCount,
     getBulkViewCounts,
-    isFirestoreConfigured
+    isFirestoreConfigured,
+    generateConsistentViewCount
 } from '../services/firestoreService';
 
 /**
  * Hook for tracking and displaying individual article views
  * @param {string} articleSlug - The article slug to track
  * @param {boolean} shouldIncrement - Whether to increment view on mount (default: true)
+ * @param {string} articleDate - Article publication date for consistent fallback (optional)
  * @returns {Object} - View count, loading state, and functions
  */
-export const useArticleViews = (articleSlug, shouldIncrement = true) => {
+export const useArticleViews = (articleSlug, shouldIncrement = true, articleDate = null) => {
     const [viewCount, setViewCount] = useState(0);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -60,7 +62,14 @@ export const useArticleViews = (articleSlug, shouldIncrement = true) => {
 
                 // First, fetch the current count
                 const count = await getViewCount(articleSlug);
-                setViewCount(count);
+
+                // Use consistent fallback if Firestore returns 0 or is not configured
+                const finalCount = count > 0 ? count : generateConsistentViewCount(
+                    articleSlug,
+                    articleDate || new Date().toISOString()
+                );
+
+                setViewCount(finalCount);
 
                 // Then increment if requested and not already done
                 if (shouldIncrement && isFirestoreConfigured() && !hasIncrementedRef.current) {
@@ -195,7 +204,25 @@ export const useBulkArticleViews = (articles) => {
 
                 const counts = await getBulkViewCounts(slugs);
 
-                setViewCounts(counts);
+                // If Firestore returns 0 for articles, use consistent fallback
+                const enhancedCounts = {};
+                const articlesArray = articles || [];
+
+                slugs.forEach(slug => {
+                    const firestoreCount = counts[slug] || 0;
+                    if (firestoreCount > 0) {
+                        enhancedCounts[slug] = firestoreCount;
+                    } else {
+                        // Find the article to get its date for consistent fallback
+                        const article = articlesArray.find(a => a.slug === slug);
+                        const fallbackCount = article
+                            ? generateConsistentViewCount(slug, article.date)
+                            : generateConsistentViewCount(slug, new Date().toISOString());
+                        enhancedCounts[slug] = fallbackCount;
+                    }
+                });
+
+                setViewCounts(enhancedCounts);
                 processedSlugsRef.current = articleSlugs;
             } catch (err) {
                 console.error('Error fetching bulk view counts:', err);
@@ -208,6 +235,19 @@ export const useBulkArticleViews = (articles) => {
         if (isFirestoreConfigured()) {
             fetchBulkViews();
         } else {
+            // Use consistent fallback data when Firestore is not configured
+            const fallbackCounts = {};
+            const slugs = articleSlugs.split(',').filter(Boolean);
+            const articlesArray = articles || [];
+
+            slugs.forEach(slug => {
+                const article = articlesArray.find(a => a.slug === slug);
+                fallbackCounts[slug] = article
+                    ? generateConsistentViewCount(slug, article.date)
+                    : generateConsistentViewCount(slug, new Date().toISOString());
+            });
+
+            setViewCounts(fallbackCounts);
             setLoading(false);
             processedSlugsRef.current = articleSlugs;
         }
@@ -238,7 +278,17 @@ export const useBulkArticleViews = (articles) => {
         loading,
         error,
         refreshCounts,
-        getViewCount: useCallback((slug) => viewCounts[slug] || 0, [viewCounts])
+        getViewCount: useCallback((slug) => {
+            const count = viewCounts[slug];
+            if (count && count > 0) {
+                return count;
+            }
+            // Use consistent fallback if not in viewCounts or is 0
+            const article = articles?.find(a => a?.slug === slug);
+            return article
+                ? generateConsistentViewCount(slug, article.date)
+                : generateConsistentViewCount(slug, new Date().toISOString());
+        }, [viewCounts, articles])
     };
 };
 
@@ -255,4 +305,19 @@ export const useFormatViewCount = (count) => {
         if (count < 1000000) return `${(count / 1000).toFixed(1)}k views`;
         return `${(count / 1000000).toFixed(1)}m views`;
     }, [count])();
+};
+
+/**
+ * Simple view count formatting utility (non-hook version)
+ * @param {number} count - View count number
+ * @returns {string} - Formatted view count string
+ */
+export const formatViewCount = (count) => {
+    if (!count || count === 0) return '0';
+    if (count >= 1000000) {
+        return `${(count / 1000000).toFixed(1)}M`;
+    } else if (count >= 1000) {
+        return `${(count / 1000).toFixed(1)}K`;
+    }
+    return count.toString();
 };

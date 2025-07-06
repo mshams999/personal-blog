@@ -19,6 +19,10 @@
             "href": "/"
         },
         {
+            "name": "Categories",
+            "href": "/categories"
+        },
+        {
             "name": "CV",
             "href": "/cv"
         }
@@ -58,6 +62,16 @@
             "id": "cat-4",
             "name": "Lifestyle",
             "slug": "lifestyle"
+        },
+        {
+            "id": "cat-5",
+            "name": "Technology",
+            "slug": "technology"
+        },
+        {
+            "id": "cat-6",
+            "name": "Photography",
+            "slug": "photography"
         }
     ],
     "posts": [
@@ -140,6 +154,297 @@
                 "reflection"
             ],
             "mdxContentPath": "/content/posts/post-5.mdx"
+        },
+        {
+            "id": "post-6",
+            "slug": "exploring-modern-web-technologies",
+            "title": "Exploring Modern Web Technologies",
+            "excerpt": "A deep dive into the latest web development frameworks and tools that are shaping the future of the internet...",
+            "date": "2025-06-16T15:30:00Z",
+            "readTime": 8,
+            "featuredImage": "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=1200&h=800&fit=crop&crop=center",
+            "authorId": "author-1",
+            "categoryId": "cat-5",
+            "tags": [
+                "javascript",
+                "react",
+                "development"
+            ],
+            "mdxContentPath": "/content/posts/post-6.mdx"
+        },
+        {
+            "id": "post-7",
+            "slug": "capturing-perfect-moments-photography-guide",
+            "title": "Capturing Perfect Moments: A Photography Guide",
+            "excerpt": "Learn the art of photography with practical tips and techniques for capturing stunning images in any lighting condition...",
+            "date": "2025-06-13T12:00:00Z",
+            "readTime": 5,
+            "featuredImage": "https://images.unsplash.com/photo-1502920917128-1aa500764cbd?w=1200&h=800&fit=crop&crop=center",
+            "authorId": "author-1",
+            "categoryId": "cat-6",
+            "tags": [
+                "photography",
+                "camera",
+                "techniques"
+            ],
+            "mdxContentPath": "/content/posts/post-7.mdx"
+        },
+        {
+            "id": "post-8",
+            "slug": "mindful-living-in-busy-world",
+            "title": "Mindful Living in a Busy World",
+            "excerpt": "Discover practical strategies for maintaining mindfulness and inner peace in our fast-paced modern society...",
+            "date": "2025-06-10T08:30:00Z",
+            "readTime": 7,
+            "featuredImage": "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=1200&h=800&fit=crop&crop=center",
+            "authorId": "author-1",
+            "categoryId": "cat-1",
+            "tags": [
+                "mindfulness",
+                "meditation",
+                "wellness"
+            ],
+            "mdxContentPath": "/content/posts/post-8.mdx"
+        },
+        {
+            "id": "post-9",
+            "slug": "creative-design-principles-that-work",
+            "title": "Creative Design Principles That Work",
+            "excerpt": "Explore fundamental design principles that create visually appealing and functional user interfaces and experiences...",
+            "date": "2025-06-07T16:20:00Z",
+            "readTime": 6,
+            "featuredImage": "https://images.unsplash.com/photo-1558655146-d09347e92766?w=1200&h=800&fit=crop&crop=center",
+            "authorId": "author-1",
+            "categoryId": "cat-2",
+            "tags": [
+                "design",
+                "ui",
+                "creativity"
+            ],
+            "mdxContentPath": "/content/posts/post-9.mdx"
+        },
+        {
+            "id": "post-10",
+            "slug": "hidden-gems-of-southeast-asia",
+            "title": "Hidden Gems of Southeast Asia",
+            "excerpt": "Uncover breathtaking destinations off the beaten path in Southeast Asia that offer authentic cultural experiences...",
+            "date": "2025-06-04T13:45:00Z",
+            "readTime": 9,
+            "featuredImage": "https://images.unsplash.com/photo-1537953773345-d172ccf13cf1?w=1200&h=800&fit=crop&crop=center",
+            "authorId": "author-1",
+            "categoryId": "cat-3",
+            "tags": [
+                "travel",
+                "asia",
+                "culture"
+            ],
+            "mdxContentPath": "/content/posts/post-10.mdx"
+        },
+        {
+            "id": "post-11",
+            "slug": "sustainable-lifestyle-choices",
+            "title": "Sustainable Lifestyle Choices for Modern Living",
+            "excerpt": "Simple yet impactful changes you can make to live more sustainably and reduce your environmental footprint...",
+            "date": "2025-06-01T10:15:00Z",
+            "readTime": 5,
+            "featuredImage": "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=1200&h=800&fit=crop&crop=center",
+            "authorId": "author-1",
+            "categoryId": "cat-4",
+            "tags": [
+                "sustainability",
+                "environment",
+                "lifestyle"
+            ],
+            "mdxContentPath": "/content/posts/post-11.mdx"
+        },
+        {
+            "id": "post-12",
+            "slug": "artificial-intelligence-future-impact",
+            "title": "Artificial Intelligence and Its Future Impact",
+            "excerpt": "An in-depth analysis of how AI is transforming industries and what it means for the future of work and society...",
+            "date": "2025-05-29T14:00:00Z",
+            "readTime": 10,
+            "featuredImage": "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=1200&h=800&fit=crop&crop=center",
+            "authorId": "author-1",
+            "categoryId": "cat-5",
+            "tags": [
+                "ai",
+                "future",
+                "technology"
+            ],
+            "mdxContentPath": "/content/posts/post-12.mdx"
+        },
+        {
+            "id": "post-13",
+            "slug": "street-photography-urban-stories",
+            "title": "Street Photography: Capturing Urban Stories",
+            "excerpt": "Master the art of street photography and learn how to capture compelling stories in urban environments...",
+            "date": "2025-05-26T11:30:00Z",
+            "readTime": 6,
+            "featuredImage": "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=1200&h=800&fit=crop&crop=center",
+            "authorId": "author-1",
+            "categoryId": "cat-6",
+            "tags": [
+                "street photography",
+                "urban",
+                "storytelling"
+            ],
+            "mdxContentPath": "/content/posts/post-13.mdx"
+        },
+        {
+            "id": "post-14",
+            "slug": "finding-inspiration-everyday-moments",
+            "title": "Finding Inspiration in Everyday Moments",
+            "excerpt": "Learn to recognize and appreciate the extraordinary beauty and inspiration that exists in ordinary daily experiences...",
+            "date": "2025-05-23T09:45:00Z",
+            "readTime": 4,
+            "featuredImage": "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&h=800&fit=crop&crop=center",
+            "authorId": "author-1",
+            "categoryId": "cat-1",
+            "tags": [
+                "inspiration",
+                "creativity",
+                "mindfulness"
+            ],
+            "mdxContentPath": "/content/posts/post-14.mdx"
+        },
+        {
+            "id": "post-15",
+            "slug": "modern-minimalist-design-trends",
+            "title": "Modern Minimalist Design Trends",
+            "excerpt": "Explore the latest minimalist design trends that emphasize simplicity, functionality, and elegant aesthetics...",
+            "date": "2025-05-20T15:20:00Z",
+            "readTime": 5,
+            "featuredImage": "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=1200&h=800&fit=crop&crop=center",
+            "authorId": "author-1",
+            "categoryId": "cat-2",
+            "tags": [
+                "minimalism",
+                "design",
+                "trends"
+            ],
+            "mdxContentPath": "/content/posts/post-15.mdx"
+        },
+        {
+            "id": "post-16",
+            "slug": "solo-travel-guide-confident-explorer",
+            "title": "Solo Travel Guide for the Confident Explorer",
+            "excerpt": "Essential tips and insights for safe, enjoyable solo travel adventures that will boost your confidence and independence...",
+            "date": "2025-05-17T12:10:00Z",
+            "readTime": 8,
+            "featuredImage": "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=1200&h=800&fit=crop&crop=center",
+            "authorId": "author-1",
+            "categoryId": "cat-3",
+            "tags": [
+                "solo travel",
+                "adventure",
+                "independence"
+            ],
+            "mdxContentPath": "/content/posts/post-16.mdx"
+        },
+        {
+            "id": "post-17",
+            "slug": "work-life-balance-modern-professional",
+            "title": "Work-Life Balance for the Modern Professional",
+            "excerpt": "Practical strategies for achieving a healthy work-life balance in today's demanding professional environment...",
+            "date": "2025-05-14T17:30:00Z",
+            "readTime": 6,
+            "featuredImage": "https://images.unsplash.com/photo-1551632811-561732d1e306?w=1200&h=800&fit=crop&crop=center",
+            "authorId": "author-1",
+            "categoryId": "cat-4",
+            "tags": [
+                "work-life balance",
+                "productivity",
+                "wellness"
+            ],
+            "mdxContentPath": "/content/posts/post-17.mdx"
+        },
+        {
+            "id": "post-18",
+            "slug": "blockchain-technology-explained-simply",
+            "title": "Blockchain Technology Explained Simply",
+            "excerpt": "A beginner-friendly guide to understanding blockchain technology and its real-world applications beyond cryptocurrency...",
+            "date": "2025-05-11T13:45:00Z",
+            "readTime": 7,
+            "featuredImage": "https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=1200&h=800&fit=crop&crop=center",
+            "authorId": "author-1",
+            "categoryId": "cat-5",
+            "tags": [
+                "blockchain",
+                "cryptocurrency",
+                "technology"
+            ],
+            "mdxContentPath": "/content/posts/post-18.mdx"
+        },
+        {
+            "id": "post-19",
+            "slug": "nature-photography-landscape-techniques",
+            "title": "Nature Photography: Landscape Techniques",
+            "excerpt": "Master the art of landscape photography with professional techniques for capturing stunning natural scenery...",
+            "date": "2025-05-08T08:20:00Z",
+            "readTime": 8,
+            "featuredImage": "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&h=800&fit=crop&crop=center",
+            "authorId": "author-1",
+            "categoryId": "cat-6",
+            "tags": [
+                "landscape",
+                "nature",
+                "photography"
+            ],
+            "mdxContentPath": "/content/posts/post-19.mdx"
+        },
+        {
+            "id": "post-22",
+            "slug": "next-generation-web-development-2025",
+            "title": "Next-Generation Web Development: Trends and Technologies for 2025",
+            "excerpt": "Dive into the latest web development trends, emerging technologies, and best practices that will shape the future of digital experiences in 2025 and beyond...",
+            "date": "2025-07-06T14:30:00Z",
+            "readTime": 8,
+            "featuredImage": "https://images.unsplash.com/photo-1547658719-da2b51169166?w=1200&h=800&fit=crop&crop=center",
+            "authorId": "author-1",
+            "categoryId": "cat-5",
+            "tags": [
+                "web development",
+                "trends",
+                "technology",
+                "future"
+            ],
+            "mdxContentPath": "/content/posts/post-22.mdx"
+        },
+        {
+            "id": "post-21",
+            "slug": "mastering-react-18-new-features",
+            "title": "Mastering React 18: New Features and Performance Improvements",
+            "excerpt": "Explore the latest React 18 features including concurrent rendering, automatic batching, and the new hooks that will revolutionize your development workflow...",
+            "date": "2025-07-06T10:00:00Z",
+            "readTime": 12,
+            "featuredImage": "https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=1200&h=800&fit=crop&crop=center",
+            "authorId": "author-1",
+            "categoryId": "cat-5",
+            "tags": [
+                "react",
+                "javascript",
+                "frontend",
+                "performance"
+            ],
+            "mdxContentPath": "/content/posts/post-21.mdx"
+        },
+        {
+            "id": "post-20",
+            "slug": "personal-growth-self-reflection",
+            "title": "Personal Growth Through Self-Reflection",
+            "excerpt": "Discover powerful self-reflection techniques that promote personal growth and deeper self-understanding...",
+            "date": "2025-05-05T16:00:00Z",
+            "readTime": 5,
+            "featuredImage": "https://images.unsplash.com/photo-1515378960530-7c0da6231fb1?w=1200&h=800&fit=crop&crop=center",
+            "authorId": "author-1",
+            "categoryId": "cat-1",
+            "tags": [
+                "personal growth",
+                "self-reflection",
+                "mindfulness"
+            ],
+            "mdxContentPath": "/content/posts/post-20.mdx"
         }
     ],
     "footer": {

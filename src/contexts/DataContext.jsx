@@ -39,6 +39,13 @@ export const DataProvider = ({ children }) => {
     }
 
     /**
+     * Find a category by its slug
+     */
+    const getCategoryBySlug = (slug) => {
+        return blogData.categories.find(category => category.slug === slug)
+    }
+
+    /**
      * Get posts by category ID
      */
     const getPostsByCategory = (categoryId) => {
@@ -94,6 +101,7 @@ export const DataProvider = ({ children }) => {
         getPostBySlug,
         getAuthorById,
         getCategoryById,
+        getCategoryBySlug,
         getPostsByCategory,
         getPostsByAuthor,
         getRecentPosts,

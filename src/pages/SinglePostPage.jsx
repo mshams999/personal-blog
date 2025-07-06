@@ -9,7 +9,6 @@ import DisqusCommentCount from '../components/DisqusCommentCount'
 import ViewCounter from '../components/ViewCounter'
 import { format } from 'date-fns'
 import PostCard from '../components/PostCard'
-import { incrementViewCount } from '../hooks/useFirebaseAnalytics'
 import { useArticleViews } from '../hooks/useFirebaseViews'
 import { getPostRating, savePostRating, getUserRating } from '../utils/ratings'
 
@@ -30,7 +29,7 @@ import { getPostRating, savePostRating, getUserRating } from '../utils/ratings'
  */
 const SinglePostPage = () => {
     const { slug } = useParams()
-    const { getPostBySlug, getAuthorById, getCategoryById } = useData()
+    const { getPostBySlug, getAuthorById, getCategoryById, categories } = useData()
     const [mdxContent, setMdxContent] = useState(null)
     const [loading, setLoading] = useState(true)
     const [scrollPosition, setScrollPosition] = useState(0)
@@ -49,7 +48,8 @@ const SinglePostPage = () => {
     // Use Firebase view tracking for this article
     const { viewCount, loading: viewLoading } = useArticleViews(
         post?.slug,
-        true // shouldIncrement = true for article pages
+        true, // shouldIncrement = true for article pages
+        post?.date // Pass article date for consistent fallback
     )
 
     // Handle scroll for parallax effect and scroll-to-top button
@@ -194,6 +194,17 @@ const SinglePostPage = () => {
         .filter(p => p.id !== post.id && p.categoryId === post.categoryId)
         .slice(0, 2)
 
+    // Get suggested posts for "You may also like" section (mix of related and recent posts)
+    const suggestedPosts = posts
+        .filter(p => p.id !== post.id)
+        .sort((a, b) => {
+            // Prioritize posts from same category, then by date
+            if (a.categoryId === post?.categoryId && b.categoryId !== post?.categoryId) return -1
+            if (b.categoryId === post?.categoryId && a.categoryId !== post?.categoryId) return 1
+            return new Date(b.date) - new Date(a.date)
+        })
+        .slice(0, 4)
+
     // Parallax effect style for header image
     const parallaxStyle = {
         transform: `translateY(${scrollPosition * 0.4}px)`,
@@ -238,9 +249,12 @@ const SinglePostPage = () => {
                     {/* Category Tag */}
                     {category && (
                         <div className="mb-6 animate-fade-in">
-                            <span className="inline-block px-4 py-2 text-sm font-medium bg-pink-400 text-white rounded-full">
+                            <Link
+                                to={`/category/${category.slug}`}
+                                className="inline-block px-4 py-2 text-sm font-medium bg-pink-400 text-white rounded-full hover:bg-pink-500 transition-colors"
+                            >
                                 {category.name}
-                            </span>
+                            </Link>
                         </div>
                     )}
 
@@ -348,6 +362,7 @@ const SinglePostPage = () => {
                             shouldIncrement={false} // Don't double-increment, already handled by useArticleViews hook
                             size="md"
                             variant="default"
+                            articleDate={post.date}
                         />
                     </div>
 
@@ -469,13 +484,14 @@ const SinglePostPage = () => {
                 <div className="mt-16">
                     <h3 className="text-xl font-semibold mb-6 text-gray-900 dark:text-white">Categories</h3>
                     <div className="flex flex-wrap gap-3">
-                        {['Art & Design', 'Travel', 'Lifestyle', 'Inspiration', 'Technology', 'Photography'].map((categoryName) => (
-                            <button
-                                key={categoryName}
+                        {categories.map((category) => (
+                            <Link
+                                key={category.id}
+                                to={`/category/${category.slug}`}
                                 className="px-4 py-2 bg-pink-100 dark:bg-pink-900/20 text-pink-600 dark:text-pink-400 rounded-full hover:bg-pink-200 dark:hover:bg-pink-900/40 transition-colors text-sm font-medium"
                             >
-                                {categoryName}
-                            </button>
+                                {category.name}
+                            </Link>
                         ))}
                     </div>
                 </div>
@@ -584,47 +600,35 @@ const SinglePostPage = () => {
                     <h2 className="text-3xl font-bold mb-8">You may also like</h2>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                        {[
-                            {
-                                title: "Out believe has request not how comfort evident",
-                                author: "Will Lewis",
-                                category: "Art & Design",
-                                image: "https://placehold.co/300x200/A7D7D7/FFFFFF?text=Illustration+1"
-                            },
-                            {
-                                title: "Astonished and acceptance men two discretion",
-                                author: "Will Lewis",
-                                category: "Art & Design",
-                                image: "https://placehold.co/300x200/F2D4D4/FFFFFF?text=Illustration+2"
-                            },
-                            {
-                                title: "Pianoforte solicitude so decisively unpleasing",
-                                author: "Will Lewis",
-                                category: "Travel",
-                                image: "https://placehold.co/300x200/D4E6F1/FFFFFF?text=Illustration+3"
-                            },
-                            {
-                                title: "Songs in oh other avoid it hours woman style",
-                                author: "Will Lewis",
-                                category: "Lifestyle",
-                                image: "https://placehold.co/300x200/FCF3CF/FFFFFF?text=Illustration+4"
-                            }
-                        ].map((item, index) => (
-                            <div key={index} className="bg-white rounded-xl overflow-hidden text-gray-900 hover:transform hover:scale-105 transition-all duration-300">
-                                <img
-                                    src={item.image}
-                                    alt={item.title}
-                                    className="w-full h-32 object-cover"
-                                />
-                                <div className="p-4">
-                                    <span className="inline-block px-2 py-1 text-xs font-medium bg-pink-100 text-pink-600 rounded-full mb-2">
-                                        {item.category}
-                                    </span>
-                                    <h3 className="font-bold text-sm mb-2 line-clamp-2">{item.title}</h3>
-                                    <p className="text-xs text-gray-600">{item.author}</p>
-                                </div>
-                            </div>
-                        ))}
+                        {suggestedPosts.map((suggestedPost) => {
+                            const postCategory = getCategoryById(suggestedPost.categoryId)
+                            const postAuthor = getAuthorById(suggestedPost.authorId)
+
+                            return (
+                                <Link
+                                    key={suggestedPost.id}
+                                    to={`/post/${suggestedPost.slug}`}
+                                    className="bg-white rounded-xl overflow-hidden text-gray-900 hover:transform hover:scale-105 transition-all duration-300 block"
+                                >
+                                    <img
+                                        src={suggestedPost.featuredImage}
+                                        alt={suggestedPost.title}
+                                        className="w-full h-32 object-cover"
+                                    />
+                                    <div className="p-4">
+                                        {postCategory && (
+                                            <span className="inline-block px-2 py-1 text-xs font-medium bg-pink-100 text-pink-600 rounded-full mb-2">
+                                                {postCategory.name}
+                                            </span>
+                                        )}
+                                        <h3 className="font-bold text-sm mb-2 line-clamp-2">{suggestedPost.title}</h3>
+                                        {postAuthor && (
+                                            <p className="text-xs text-gray-600">{postAuthor.name}</p>
+                                        )}
+                                    </div>
+                                </Link>
+                            )
+                        })}
                     </div>
                 </div>
             </div>

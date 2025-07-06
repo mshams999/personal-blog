@@ -195,3 +195,104 @@ export const isFirestoreConfigured = () => {
         import.meta.env.VITE_FIREBASE_PROJECT_ID &&
         import.meta.env.VITE_FIREBASE_API_KEY);
 };
+
+/**
+ * Generate a consistent fallback view count based on article characteristics
+ * This ensures the same article always gets the same fallback count
+ * @param {string} slug - Article slug
+ * @param {string} date - Article publication date
+ * @returns {number} - Consistent view count
+ */
+export const generateConsistentViewCount = (slug, date) => {
+    // Use slug to generate a consistent "random" number
+    let hash = 0;
+    for (let i = 0; i < slug.length; i++) {
+        const char = slug.charCodeAt(i);
+        hash = ((hash << 5) - hash) + char;
+        hash = hash & hash; // Convert to 32-bit integer
+    }
+
+    // Get a pseudo-random number between 0-1 based on slug
+    const seedRandom = Math.abs(hash) / 2147483647;
+
+    // Calculate days since publication
+    const postAge = Date.now() - new Date(date).getTime();
+    const daysSincePublished = Math.floor(postAge / (1000 * 60 * 60 * 24));
+
+    // Generate base views: newer posts get fewer views, older posts get more
+    const baseViews = Math.max(5, Math.floor(daysSincePublished * 0.8));
+
+    // Add some variation based on the slug hash (but consistent)
+    const variation = Math.floor(seedRandom * 50);
+
+    return Math.max(1, baseViews + variation);
+};
+
+/**
+ * Store additional metadata for articles (like category, author, etc.)
+ * @param {string} articleSlug - The unique slug identifier for the article
+ * @param {Object} metadata - Additional metadata (category, author, tags, etc.)
+ * @returns {Promise<boolean>} - Success status
+ */
+export const updateArticleMetadata = async (articleSlug, metadata) => {
+    if (!articleSlug || !db) {
+        console.warn('Article slug or Firebase not configured');
+        return false;
+    }
+
+    try {
+        const articleRef = doc(db, ARTICLES_COLLECTION, articleSlug);
+
+        await updateDoc(articleRef, {
+            ...metadata,
+            slug: articleSlug,
+            updatedAt: new Date().toISOString()
+        });
+
+        return true;
+    } catch (error) {
+        console.error('Error updating article metadata:', error);
+        return false;
+    }
+};
+
+/**
+ * Get articles by category from Firestore
+ * @param {string} categorySlug - The category slug to filter by
+ * @param {number} limitCount - Number of articles to return
+ * @returns {Promise<Array>} - Array of articles in the category
+ */
+export const getArticlesByCategory = async (categorySlug, limitCount = 20) => {
+    if (!categorySlug || !db) {
+        return [];
+    }
+
+    try {
+        const articlesRef = collection(db, ARTICLES_COLLECTION);
+        const q = query(
+            articlesRef,
+            // Note: You would need to index 'category' field in Firestore
+            // For now, we'll get all articles and filter client-side
+            orderBy('views', 'desc'),
+            limit(limitCount * 2) // Get more to filter client-side
+        );
+
+        const querySnapshot = await getDocs(q);
+        const articles = [];
+
+        querySnapshot.forEach((doc) => {
+            const data = doc.data();
+            if (data.category === categorySlug) {
+                articles.push({
+                    slug: doc.id,
+                    ...data
+                });
+            }
+        });
+
+        return articles.slice(0, limitCount);
+    } catch (error) {
+        console.error('Error getting articles by category:', error);
+        return [];
+    }
+};

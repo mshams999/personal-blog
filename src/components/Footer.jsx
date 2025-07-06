@@ -1,9 +1,9 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { Clock, MessageCircle, ArrowUp, Eye } from 'lucide-react'
 import { useData } from '../contexts/DataContext'
 import { format } from 'date-fns'
-import { useFirebaseAnalytics, getArticleViewCount, formatViewCount } from '../hooks/useFirebaseAnalytics'
+import { useBulkArticleViews, formatViewCount } from '../hooks/useFirebaseViews'
 import { useDisqusCommentCounts } from '../hooks/useDisqusCommentCounts'
 import DisqusCommentCount from './DisqusCommentCount'
 
@@ -22,7 +22,19 @@ import DisqusCommentCount from './DisqusCommentCount'
  */
 const Footer = () => {
     const { posts, getAuthorById } = useData()
-    const { views, sortedPosts } = useFirebaseAnalytics(posts)
+    const { viewCounts, getViewCount, loading: viewsLoading } = useBulkArticleViews(posts)
+
+    // Create sorted posts with consistent view counts
+    const sortedPosts = useMemo(() => {
+        if (!posts || posts.length === 0) return []
+
+        return posts
+            .map(post => ({
+                ...post,
+                viewCount: getViewCount(post.slug)
+            }))
+            .sort((a, b) => b.viewCount - a.viewCount)
+    }, [posts, viewCounts, getViewCount])
 
     // Use a try-catch to handle potential errors
     let commentData = { sortedByComments: [], getCommentCount: () => 0, loading: false }
@@ -149,7 +161,7 @@ const Footer = () => {
                                                     <span>—</span>
                                                     <div className="flex items-center space-x-1">
                                                         <Eye className="w-3 h-3" />
-                                                        <span>{formatViewCount(getArticleViewCount(post.slug, views))} views</span>
+                                                        <span>{formatViewCount(getViewCount(post.slug))} views</span>
                                                     </div>
                                                 </div>
                                             </div>
