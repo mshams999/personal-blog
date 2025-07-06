@@ -76,51 +76,25 @@
     ],
     "posts": [
         {
-            "id": "fallback-1",
-            "slug": "welcome-to-my-blog",
-            "title": "Welcome to My Blog",
-            "excerpt": "This is a fallback post to ensure the blog always has content to display.",
-            "date": "2025-01-01T00:00:00.000Z",
-            "readTime": 3,
+            "id": "getting-started",
+            "slug": "getting-started",
+            "title": "Getting Started with Your Fresh Blog",
+            "excerpt": "Welcome to your fresh blog! This is a starter post to help you get familiar with creating content.",
+            "date": "2025-07-07T00:00:00.000Z",
+            "readTime": 2,
             "featuredImage": "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=1200&h=800&fit=crop&crop=center",
             "authorId": "author-1",
             "categoryId": "cat-1",
             "tags": [
-                "welcome",
-                "blog"
+                "getting-started",
+                "fresh-start"
             ],
-            "body": "# Welcome to My Blog\n\nThis is a fallback post to ensure there's always content available while TinaCMS is loading or unavailable.",
+            "body": "# Welcome to Your Fresh Blog!\n\nYour blog is now clean and ready for new content. You can create new posts using TinaCMS admin panel at `/admin`.\n\nThis is just a placeholder post - feel free to delete it once you create your first real article!",
             "_source": "static"
         }
     ],
     "footer": {
-        "recentPosts": [
-            {
-                "title": "An delighted offending curiosity my is dashwoods",
-                "slug": "an-delighted-offending-curiosity-my-is-dashwoods"
-            },
-            {
-                "title": "Indulgence unreserved is the alteration appearance",
-                "slug": "indulgence-unreserved-is-the-alteration-appearance"
-            },
-            {
-                "title": "To travelling occasional at oh sympathize prosperous",
-                "slug": "to-travelling-occasional-at-oh-sympathize-prosperous"
-            }
-        ],
-        "popularPosts": [
-            {
-                "title": "Old unsatiable our now but considered travelling",
-                "slug": "old-unsatiable-our-now-but-considered-travelling"
-            },
-            {
-                "title": "Style begin mr heard by in music tried do",
-                "slug": "style-begin-mr-heard-by-in-music-tried-do"
-            },
-            {
-                "title": "An delighted offending curiosity my is dashwoods",
-                "slug": "an-delighted-offending-curiosity-my-is-dashwoods"
-            }
-        ]
+        "recentPosts": [],
+        "popularPosts": []
     }
 }

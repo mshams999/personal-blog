@@ -34,7 +34,7 @@ const envExamplePath = path.join(__dirname, '.env.example')
 
 if (!fs.existsSync(envPath)) {
     console.log(`${colors.yellow}⚠️  No .env file found. Creating from template...${colors.reset}`)
-    
+
     if (fs.existsSync(envExamplePath)) {
         fs.copyFileSync(envExamplePath, envPath)
         console.log(`${colors.green}✅ Created .env file from .env.example${colors.reset}`)
@@ -50,7 +50,7 @@ if (!fs.existsSync(envPath)) {
 // Check for exposed secrets in various files
 const dangerousFiles = [
     '.env.local.new',
-    '.env.template', 
+    '.env.template',
     '.env.backup',
     'setup-tinacms.js'
 ]
@@ -61,7 +61,7 @@ dangerousFiles.forEach(file => {
     const filePath = path.join(__dirname, file)
     if (fs.existsSync(filePath)) {
         console.log(`${colors.red}⚠️  Found potentially exposed file: ${file}${colors.reset}`)
-        
+
         // Ask user if they want to remove it (for now, just warn)
         console.log(`${colors.cyan}   Consider removing this file if it contains real API keys${colors.reset}`)
     }
