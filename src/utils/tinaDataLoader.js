@@ -4,10 +4,18 @@
  * If TinaCMS is not available, it falls back to static content only
  */
 
+import { loadStaticTinaPosts } from './staticContentLoader.js'
+
 // Check if we're in development mode and TinaCMS is available
 const isTinaCMSAvailable = () => {
     try {
-        // For client-side, check if we're in development and have access to the browser environment
+        // For production builds, TinaCMS content is pre-built into static files
+        // For development, we need the GraphQL endpoint
+        if (process.env.NODE_ENV === 'production') {
+            // In production, content is built into static files, so we can try to load them
+            return true
+        }
+        // For client-side development, check if we have access to the browser environment
         return process.env.NODE_ENV === 'development'
     } catch (error) {
         return false
@@ -20,8 +28,48 @@ const isTinaCMSAvailable = () => {
  */
 export const fetchTinaPosts = async () => {
     if (!isTinaCMSAvailable()) {
-        console.log('TinaCMS not available (not in development mode), returning empty array for posts')
+        console.log('TinaCMS not available, returning empty array for posts')
         return []
+    }
+
+    // In production, try to load from pre-built static content first
+    if (process.env.NODE_ENV === 'production') {
+        try {
+            console.log('🔄 Loading TinaCMS posts from static build...')
+            // Try to import the generated client if available
+            const { client } = await import('../../tina/__generated__/client.js')
+            const response = await client.queries.postConnection()
+            
+            if (response?.data?.postConnection?.edges) {
+                const posts = response.data.postConnection.edges.map(edge => {
+                    const post = edge.node
+                    const slug = post._sys.filename.replace('.mdx', '')
+                    
+                    return {
+                        id: post.id,
+                        slug: slug,
+                        title: post.title,
+                        excerpt: post.excerpt,
+                        date: post.date,
+                        readTime: post.readTime,
+                        featuredImage: post.featuredImage,
+                        authorId: post.authorId,
+                        categoryId: post.categoryId,
+                        tags: post.tags || [],
+                        body: post.body,
+                        seo: post.seo,
+                        _source: 'tinacms'
+                    }
+                })
+                
+                console.log(`✅ Successfully loaded ${posts.length} posts from TinaCMS static build`)
+                return posts
+            }
+        } catch (error) {
+            console.warn('⚠️ Failed to load TinaCMS static content, trying direct MDX loader:', error.message)
+            // Try the static MDX loader as final fallback
+            return await loadStaticTinaPosts()
+        }
     }
 
     console.log('🔄 Fetching posts from TinaCMS GraphQL API...')
@@ -106,6 +154,13 @@ export const fetchTinaPosts = async () => {
         return []
     } catch (error) {
         console.error('❌ Failed to fetch TinaCMS posts:', error.message)
+        
+        // In production, try the static loader as final fallback
+        if (process.env.NODE_ENV === 'production') {
+            console.log('🔄 Trying static MDX loader as fallback...')
+            return await loadStaticTinaPosts()
+        }
+        
         return []
     }
 }
