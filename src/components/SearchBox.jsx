@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { Search, X } from 'lucide-react'
-import { useData } from '../contexts/DataContext'
+import { useHybridData } from '../contexts/HybridDataContext'
 import { searchPosts } from '../utils/search'
 
 /**
@@ -21,7 +21,7 @@ const SearchBox = ({ className = '', onClose }) => {
     const searchRef = useRef(null)
     const inputRef = useRef(null)
 
-    const { posts, getAuthorById, getCategoryById } = useData()
+    const { posts, getAuthorById, getCategoryById } = useHybridData()
 
     // Handle search
     useEffect(() => {

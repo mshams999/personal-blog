@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { Clock, MessageCircle, ArrowUp, Eye } from 'lucide-react'
-import { useData } from '../contexts/DataContext'
+import { useHybridData } from '../contexts/HybridDataContext'
 import { format } from 'date-fns'
 import { useBulkArticleViews, formatViewCount } from '../hooks/useFirebaseViews'
 import { useDisqusCommentCounts } from '../hooks/useDisqusCommentCounts'
@@ -21,7 +21,7 @@ import DisqusCommentCount from './DisqusCommentCount'
  * - Scroll to top button
  */
 const Footer = () => {
-    const { posts, getAuthorById } = useData()
+    const { posts, getAuthorById } = useHybridData()
     const { viewCounts, getViewCount, loading: viewsLoading } = useBulkArticleViews(posts)
 
     // Create sorted posts with consistent view counts

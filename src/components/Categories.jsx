@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { useData } from '../contexts/DataContext'
+import { useHybridData } from '../contexts/HybridDataContext'
 
 /**
  * Categories component for displaying all available categories
@@ -17,7 +17,7 @@ const Categories = ({
     showTitle = true,
     columns = "lg:grid-cols-6"
 }) => {
-    const { categories, getPostsByCategory } = useData()
+    const { categories, getPostsByCategory } = useHybridData()
 
     if (!categories || categories.length === 0) {
         return null

@@ -5,10 +5,12 @@ import React from 'react'
  */
 const HomePage = () => {
     return (
-        <div className="min-h-screen p-8">
-            <h1 className="text-4xl font-bold text-gray-900">Test Page</h1>
-            <p className="text-lg text-gray-600 mt-4">
-                If you can see this, React is working!
+        <div style={{ minHeight: '200px', padding: '32px', backgroundColor: '#fef3c7', borderRadius: '8px' }}>
+            <h1 style={{ fontSize: '2rem', fontWeight: 'bold', color: '#92400e', marginBottom: '16px' }}>
+                Test Page with Inline Styles
+            </h1>
+            <p style={{ fontSize: '1rem', color: '#a16207', marginTop: '16px' }}>
+                If you can see this, React is working! Time: {new Date().toLocaleTimeString()}
             </p>
         </div>
     )

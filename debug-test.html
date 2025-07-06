@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Debug Test</title>
+</head>
+
+<body>
+    <h1>Debug Test</h1>
+    <div id="result"></div>
+
+    <script>
+        async function testTinaCMS() {
+            try {
+                console.log('Testing TinaCMS GraphQL endpoint...')
+                const response = await fetch('http://localhost:4001/graphql', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        query: `
+                            query {
+                                postConnection {
+                                    edges {
+                                        node {
+                                            id
+                                            title
+                                            excerpt
+                                            date
+                                            readTime
+                                            featuredImage
+                                            authorId
+                                            categoryId
+                                            tags
+                                            body
+                                            seo {
+                                                metaDescription
+                                            }
+                                            _sys {
+                                                filename
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        `
+                    })
+                })
+
+                if (!response.ok) {
+                    throw new Error(`GraphQL request failed: ${response.status}`)
+                }
+
+                const data = await response.json()
+                console.log('TinaCMS Response:', data)
+                document.getElementById('result').innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>'
+            } catch (error) {
+                console.error('Error:', error)
+                document.getElementById('result').innerHTML = '<p style="color: red;">Error: ' + error.message + '</p>'
+            }
+        }
+
+        // Test when page loads
+        testTinaCMS()
+    </script>
+</body>
+
+</html>

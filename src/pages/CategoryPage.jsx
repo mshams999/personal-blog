@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { useData } from '../contexts/DataContext'
+import { useHybridData } from '../contexts/HybridDataContext'
 import { Clock, Calendar, ArrowLeft, Eye, Star } from 'lucide-react'
 import { format } from 'date-fns'
 import ViewCounter from '../components/ViewCounter'
@@ -23,7 +23,7 @@ const CategoryPage = () => {
         getAuthorById,
         getCategoryById,
         categories
-    } = useData()
+    } = useHybridData()
 
     // Get the current category
     const category = getCategoryBySlug(categorySlug)

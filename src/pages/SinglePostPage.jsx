@@ -2,11 +2,12 @@ import React, { useEffect, useState } from 'react'
 import { useParams, Navigate, Link } from 'react-router-dom'
 import { Clock, ArrowLeft, Share2, Bookmark, Heart, ArrowUp, MessageCircle, Star, ChevronDown, X, Facebook, Instagram, Twitter, Globe, Eye } from 'lucide-react'
 import ReactStars from 'react-stars'
-import { useData } from '../contexts/DataContext'
+import { useHybridData } from '../contexts/HybridDataContext'
 import AuthorBio from '../components/AuthorBio'
 import DisqusComments from '../components/DisqusComments'
 import DisqusCommentCount from '../components/DisqusCommentCount'
 import ViewCounter from '../components/ViewCounter'
+import { TinaCMSContent, StaticContent } from '../components/TinaCMSContent'
 import { format } from 'date-fns'
 import PostCard from '../components/PostCard'
 import { useArticleViews } from '../hooks/useFirebaseViews'
@@ -29,7 +30,7 @@ import { getPostRating, savePostRating, getUserRating } from '../utils/ratings'
  */
 const SinglePostPage = () => {
     const { slug } = useParams()
-    const { getPostBySlug, getAuthorById, getCategoryById, categories } = useData()
+    const { getPostBySlug, getAuthorById, getCategoryById, categories } = useHybridData()
     const [mdxContent, setMdxContent] = useState(null)
     const [loading, setLoading] = useState(true)
     const [scrollPosition, setScrollPosition] = useState(0)
@@ -88,13 +89,73 @@ const SinglePostPage = () => {
     const loadMDXContent = async (path) => {
         try {
             setLoading(true)
-            // For demo purposes, we'll create sample content
-            // In a real app, you would dynamically import the MDX file
-            const content = generateSampleContent(post)
-            setMdxContent(content)
+
+            // Check if the post has TinaCMS content (body field)
+            if (post.body) {
+                console.log('📝 Loading TinaCMS content for post:', post.title)
+                console.log('🔍 Post body structure:', post.body)
+                console.log('🔍 Post body type:', typeof post.body)
+
+                // Check if the body is a string (markdown) or rich-text object
+                if (typeof post.body === 'string') {
+                    // Simple markdown/text content
+                    const content = (
+                        <div className="animate-fade-in prose prose-lg max-w-none dark:prose-invert">
+                            <div
+                                className="tinacms-content"
+                                dangerouslySetInnerHTML={{ __html: post.body.replace(/\n/g, '<br/>') }}
+                            />
+                        </div>
+                    )
+                    setMdxContent(content)
+                } else {
+                    // Rich text content - use TinaMarkdown
+                    const content = (
+                        <div className="animate-fade-in prose prose-lg max-w-none dark:prose-invert">
+                            <TinaCMSContent content={post.body} />
+                        </div>
+                    )
+                    setMdxContent(content)
+                }
+            } else {
+                console.log('⚠️ No TinaCMS content found, falling back to excerpt')
+
+                // Fallback to excerpt if no body content
+                const content = (
+                    <div className="animate-fade-in prose prose-lg max-w-none dark:prose-invert">
+                        <p className="text-lg leading-relaxed text-gray-700 dark:text-gray-300 mb-8">
+                            {post.excerpt}
+                        </p>
+
+                        <div className="my-10 p-6 bg-gray-50 dark:bg-dark-700 rounded-xl border border-gray-100 dark:border-dark-600 shadow-sm">
+                            <h4 className="text-lg font-semibold mb-2 text-yellow-600 dark:text-yellow-400">
+                                📝 Content Not Available
+                            </h4>
+                            <p className="text-sm text-gray-600 dark:text-gray-400">
+                                This post doesn't have full content available. This could be because:
+                            </p>
+                            <ul className="text-sm text-gray-600 dark:text-gray-400 mt-2 ml-4">
+                                <li>• The post body is empty in TinaCMS</li>
+                                <li>• The content failed to load</li>
+                                <li>• This is a legacy post</li>
+                            </ul>
+                            <p className="text-sm text-gray-600 dark:text-gray-400 mt-3">
+                                <a href="/admin" className="text-primary-600 hover:text-primary-700 underline">
+                                    Edit this post in TinaCMS
+                                </a> to add content.
+                            </p>
+                        </div>
+                    </div>
+                )
+                setMdxContent(content)
+            }
         } catch (error) {
-            console.error('Error loading MDX content:', error)
-            setMdxContent(<p>Error loading content.</p>)
+            console.error('Error loading content:', error)
+            setMdxContent(
+                <div className="animate-fade-in">
+                    <p className="text-red-600 dark:text-red-400">Error loading content.</p>
+                </div>
+            )
         } finally {
             setLoading(false)
         }
@@ -127,61 +188,6 @@ const SinglePostPage = () => {
         setTimeout(() => setShowRatingMessage(false), 3000)
     }
 
-    const generateSampleContent = (post) => {
-        return (
-            <div className="animate-fade-in">
-                <p className="text-lg leading-relaxed text-gray-700 dark:text-gray-300 mb-8">
-                    {post.excerpt}
-                </p>
-
-                <p className="mb-6">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                </p>
-
-                <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white mt-10 gradient-text">
-                    Understanding the Concept
-                </h2>
-                <p className="mb-6">
-                    Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                </p>
-
-                <blockquote className="border-l-4 border-primary-500 pl-4 py-3 my-8 italic text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-dark-700 rounded-r-lg">
-                    <p className="text-lg">
-                        "The best time to plant a tree was 20 years ago. The second best time is now." - Chinese Proverb
-                    </p>
-                </blockquote>
-
-                <h3 className="text-xl font-bold mb-4 text-gray-900 dark:text-white mt-8">
-                    Key Takeaways
-                </h3>
-                <ul className="list-disc pl-6 mb-6 space-y-2">
-                    <li>Focus on what matters most to you</li>
-                    <li>Take action consistently, even if it's small</li>
-                    <li>Learn from both successes and failures</li>
-                    <li>Stay curious and open to new experiences</li>
-                </ul>
-
-                <div className="my-10 p-6 bg-gray-50 dark:bg-dark-700 rounded-xl border border-gray-100 dark:border-dark-600 shadow-sm">
-                    <h4 className="text-lg font-semibold mb-2">Pro Tip</h4>
-                    <p>
-                        Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.
-                    </p>
-                </div>
-
-                <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white mt-10 gradient-text">
-                    Moving Forward
-                </h2>
-                <p className="mb-6">
-                    Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet.
-                </p>
-
-                <p className="mb-6">
-                    At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa.
-                </p>
-            </div>
-        )
-    }
-
     if (!post) {
         return <Navigate to="/" replace />
     }
@@ -189,7 +195,7 @@ const SinglePostPage = () => {
     const formattedDate = format(new Date(post.date), 'MMMM dd, yyyy')
 
     // Get related posts based on category
-    const { posts } = useData()
+    const { posts } = useHybridData()
     const relatedPosts = posts
         .filter(p => p.id !== post.id && p.categoryId === post.categoryId)
         .slice(0, 2)
@@ -391,8 +397,12 @@ const SinglePostPage = () => {
                             <div className="h-4 bg-gray-200 dark:bg-dark-600 rounded w-4/5"></div>
                             <div className="h-4 bg-gray-200 dark:bg-dark-600 rounded w-3/5"></div>
                         </div>
+                    ) : post?.isTinaPost ? (
+                        // Render TinaCMS content with rich components
+                        <TinaCMSContent content={post.body} />
                     ) : (
-                        mdxContent
+                        // Render static content or fallback
+                        mdxContent || <StaticContent content={post?.excerpt} />
                     )}
                 </div>
 

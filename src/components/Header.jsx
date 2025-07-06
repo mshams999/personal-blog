@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { Menu, X, Sun, Moon, Search, Github, Linkedin, Twitter, Facebook, Mail } from 'lucide-react'
 import { useTheme } from '../contexts/ThemeContext'
-import { useData } from '../contexts/DataContext'
+import { useHybridData } from '../contexts/HybridDataContext'
 import SearchBox from './SearchBox'
 
 /**
@@ -20,7 +20,7 @@ const Header = () => {
     const [isSearchOpen, setIsSearchOpen] = useState(false)
     const [isScrolled, setIsScrolled] = useState(false)
     const { theme, toggleTheme } = useTheme()
-    const { siteMetadata = {}, navigation = [] } = useData() || {}
+    const { siteMetadata = {}, navigation = [] } = useHybridData() || {}
     const location = useLocation()
 
     // Handle scroll effect

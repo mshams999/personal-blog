@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react'
-import { CommentCount } from 'disqus-react'
+import React, { useEffect, useState, useRef } from 'react'
 import { MessageCircle } from 'lucide-react'
 import { disqusConfig, getDisqusConfig, isDisqusConfigured } from '../config/disqus'
 
@@ -19,85 +18,116 @@ const generateConsistentCommentCount = (slug) => {
 }
 
 /**
+ * Simple Disqus Comment Counter that avoids DOM manipulation issues
+ * Uses the Disqus count API directly instead of the problematic CommentCount component
+ */
+const SimpleDisqusCounter = ({ post, currentUrl }) => {
+    const [count, setCount] = useState('0')
+    const [loading, setLoading] = useState(true)
+    const containerRef = useRef(null)
+
+    useEffect(() => {
+        if (!isDisqusConfigured()) {
+            setLoading(false)
+            return
+        }
+
+        const identifier = post.slug
+        const url = currentUrl || `${window.location.origin}/post/${post.slug}`
+
+        // Create a unique container ID to avoid conflicts
+        const containerId = `disqus-count-${identifier}-${Date.now()}`
+
+        if (containerRef.current) {
+            containerRef.current.innerHTML = `<a href="${url}#disqus_thread" data-disqus-identifier="${identifier}">0 Comments</a>`
+
+            // Add the unique ID to the link
+            const link = containerRef.current.querySelector('a')
+            if (link) {
+                link.id = containerId
+                link.style.color = 'inherit'
+                link.style.textDecoration = 'none'
+                link.style.fontSize = 'inherit'
+            }
+        }
+
+        // Load Disqus count script if not already loaded
+        if (!window.DISQUSWIDGETS) {
+            const script = document.createElement('script')
+            script.src = `https://${disqusConfig.shortname}.disqus.com/count.js`
+            script.async = true
+            script.id = 'dsq-count-scr'
+
+            script.onload = () => {
+                setLoading(false)
+                // Reset counts to trigger update
+                if (window.DISQUSWIDGETS) {
+                    window.DISQUSWIDGETS.getCount({ reset: true })
+                }
+            }
+
+            script.onerror = () => {
+                setLoading(false)
+                setCount('0')
+            }
+
+            // Only add if not already present
+            if (!document.getElementById('dsq-count-scr')) {
+                document.head.appendChild(script)
+            }
+        } else {
+            setLoading(false)
+            // Trigger count update
+            window.DISQUSWIDGETS.getCount({ reset: true })
+        }
+
+        return () => {
+            // Clean up safely
+            if (containerRef.current) {
+                try {
+                    containerRef.current.innerHTML = ''
+                } catch (e) {
+                    // Ignore cleanup errors
+                }
+            }
+        }
+    }, [post.slug, currentUrl])
+
+    if (!isDisqusConfigured()) {
+        const placeholderCount = generateConsistentCommentCount(post.slug)
+        return (
+            <div className="flex items-center gap-1 text-gray-500 dark:text-gray-400">
+                <MessageCircle className="w-3 h-3" />
+                <span className="text-xs">{placeholderCount} Comments</span>
+            </div>
+        )
+    }
+
+    return (
+        <div className="flex items-center gap-1 text-gray-500 dark:text-gray-400">
+            <MessageCircle className="w-3 h-3" />
+            <div ref={containerRef} className="text-xs">
+                {loading ? '...' : '0 Comments'}
+            </div>
+        </div>
+    )
+}
+
+/**
  * DisqusCommentCount Component
  * 
  * Displays the comment count for a post using Disqus
  * Shows real Disqus counts if configured, otherwise shows consistent placeholder
- * Automatically refreshes when comments are added
+ * Uses a safer approach to avoid DOM manipulation conflicts
  * 
  * @param {Object} post - The post object containing title, slug, etc.
  * @param {string} currentUrl - Current page URL for Disqus identification
  * @param {string} className - Additional CSS classes
  */
 const DisqusCommentCount = ({ post, currentUrl, className = "" }) => {
-    const [key, setKey] = useState(Date.now()) // Force re-render key
-
-    // Listen for Disqus comment events to refresh counts
-    useEffect(() => {
-        const handleDisqusUpdate = () => {
-            // Force re-render of comment count components
-            setKey(Date.now())
-        }
-
-        // Listen for various Disqus events that indicate comment changes
-        const eventTypes = ['onNewComment', 'onCommentPosted', 'onCommentApproved']
-
-        // Check if Disqus is available
-        if (window.DISQUS) {
-            eventTypes.forEach(eventType => {
-                if (window.DISQUS.events && window.DISQUS.events.on) {
-                    window.DISQUS.events.on(eventType, handleDisqusUpdate)
-                }
-            })
-        }
-
-        // Also listen for storage events (for cross-tab updates)
-        window.addEventListener('storage', handleDisqusUpdate)
-
-        // Listen for custom events we might dispatch
-        window.addEventListener('disqus-comment-update', handleDisqusUpdate)
-
-        return () => {
-            if (window.DISQUS && window.DISQUS.events) {
-                eventTypes.forEach(eventType => {
-                    if (window.DISQUS.events.off) {
-                        window.DISQUS.events.off(eventType, handleDisqusUpdate)
-                    }
-                })
-            }
-            window.removeEventListener('storage', handleDisqusUpdate)
-            window.removeEventListener('disqus-comment-update', handleDisqusUpdate)
-        }
-    }, [post.slug]) // Add dependency to prevent unnecessary re-runs
-
-    // Use real Disqus if configured
-    if (isDisqusConfigured()) {
-        // Generate Disqus configuration for this post
-        const disqusProps = {
-            shortname: disqusConfig.shortname,
-            config: getDisqusConfig(post, currentUrl || `${window.location.origin}/post/${post.slug}`)
-        }
-
-        return (
-            <div
-                key={key} // Force re-render when comments change
-                className={`flex items-center gap-1 text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors ${className}`}
-            >
-                <MessageCircle className="w-3 h-3" />
-                <CommentCount {...disqusProps} className="text-xs">
-                    {/* This will show "0 Comments" when there are no comments */}
-                    0 Comments
-                </CommentCount>
-            </div>
-        )
-    }
-
-    // Fallback: show consistent placeholder count (or 0 if no comments)
-    const commentCount = generateConsistentCommentCount(post.slug)
     return (
-        <div className={`flex items-center gap-1 text-gray-500 dark:text-gray-400 ${className}`}>
-            <MessageCircle className="w-3 h-3" />
-            <span className="text-xs">{commentCount} Comments</span>
+        <div className={className}>
+            <SimpleDisqusCounter post={post} currentUrl={currentUrl} />
         </div>
     )
 }

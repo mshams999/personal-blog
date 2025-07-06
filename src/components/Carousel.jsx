@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { ChevronLeft, ChevronRight, Calendar, Clock, ArrowRight } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { format } from 'date-fns'
-import { useData } from '../contexts/DataContext'
+import { useHybridData } from '../contexts/HybridDataContext'
 
 /**
  * Carousel Component for Featured Posts
@@ -17,7 +17,7 @@ import { useData } from '../contexts/DataContext'
 const Carousel = ({ posts = [], autoSlide = true, slideInterval = 5000 }) => {
     const [currentSlide, setCurrentSlide] = useState(0)
     const [isAutoPlaying, setIsAutoPlaying] = useState(autoSlide)
-    const { getCategoryById } = useData()
+    const { getCategoryById } = useHybridData()
 
     // Auto-slide functionality
     useEffect(() => {

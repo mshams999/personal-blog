@@ -1,8 +1,8 @@
 import { defineConfig } from "tinacms"
 
 // Explicit branch configuration for TinaCloud
-const branch = 
-    process.env.GITHUB_BRANCH || 
+const branch =
+    process.env.GITHUB_BRANCH ||
     process.env.NEXT_PUBLIC_TINA_BRANCH ||
     process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_REF ||
     process.env.HEAD ||

@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react'
-import { useData } from '../contexts/DataContext'
+import { useHybridData } from '../contexts/HybridDataContext'
 import { Link } from 'react-router-dom'
 import { Clock, MessageCircle, Star, Calendar, Eye, TrendingUp, Sparkles } from 'lucide-react'
 import { format } from 'date-fns'
@@ -24,11 +24,21 @@ import { useDisqusCommentCounts } from '../hooks/useDisqusCommentCounts'
  * - Responsive design matching the provided screenshot
  */
 const HomePage = () => {
-    const { siteMetadata, getRecentPosts, getAuthorById, getCategoryById } = useData()
+    const { siteMetadata, getRecentPosts, getAuthorById, getCategoryById, loading, error } = useHybridData()
+
+    // Debug logging
+    console.log('HomePage render - loading:', loading, 'error:', error)
 
     // Memoize posts to prevent infinite re-renders
     const recentPosts = useMemo(() => {
-        return getRecentPosts().sort((a, b) => new Date(b.date) - new Date(a.date)) // Sort by newest first
+        try {
+            const posts = getRecentPosts().sort((a, b) => new Date(b.date) - new Date(a.date)) // Sort by newest first
+            console.log('HomePage recentPosts:', posts.length, 'posts:', posts)
+            return posts
+        } catch (err) {
+            console.error('Error getting recent posts:', err)
+            return []
+        }
     }, [getRecentPosts])
 
     // Get the newest posts for carousel (top 5 most recent)
@@ -176,13 +186,16 @@ const HomePage = () => {
 
                     {category && (
                         <div className="absolute top-4 left-4 z-10">
-                            <Link
-                                to={`/category/${category.slug}`}
-                                onClick={(e) => e.stopPropagation()}
-                                className={`inline-block px-3 py-1 text-xs font-medium rounded-full shadow-sm hover:shadow-md transition-all duration-300 magnetic ${currentTheme.category}`}
+                            <span
+                                className={`inline-block px-3 py-1 text-xs font-medium rounded-full shadow-sm cursor-pointer hover:shadow-md transition-all duration-300 magnetic ${currentTheme.category}`}
+                                onClick={(e) => {
+                                    e.stopPropagation()
+                                    e.preventDefault()
+                                    window.location.href = `/category/${category.slug}`
+                                }}
                             >
                                 {category.name}
-                            </Link>
+                            </span>
                         </div>
                     )}
 
@@ -257,6 +270,53 @@ const HomePage = () => {
                     <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-gray-300 to-gray-500 dark:from-dark-500 dark:to-dark-400"></div>
                 )}
             </Link>
+        )
+    }
+
+    // Show loading state while fetching TinaCMS posts
+    if (loading) {
+        return (
+            <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-dark-900 dark:via-dark-800 dark:to-dark-900 flex items-center justify-center">
+                <div className="text-center">
+                    <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-purple-600 mx-auto mb-4"></div>
+                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Loading Blog Posts...</h2>
+                    <p className="text-gray-600 dark:text-gray-300">Fetching the latest content from TinaCMS</p>
+                </div>
+            </div>
+        )
+    }
+
+    // Show error state if TinaCMS failed to load (will fallback to static posts)
+    if (error) {
+        console.warn('TinaCMS failed to load, falling back to static posts:', error)
+    }
+
+    // Add safety check for empty posts
+    if (!recentPosts || recentPosts.length === 0) {
+        console.warn('No posts available to display')
+        return (
+            <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-dark-900 dark:via-dark-800 dark:to-dark-900 flex items-center justify-center">
+                <div className="text-center max-w-md mx-auto p-8">
+                    <div className="text-6xl mb-4">📝</div>
+                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">No Posts Found</h2>
+                    <p className="text-gray-600 dark:text-gray-300 mb-4">
+                        There are currently no blog posts available. This could be because:
+                    </p>
+                    <ul className="text-left text-gray-600 dark:text-gray-300 text-sm">
+                        <li>• TinaCMS server is not running</li>
+                        <li>• No posts have been created yet</li>
+                        <li>• Static fallback posts are missing</li>
+                    </ul>
+                    <div className="mt-6">
+                        <a
+                            href="/admin"
+                            className="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition-colors"
+                        >
+                            Create First Post
+                        </a>
+                    </div>
+                </div>
+            </div>
         )
     }
 
