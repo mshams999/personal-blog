@@ -2,7 +2,8 @@ import React, { useState } from 'react'
 import { Check, AlertCircle, Mail, Loader2 } from 'lucide-react'
 
 /**
- * Newsletter Component - Simplified Version
+ * Newsletter Component - Simple Working Version
+ * Ready for integration with a new newsletter service
  */
 const Newsletter = () => {
     const [email, setEmail] = useState('')
@@ -38,14 +39,22 @@ const Newsletter = () => {
         setError('')
         setIsLoading(true)
 
-        // Simple simulation without external dependencies
-        setTimeout(() => {
+        try {
+            // TODO: Replace with actual newsletter service integration
+            // For now, simulate subscription process
+            setTimeout(() => {
+                setIsLoading(false)
+                setIsSubscribed(true)
+                setEmail('')
+                setFirstName('')
+                setAgreeToTerms(false)
+            }, 2000)
+
+        } catch (error) {
+            console.error('Newsletter subscription error:', error)
+            setError('Unable to subscribe. Please try again.')
             setIsLoading(false)
-            setIsSubscribed(true)
-            setEmail('')
-            setFirstName('')
-            setAgreeToTerms(false)
-        }, 1500)
+        }
     }
 
     if (isSubscribed) {

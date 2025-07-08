@@ -1,0 +1,45 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Newsletter subscribers collection
+    match /newsletter_subscribers/{subscriberId} {
+      // Allow anyone to create a new subscription (public newsletter signup)
+      allow create: if isValidNewsletterSubscription(request.resource.data);
+      
+      // Allow reading for authenticated admin users only
+      allow read: if isAdmin();
+      
+      // Allow updating for admin users only (for unsubscribing)
+      allow update: if isAdmin() && 
+                    request.resource.data.keys().hasAll(['isActive', 'unsubscribedAt']) &&
+                    request.resource.data.isActive == false;
+      
+      // Never allow deleting (keep data for analytics)
+      allow delete: if false;
+    }
+    
+    // Helper functions
+    function isValidNewsletterSubscription(data) {
+      return data.keys().hasAll(['email', 'subscribedAt', 'isActive', 'source']) &&
+             data.email is string &&
+             data.email.size() > 0 &&
+             data.email.matches('.*@.*\\..*') &&  // Basic email validation
+             data.subscribedAt is timestamp &&
+             data.isActive == true &&
+             data.source is string;
+    }
+    
+    function isAdmin() {
+      // Admin authentication - replace with your admin email
+      return request.auth != null && 
+             request.auth.token.email == 'mohamedshams3467@gmail.com';
+    }
+    
+    // Allow all other operations for authenticated users (for your existing content)
+    match /{document=**} {
+      allow read, write: if request.auth != null;
+    }
+  }
+}

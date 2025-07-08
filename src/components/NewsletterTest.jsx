@@ -2,8 +2,8 @@ import React, { useState } from 'react'
 import { Check, AlertCircle, Mail, Loader2 } from 'lucide-react'
 
 /**
- * Newsletter Component with MailChimp Integration
- * Clean, working version without complex logic
+ * Newsletter Component - Test Version
+ * Ready for integration with a new newsletter service
  */
 const Newsletter = () => {
     const [email, setEmail] = useState('')
@@ -12,11 +12,6 @@ const Newsletter = () => {
     const [isSubscribed, setIsSubscribed] = useState(false)
     const [error, setError] = useState('')
     const [agreeToTerms, setAgreeToTerms] = useState(false)
-
-    // MailChimp configuration - can be moved to environment variables later
-    const mailchimpConfig = {
-        signupUrl: 'https://us10.list-manage.com/subscribe/post?u=921071254cb0c140c84d517e77bed105&id=cd7207c9ee'
-    }
 
     const validateEmail = (email) => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -44,41 +39,15 @@ const Newsletter = () => {
         setError('')
         setIsLoading(true)
 
-        // Create hidden form and submit to MailChimp
-        const form = document.createElement('form')
-        form.method = 'POST'
-        form.action = mailchimpConfig.signupUrl
-        form.target = '_blank'
-
-        // Email field
-        const emailField = document.createElement('input')
-        emailField.type = 'hidden'
-        emailField.name = 'EMAIL'
-        emailField.value = email
-        form.appendChild(emailField)
-
-        // First name field (optional)
-        if (firstName.trim()) {
-            const firstNameField = document.createElement('input')
-            firstNameField.type = 'hidden'
-            firstNameField.name = 'FNAME'
-            firstNameField.value = firstName
-            form.appendChild(firstNameField)
-        }
-
-        // Submit form
-        document.body.appendChild(form)
-        form.submit()
-        document.body.removeChild(form)
-
-        // Show success message
+        // TODO: Replace with actual newsletter service integration
+        // For now, simulate subscription process
         setTimeout(() => {
             setIsLoading(false)
             setIsSubscribed(true)
             setEmail('')
             setFirstName('')
             setAgreeToTerms(false)
-        }, 1000)
+        }, 1500)
     }
 
     if (isSubscribed) {

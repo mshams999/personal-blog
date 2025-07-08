@@ -10,6 +10,12 @@ import CategoryPage from './pages/CategoryPage'
 import AllCategoriesPage from './pages/AllCategoriesPage'
 import CVPage from './pages/CVPage'
 import AdminPage from './pages/AdminPage'
+import ReadingLibrary from './pages/ReadingLibrary'
+import ATLSCertificate from './pages/certificates/ATLSCertificate'
+import ACLSCertificate from './pages/certificates/ACLSCertificate'
+import BLSCertificate from './pages/certificates/BLSCertificate'
+import MaadenCertificate from './pages/certificates/MaadenCertificate'
+import USMLEStep1Certificate from './pages/certificates/USMLEStep1Certificate'
 import { useAnalytics } from './hooks/useAnalytics'
 
 // ScrollToTop component to reset scroll position on navigation
@@ -40,7 +46,14 @@ function App() {
                                 <Route path="/category/:categorySlug" element={<CategoryPage />} />
                                 <Route path="/categories" element={<AllCategoriesPage />} />
                                 <Route path="/cv" element={<CVPage />} />
+                                <Route path="/reading" element={<ReadingLibrary />} />
                                 <Route path="/admin" element={<AdminPage />} />
+                                {/* Certificate Routes */}
+                                <Route path="/certificates/atls" element={<ATLSCertificate />} />
+                                <Route path="/certificates/acls" element={<ACLSCertificate />} />
+                                <Route path="/certificates/bls" element={<BLSCertificate />} />
+                                <Route path="/certificates/maaden" element={<MaadenCertificate />} />
+                                <Route path="/certificates/usmle-step1" element={<USMLEStep1Certificate />} />
                             </Routes>
                         </Layout>
                     </div>

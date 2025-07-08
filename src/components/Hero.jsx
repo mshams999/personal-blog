@@ -20,7 +20,7 @@ const Hero = () => {
                     <div className="space-y-8">
                         <div className="space-y-4">
                             <div className="flex items-center space-x-2 text-primary-600 dark:text-primary-400">
-                                <div className="w-2 h-2 bg-primary-500 rounded-full animate-pulse"></div>
+                                <div className="w-2 h-2 bg-green-500 rounded-full animate-ping"></div>
                                 <span className="text-sm font-medium tracking-wide uppercase">Beyond the Chief Complaint:</span>
                             </div>
 
