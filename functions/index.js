@@ -51,8 +51,7 @@ exports.sendWelcomeEmail = onRequest({
 
         // Send email using Resend
         const result = await resendClient.emails.send({
-            from: 'Ruki Blog <onboarding@resend.dev>', // Resend verified domain
-            reply_to: 'mohamedshams3467@gmail.com', // Your Gmail for replies
+            from: 'Mohamed Shams <mohamed@mohamedshams.com>', // Professional domain email
             to: [email],
             subject: `Welcome to ${templateData?.websiteName || 'Our Newsletter'} Newsletter! 🎉`,
             html: htmlContent,
@@ -106,8 +105,7 @@ exports.sendCustomEmail = onRequest({
         logger.info('Sending custom email to:', email);
 
         const result = await resendClient.emails.send({
-            from: 'Ruki Blog <onboarding@resend.dev>', // Resend verified domain
-            reply_to: 'mohamedshams3467@gmail.com', // Your Gmail for replies
+            from: 'Mohamed Shams <mohamed@mohamedshams.com>', // Professional domain email
             to: [email],
             subject: subject,
             html: htmlContent || generateDefaultEmailHTML(templateData || {}),
@@ -136,9 +134,9 @@ exports.sendCustomEmail = onRequest({
 function generateWelcomeEmailHTML(templateData = {}) {
     const {
         subscriberName = 'there',
-        senderName = 'Ruki Blog',
-        websiteName = 'Ruki Blog',
-        websiteUrl = 'https://rukiblog.com',
+        senderName = 'Mohamed Shams',
+        websiteName = 'Mohamed Shams Blog',
+        websiteUrl = 'https://mohamedshams.com',
         unsubscribeUrl = '#',
         currentYear = new Date().getFullYear(),
         currentDate = new Date().toLocaleDateString('en-US', {
@@ -297,9 +295,9 @@ function generateWelcomeEmailHTML(templateData = {}) {
  */
 function generateDefaultEmailHTML(templateData = {}) {
     const {
-        senderName = 'Ruki Blog',
-        websiteName = 'Ruki Blog',
-        websiteUrl = 'https://rukiblog.com',
+        senderName = 'Mohamed Shams',
+        websiteName = 'Mohamed Shams Blog',
+        websiteUrl = 'https://mohamedshams.com',
         currentYear = new Date().getFullYear()
     } = templateData;
 
