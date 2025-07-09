@@ -10,7 +10,7 @@
         "preview": "vite preview",
         "tina:dev": "tinacms dev -c \"npm run dev\"",
         "tina:build": "tinacms build",
-        "tina:admin": "tinacms admin"
+        "tina:admin": "tinacms dev"
     },
     "dependencies": {
         "@mailchimp/mailchimp_marketing": "^3.0.80",
