@@ -19,6 +19,7 @@
         "@tinacms/cli": "^1.9.9",
         "@tinacms/mdx": "^1.7.0",
         "@types/mdx": "^2.0.10",
+        "applause-button": "^4.0.7",
         "axios": "^1.10.0",
         "concurrently": "^9.2.0",
         "date-fns": "^2.30.0",
@@ -32,6 +33,7 @@
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
         "react-router-dom": "^6.20.1",
+        "react-share": "^5.2.2",
         "react-stars": "^2.2.5",
         "resend": "^4.6.0",
         "tinacms": "^2.7.9"

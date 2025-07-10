@@ -2,42 +2,59 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Mohamed Shams Blog</title>
-    <meta name="description"
-        content="A beautifully designed personal blog theme, focusing on content and readability." />
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mohamed Shams Blog</title>
+  <meta name="description" content="A beautifully designed personal blog theme, focusing on content and readability." />
 
-    <!-- Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=%VITE_GA_MEASUREMENT_ID%"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag() { dataLayer.push(arguments); }
-        gtag('js', new Date());
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://your-domain.com/" />
+  <meta property="og:title" content="Mohamed Shams Blog" />
+  <meta property="og:description"
+    content="The official blog for Dr. Mohamed Shams - Emergency Medicine Doctor and Medical Professional" />
+  <meta property="og:image" content="https://your-domain.com/og-image.jpg" />
+  <meta property="og:site_name" content="Mohamed Shams Blog" />
 
-        // Only initialize if GA ID is provided and valid
-        const GA_ID = '%VITE_GA_MEASUREMENT_ID%';
-        if (GA_ID && GA_ID !== 'G-XXXXXXXXXX' && GA_ID.startsWith('G-')) {
-            gtag('config', GA_ID, {
-                send_page_view: true,
-                anonymize_ip: true,
-                allow_google_signals: true,
-                allow_ad_personalization_signals: false
-            });
-        }
-    </script>
-    <!-- End Google Analytics -->
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image" />
+  <meta property="twitter:url" content="https://your-domain.com/" />
+  <meta property="twitter:title" content="Mohamed Shams Blog" />
+  <meta property="twitter:description"
+    content="The official blog for Dr. Mohamed Shams - Emergency Medicine Doctor and Medical Professional" />
+  <meta property="twitter:image" content="https://your-domain.com/og-image.jpg" />
+  <meta property="twitter:creator" content="@MohamedShams936" />
 
-    <!-- MailChimp Connected JavaScript -->
-    <script
-        id="mcjs">!function (c, h, i, m, p) { m = c.createElement(h), p = c.getElementsByTagName(h)[0], m.async = 1, m.src = i, p.parentNode.insertBefore(m, p) }(document, "script", "https://chimpstatic.com/mcjs-connected/js/users/e1421120f3708e63ce15176f6/da708c640f0c56b078e7c1d2f.js");</script>
-    <!-- End MailChimp -->
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=%VITE_GA_MEASUREMENT_ID%"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+
+    // Only initialize if GA ID is provided and valid
+    const GA_ID = '%VITE_GA_MEASUREMENT_ID%';
+    if (GA_ID && GA_ID !== 'G-XXXXXXXXXX' && GA_ID.startsWith('G-')) {
+      gtag('config', GA_ID, {
+        send_page_view: true,
+        anonymize_ip: true,
+        allow_google_signals: true,
+        allow_ad_personalization_signals: false
+      });
+    }
+  </script>
+  <!-- End Google Analytics -->
+
+  <!-- MailChimp Connected JavaScript -->
+  <script
+    id="mcjs">!function (c, h, i, m, p) { m = c.createElement(h), p = c.getElementsByTagName(h)[0], m.async = 1, m.src = i, p.parentNode.insertBefore(m, p) }(document, "script", "https://chimpstatic.com/mcjs-connected/js/users/e1421120f3708e63ce15176f6/da708c640f0c56b078e7c1d2f.js");</script>
+  <!-- End MailChimp -->
 </head>
 
 <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
+  <div id="root"></div>
+  <script type="module" src="/src/main.jsx"></script>
 </body>
 
 </html>

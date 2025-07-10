@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import { useParams, Navigate, Link } from 'react-router-dom'
-import { Clock, ArrowLeft, Share2, Bookmark, Heart, ArrowUp, MessageCircle, Star, ChevronDown, X, Facebook, Instagram, Twitter, Globe, Eye } from 'lucide-react'
+import { Clock, ArrowLeft, ArrowUp, MessageCircle, Star, ChevronDown, X, Facebook, Instagram, Twitter, Globe, Eye } from 'lucide-react'
 import ReactStars from 'react-stars'
 import { useHybridData } from '../contexts/HybridDataContext'
 import AuthorBio from '../components/AuthorBio'
 import DisqusComments from '../components/DisqusComments'
 import DisqusCommentCount from '../components/DisqusCommentCount'
 import ViewCounter from '../components/ViewCounter'
+import ApplauseButton from '../components/ApplauseButton'
+import SocialShareButton from '../components/SocialShareButton'
+import MetaTags from '../components/MetaTags_fixed'
 import { TinaCMSContent, StaticContent } from '../components/TinaCMSContent'
 import { format } from 'date-fns'
 import PostCard from '../components/PostCard'
@@ -30,12 +33,10 @@ import { getPostRating, savePostRating, getUserRating } from '../utils/ratings'
  */
 const SinglePostPage = () => {
     const { slug } = useParams()
-    const { getPostBySlug, getAuthorById, getCategoryById, categories } = useHybridData()
+    const { getPostBySlug, getAuthorById, getCategoryById, categories, getAllPosts } = useHybridData()
     const [mdxContent, setMdxContent] = useState(null)
     const [loading, setLoading] = useState(true)
     const [scrollPosition, setScrollPosition] = useState(0)
-    const [liked, setLiked] = useState(false)
-    const [bookmarked, setBookmarked] = useState(false)
     const [showScrollTop, setShowScrollTop] = useState(false)
     const [userRating, setUserRating] = useState(0)
     const [averageRating, setAverageRating] = useState(0)
@@ -45,6 +46,25 @@ const SinglePostPage = () => {
     const post = getPostBySlug(slug)
     const author = post ? getAuthorById(post.authorId) : null
     const category = post ? getCategoryById(post.categoryId) : null
+
+    // Get all posts for navigation
+    const allPosts = getAllPosts()
+    
+    // Find current post index and get previous/next posts
+    const currentPostIndex = allPosts.findIndex(p => p.slug === slug)
+    const previousPost = currentPostIndex > 0 ? allPosts[currentPostIndex - 1] : null
+    const nextPost = currentPostIndex < allPosts.length - 1 ? allPosts[currentPostIndex + 1] : null
+
+    // Debug logging
+    if (process.env.NODE_ENV === 'development') {
+        console.log('📚 Post Navigation:', {
+            currentPost: post?.title,
+            currentIndex: currentPostIndex,
+            totalPosts: allPosts.length,
+            previousPost: previousPost?.title || 'None',
+            nextPost: nextPost?.title || 'None'
+        })
+    }
 
     // Use Firebase view tracking for this article
     const { viewCount, loading: viewLoading } = useArticleViews(
@@ -218,7 +238,19 @@ const SinglePostPage = () => {
     }
 
     return (
-        <article className="min-h-screen pb-16 animate-fade-in">
+        <>
+            {/* Meta Tags for Social Sharing */}
+            <MetaTags
+                title={post.title}
+                description={post.excerpt}
+                image={post.featuredImage}
+                url={`${window.location.origin}/post/${post.slug}`}
+                type="article"
+                author={author?.name}
+                publishedTime={new Date(post.date).toISOString()}
+            />
+            
+            <article className="min-h-screen pb-16 animate-fade-in">
             {/* Back Button - Fixed position over the header */}
             <div className="absolute top-6 left-6 z-30">
                 <Link
@@ -321,26 +353,21 @@ const SinglePostPage = () => {
             <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
                 {/* Social Sharing Sidebar - Desktop */}
                 <div className="hidden md:flex flex-col fixed right-8 top-1/3 items-center space-y-4 z-30">
-                    <button
-                        onClick={() => setLiked(!liked)}
-                        className={`p-3 rounded-full transition-all backdrop-blur-sm ${liked ? 'bg-primary-500/90 text-white' : 'bg-gray-100/90 text-gray-700 hover:bg-gray-200/90'} dark:bg-dark-700 dark:text-white`}
-                        aria-label="Like post"
-                    >
-                        <Heart className={`h-5 w-5 ${liked ? 'fill-current' : ''}`} />
-                    </button>
-                    <button
-                        onClick={() => setBookmarked(!bookmarked)}
-                        className={`p-3 rounded-full transition-all backdrop-blur-sm ${bookmarked ? 'bg-primary-500/90 text-white' : 'bg-gray-100/90 text-gray-700 hover:bg-gray-200/90'} dark:bg-dark-700 dark:text-white`}
-                        aria-label="Bookmark post"
-                    >
-                        <Bookmark className={`h-5 w-5 ${bookmarked ? 'fill-current' : ''}`} />
-                    </button>
-                    <button
-                        className="p-3 rounded-full bg-gray-100/90 text-gray-700 hover:bg-gray-200/90 transition-all backdrop-blur-sm dark:bg-dark-700 dark:text-white"
-                        aria-label="Share post"
-                    >
-                        <Share2 className="h-5 w-5" />
-                    </button>
+                    {/* Applause Button for sidebar */}
+                    <div className="bg-gray-100/90 backdrop-blur-sm rounded-full p-2 dark:bg-dark-700" title="Applaud this post">
+                        <ApplauseButton 
+                            url={`${window.location.origin}/post/${post.slug}`}
+                            size="sm"
+                            className="applause-sidebar"
+                        />
+                    </div>
+                    <SocialShareButton
+                        url={`${window.location.origin}/post/${post.slug}`}
+                        title={post.title}
+                        text={post.excerpt}
+                        image={post.featuredImage}
+                        size="md"
+                    />
                 </div>
 
                 {/* Post Header */}
@@ -405,6 +432,7 @@ const SinglePostPage = () => {
                         mdxContent || <StaticContent content={post?.excerpt} />
                     )}
                 </div>
+
 
                 {/* Interactive Rating Section */}
                 <div className="mt-16 p-8 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-dark-800 dark:to-dark-700 rounded-2xl border border-blue-100 dark:border-dark-600 relative overflow-hidden">
@@ -478,17 +506,7 @@ const SinglePostPage = () => {
                     currentUrl={window.location.href}
                 />
 
-                {/* More Reading Section */}
-                <div className="mt-16 p-6 bg-gray-50 dark:bg-dark-700 rounded-xl border border-gray-200 dark:border-dark-600">
-                    <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">Continue Reading</h3>
-                    <p className="text-gray-600 dark:text-gray-300 mb-4">
-                        Discover more insights and stories that will inspire your journey. Our carefully curated collection of articles covers everything from personal development to creative inspiration.
-                    </p>
-                    <Link to="/" className="inline-flex items-center text-primary-500 hover:text-primary-600 font-medium">
-                        View all articles
-                        <ArrowLeft className="h-4 w-4 ml-1 rotate-180" />
-                    </Link>
-                </div>
+              
 
                 {/* Categories */}
                 <div className="mt-16">
@@ -508,139 +526,95 @@ const SinglePostPage = () => {
 
                 {/* Mobile Action Bar */}
                 <div className="md:hidden flex justify-between items-center mt-12 pt-6 border-t border-gray-200 dark:border-dark-700">
-                    <div className="flex space-x-4">
-                        <button
-                            onClick={() => setLiked(!liked)}
-                            className={`p-2 rounded-full transition-all ${liked ? 'text-primary-500' : 'text-gray-500'}`}
-                            aria-label="Like post"
-                        >
-                            <Heart className={`h-6 w-6 ${liked ? 'fill-primary-500' : ''}`} />
-                        </button>
-                        <button
-                            onClick={() => setBookmarked(!bookmarked)}
-                            className={`p-2 rounded-full transition-all ${bookmarked ? 'text-primary-500' : 'text-gray-500'}`}
-                            aria-label="Bookmark post"
-                        >
-                            <Bookmark className={`h-6 w-6 ${bookmarked ? 'fill-primary-500' : ''}`} />
-                        </button>
+                    <div className="flex space-x-4 items-center">
+                        {/* Mobile Applause Button */}
+                        <div title="Applaud this post">
+                            <ApplauseButton 
+                                url={`${window.location.origin}/post/${post.slug}`}
+                                size="sm"
+                                className="applause-mobile"
+                            />
+                        </div>
                     </div>
-                    <button
-                        className="p-2 rounded-full text-gray-500"
-                        aria-label="Share post"
-                    >
-                        <Share2 className="h-6 w-6" />
-                    </button>
+                    <SocialShareButton
+                        url={`${window.location.origin}/post/${post.slug}`}
+                        title={post.title}
+                        text={post.excerpt}
+                        image={post.featuredImage}
+                        size="md"
+                    />
                 </div>
 
-                {/* Enhanced Author Bio */}
-                {author && (
-                    <div className="mt-16 text-center animate-fade-in">
-                        <div className="inline-block">
-                            <img
-                                src={author.avatar}
-                                alt={author.name}
-                                className="w-24 h-24 rounded-full mx-auto mb-4 ring-4 ring-white dark:ring-dark-800 shadow-lg"
-                            />
-                            <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">{author.name}</h3>
-                            <p className="text-gray-600 dark:text-gray-300 max-w-md mx-auto mb-6 leading-relaxed">
-                                {author.bio}
-                            </p>
+              
 
-                            {/* Social Links */}
-                            <div className="flex justify-center space-x-4">
-                                <a href="#" className="p-2 rounded-full bg-gray-200 dark:bg-dark-600 text-gray-600 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-dark-500 transition-colors">
-                                    <X className="h-5 w-5" />
-                                </a>
-                                <a href="#" className="p-2 rounded-full bg-blue-500 text-white hover:bg-blue-600 transition-colors">
-                                    <Facebook className="h-5 w-5" />
-                                </a>
-                                <a href="#" className="p-2 rounded-full bg-pink-500 text-white hover:bg-pink-600 transition-colors">
-                                    <Instagram className="h-5 w-5" />
-                                </a>
-                                <a href="#" className="p-2 rounded-full bg-blue-400 text-white hover:bg-blue-500 transition-colors">
-                                    <Twitter className="h-5 w-5" />
-                                </a>
-                                <a href="#" className="p-2 rounded-full bg-green-500 text-white hover:bg-green-600 transition-colors">
-                                    <Globe className="h-5 w-5" />
-                                </a>
-                            </div>
-                        </div>
+                {/* Previous/Next Post Navigation */}
+                {(previousPost || nextPost) && (
+                    <div className="mt-16 flex flex-col md:flex-row justify-between items-center gap-8">
+                        {/* Previous Post */}
+                        {previousPost ? (
+                            <Link 
+                                to={`/post/${previousPost.slug}`}
+                                className="flex items-center space-x-4 group hover:transform hover:scale-105 transition-all duration-300"
+                            >
+                                <img
+                                    src={previousPost.featuredImage}
+                                    alt={previousPost.title}
+                                    className="w-20 h-20 rounded-lg object-cover shadow-md group-hover:shadow-lg transition-shadow"
+                                    onError={(e) => {
+                                        e.target.src = 'https://placehold.co/80x80/A7D7D7/FFFFFF?text=Prev'
+                                    }}
+                                />
+                                <div>
+                                    <span className="inline-block px-3 py-1 text-xs font-medium bg-pink-100 dark:bg-pink-900/20 text-pink-600 dark:text-pink-400 rounded-full mb-2">
+                                        Previous Post
+                                    </span>
+                                    <h4 className="text-lg font-semibold text-gray-900 dark:text-white group-hover:text-primary-500 transition-colors line-clamp-2 max-w-xs">
+                                        {previousPost.title}
+                                    </h4>
+                                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                                        {format(new Date(previousPost.date), 'MMM dd, yyyy')}
+                                    </p>
+                                </div>
+                            </Link>
+                        ) : (
+                            <div className="flex-1" />
+                        )}
+
+                        {/* Next Post */}
+                        {nextPost ? (
+                            <Link 
+                                to={`/post/${nextPost.slug}`}
+                                className="flex items-center space-x-4 text-right group hover:transform hover:scale-105 transition-all duration-300"
+                            >
+                                <div>
+                                    <span className="inline-block px-3 py-1 text-xs font-medium bg-pink-100 dark:bg-pink-900/20 text-pink-600 dark:text-pink-400 rounded-full mb-2">
+                                        Next Post
+                                    </span>
+                                    <h4 className="text-lg font-semibold text-gray-900 dark:text-white group-hover:text-primary-500 transition-colors line-clamp-2 max-w-xs">
+                                        {nextPost.title}
+                                    </h4>
+                                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                                        {format(new Date(nextPost.date), 'MMM dd, yyyy')}
+                                    </p>
+                                </div>
+                                <img
+                                    src={nextPost.featuredImage}
+                                    alt={nextPost.title}
+                                    className="w-20 h-20 rounded-lg object-cover shadow-md group-hover:shadow-lg transition-shadow"
+                                    onError={(e) => {
+                                        e.target.src = 'https://placehold.co/80x80/F2D4D4/FFFFFF?text=Next'
+                                    }}
+                                />
+                            </Link>
+                        ) : (
+                            <div className="flex-1" />
+                        )}
                     </div>
                 )}
 
-                {/* Previous/Next Post Navigation */}
-                <div className="mt-16 flex flex-col md:flex-row justify-between items-center gap-8">
-                    <div className="flex items-center space-x-4">
-                        <img
-                            src="https://placehold.co/80x80/A7D7D7/FFFFFF?text=P1"
-                            alt="Previous post"
-                            className="w-20 h-20 rounded-lg object-cover"
-                        />
-                        <div>
-                            <span className="inline-block px-3 py-1 text-xs font-medium bg-pink-100 dark:bg-pink-900/20 text-pink-600 dark:text-pink-400 rounded-full mb-2">
-                                Previous Post
-                            </span>
-                            <h4 className="text-lg font-semibold text-gray-900 dark:text-white">
-                                Any delicate you how kindness horrible outlived servants
-                            </h4>
-                        </div>
-                    </div>
-
-                    <div className="flex items-center space-x-4 text-right">
-                        <div>
-                            <span className="inline-block px-3 py-1 text-xs font-medium bg-pink-100 dark:bg-pink-900/20 text-pink-600 dark:text-pink-400 rounded-full mb-2">
-                                Next Post
-                            </span>
-                            <h4 className="text-lg font-semibold text-gray-900 dark:text-white">
-                                Pianoforte solicitude so decisively unpleasing
-                            </h4>
-                        </div>
-                        <img
-                            src="https://placehold.co/80x80/F2D4D4/FFFFFF?text=P2"
-                            alt="Next post"
-                            className="w-20 h-20 rounded-lg object-cover"
-                        />
-                    </div>
-                </div>
 
 
-
-                {/* You May Also Like Section - Full Width */}
-                <div className="mt-20 bg-gradient-to-r from-pink-300 to-pink-400 p-8 md:p-12 rounded-2xl text-white w-full">
-                    <h2 className="text-3xl font-bold mb-8">You may also like</h2>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                        {suggestedPosts.map((suggestedPost) => {
-                            const postCategory = getCategoryById(suggestedPost.categoryId)
-                            const postAuthor = getAuthorById(suggestedPost.authorId)
-
-                            return (
-                                <Link
-                                    key={suggestedPost.id}
-                                    to={`/post/${suggestedPost.slug}`}
-                                    className="bg-white rounded-xl overflow-hidden text-gray-900 hover:transform hover:scale-105 transition-all duration-300 block"
-                                >
-                                    <img
-                                        src={suggestedPost.featuredImage}
-                                        alt={suggestedPost.title}
-                                        className="w-full h-32 object-cover"
-                                    />
-                                    <div className="p-4">
-                                        {postCategory && (
-                                            <span className="inline-block px-2 py-1 text-xs font-medium bg-pink-100 text-pink-600 rounded-full mb-2">
-                                                {postCategory.name}
-                                            </span>
-                                        )}
-                                        <h3 className="font-bold text-sm mb-2 line-clamp-2">{suggestedPost.title}</h3>
-                                        {postAuthor && (
-                                            <p className="text-xs text-gray-600">{postAuthor.name}</p>
-                                        )}
-                                    </div>
-                                </Link>
-                            )
-                        })}
-                    </div>
-                </div>
+                
             </div>
 
             {/* Scroll to Top Button */}
@@ -654,6 +628,7 @@ const SinglePostPage = () => {
                 </button>
             )}
         </article>
+        </>
     )
 }
 
