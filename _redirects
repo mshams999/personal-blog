@@ -1,0 +1,6 @@
+# Handle direct links to internal pages
+/* /index.html 200
+
+# Specific routes that were failing
+/the-best-english-bookstore/* /index.html 200
+/category/mnwaat/* /index.html 200
