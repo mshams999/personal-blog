@@ -1,5 +1,45 @@
 import { writeFileSync } from 'fs';
-import { client } from '../tina/__generated__/client.js';
+import { createClient } from 'tinacms/dist/client';
+import { queries } from '../tina/__generated__/types.js';
+
+const resolveBranch = () =>
+    process.env.GITHUB_BRANCH ||
+    process.env.NEXT_PUBLIC_TINA_BRANCH ||
+    process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_REF ||
+    process.env.HEAD ||
+    'main';
+
+const buildTinaClient = () => {
+    const branch = resolveBranch();
+    const clientId = process.env.NEXT_PUBLIC_TINA_CLIENT_ID;
+    const token = process.env.TINA_TOKEN;
+    const isLocal = process.env.TINA_PUBLIC_IS_LOCAL === 'true';
+    const explicitUrl = process.env.TINA_API_URL;
+
+    const defaultUrl = isLocal
+        ? 'http://localhost:4001/graphql'
+        : clientId
+            ? `https://content.tinajs.io/1.5/content/${clientId}/github/${branch}`
+            : undefined;
+
+    const url = explicitUrl || defaultUrl;
+
+    if (!url) {
+        throw new Error(
+            'Unable to determine Tina GraphQL URL. Set TINA_API_URL or provide NEXT_PUBLIC_TINA_CLIENT_ID.'
+        );
+    }
+
+    const clientConfig = { url, queries };
+
+    if (token) {
+        clientConfig.token = token;
+    }
+
+    return createClient(clientConfig);
+};
+
+const client = buildTinaClient();
 
 async function generateSitemap() {
     try {
