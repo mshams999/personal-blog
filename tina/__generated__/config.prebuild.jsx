@@ -116,9 +116,14 @@ var config_default = defineConfig({
             label: "Category",
             required: true,
             options: [
-              { value: "cat-1", label: "Medical" },
-              { value: "cat-2", label: "Social Articles" },
-
+              { value: "cat-1", label: "Inspiration" },
+              { value: "cat-2", label: "Design" },
+              { value: "cat-3", label: "Business" },
+              { value: "cat-4", label: "Lifestyle" },
+              { value: "cat-5", label: "Technology" },
+              { value: "cat-6", label: "Health" },
+              { value: "cat-7", label: "Travel" },
+              { value: "cat-8", label: "Education" }
             ],
             ui: {
               description: "Which category this post belongs to"
