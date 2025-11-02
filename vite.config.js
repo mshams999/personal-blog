@@ -1,7 +1,7 @@
 import { defineConfig, loadEnv } from 'vite'
 import react from '@vitejs/plugin-react'
 import mdx from '@mdx-js/rollup'
-import { sitemap } from 'vite-plugin-sitemap'
+import VitePluginSitemap from 'vite-plugin-sitemap'
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
@@ -16,7 +16,7 @@ export default defineConfig(({ mode }) => {
                 remarkPlugins: [],
                 rehypePlugins: [],
             }),
-            sitemap({
+            VitePluginSitemap({
                 hostname: 'https://mohamedshams.com',
                 dynamicRoutes: async () => {
                     const { getAllPostPaths } = await import('./src/utils/sitemap-helpers.js')
