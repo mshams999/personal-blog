@@ -18,10 +18,12 @@ export default defineConfig(({ mode }) => {
             }),
             VitePluginSitemap({
                 hostname: 'https://mohamedshams.com',
-                dynamicRoutes: async () => {
-                    const { getAllPostPaths } = await import('./src/utils/sitemap-helpers.js')
-                    return await getAllPostPaths()
-                },
+                dynamicRoutes: [
+                    '/',
+                    '/blog',
+                    '/about'
+                    // We'll handle dynamic routes differently
+                ],
                 exclude: ['/404'],
                 lastmod: new Date().toISOString(),
                 changefreq: 'daily',
