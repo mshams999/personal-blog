@@ -57,36 +57,28 @@ const Header = () => {
                     <div className="absolute -top-0.5 right-1/3 w-1 h-1 bg-secondary-400/30 rounded-full animate-ping" style={{ animationDelay: '1s' }}></div>
                     <div className="absolute -top-1 right-1/4 w-1.5 h-1.5 bg-primary-300/25 rounded-full animate-pulse" style={{ animationDelay: '2s' }}></div>
                 </div>
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                     <div className="flex items-center justify-between h-16">
-                        {/* Left: Logo and Mobile menu */}
-                        <div className="flex items-center space-x-4">
+                        {/* Left: Logo */}
+                        <div className="flex items-center">
                             {/* Logo */}
                             <Link to="/" className="flex items-center group">
                                 <div className="relative overflow-hidden rounded-xl">
+                                    {/* Desktop Logo */}
                                     <img
                                         src="/pictures/logo.png"
                                         alt="Logo"
-                                        className="h-10 w-auto transition-all duration-300 group-hover:scale-110 group-hover:brightness-110"
+                                        className="hidden md:block h-10 w-auto transition-all duration-300 group-hover:scale-110 group-hover:brightness-110"
+                                    />
+                                    {/* Mobile Logo */}
+                                    <img
+                                        src="/pictures/logo-mobile.png"
+                                        alt="Logo"
+                                        className="md:hidden h-16 w-auto transition-all duration-300 group-hover:scale-110 group-hover:brightness-110"
                                     />
                                     <div className="absolute inset-0 bg-gradient-to-r from-primary-500/0 to-primary-500/0 group-hover:from-primary-500/10 group-hover:to-transparent transition-all duration-300"></div>
                                 </div>
                             </Link>
-
-                            {/* Mobile menu button */}
-                            <div className="md:hidden">
-                                <button
-                                    onClick={toggleMobileMenu}
-                                    className="p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-dark-700 transition-all duration-200 hover:scale-105 active:scale-95"
-                                    aria-label="Toggle menu"
-                                >
-                                    {isMobileMenuOpen ? (
-                                        <X className="h-5 w-5 text-gray-700 dark:text-gray-300 transition-transform duration-200" />
-                                    ) : (
-                                        <Menu className="h-5 w-5 text-gray-700 dark:text-gray-300 transition-transform duration-200" />
-                                    )}
-                                </button>
-                            </div>
                         </div>
 
                         {/* Center: Navigation */}
@@ -118,32 +110,21 @@ const Header = () => {
                             ))}
                         </nav>
 
-                        {/* Right: Search and Theme Toggle */}
+                        {/* Right: Search, Theme Toggle, and Mobile Menu */}
                         <div className="flex items-center space-x-3">
-                            {/* Search */}
-                            <div className="relative">
-                                <button
-                                    onClick={toggleSearch}
-                                    className="hidden md:flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-all duration-300 px-3 py-2 rounded-xl hover:bg-gradient-to-r hover:from-gray-50 hover:to-gray-100 dark:hover:from-dark-700 dark:hover:to-dark-600 hover:shadow-md hover:scale-105 group"
-                                >
-                                    <Search className="h-4 w-4 transition-transform duration-300 group-hover:scale-110" />
-                                    <span>Search</span>
-                                </button>
+                            {/* Desktop Search */}
+                            <button
+                                onClick={toggleSearch}
+                                className="hidden md:flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-all duration-300 px-3 py-2 rounded-xl hover:bg-gradient-to-r hover:from-gray-50 hover:to-gray-100 dark:hover:from-dark-700 dark:hover:to-dark-600 hover:shadow-md hover:scale-105 group"
+                            >
+                                <Search className="h-4 w-4 transition-transform duration-300 group-hover:scale-110" />
+                                <span>Search</span>
+                            </button>
 
-                                {/* Mobile search button */}
-                                <button
-                                    onClick={toggleSearch}
-                                    className="md:hidden p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-dark-700 transition-all duration-300 hover:scale-105 active:scale-95 group"
-                                    aria-label="Search"
-                                >
-                                    <Search className="h-5 w-5 text-gray-700 dark:text-gray-300 transition-transform duration-300 group-hover:scale-110" />
-                                </button>
-                            </div>
-
-                            {/* Theme Toggle */}
+                            {/* Desktop Theme Toggle */}
                             <button
                                 onClick={toggleTheme}
-                                className="p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-dark-700 transition-all duration-300 hover:scale-105 active:scale-95 group relative overflow-hidden"
+                                className="hidden md:block p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-dark-700 transition-all duration-300 hover:scale-105 active:scale-95 group relative overflow-hidden"
                                 aria-label="Toggle theme"
                             >
                                 <div className="absolute inset-0 bg-gradient-to-r from-yellow-400/0 via-yellow-400/10 to-yellow-400/0 opacity-0 group-hover:opacity-100 transition-all duration-300"></div>
@@ -151,6 +132,19 @@ const Header = () => {
                                     <Moon className="h-4 w-4 text-gray-700 dark:text-gray-300 transition-all duration-300 group-hover:text-blue-600 group-hover:rotate-12 relative z-10" />
                                 ) : (
                                     <Sun className="h-4 w-4 text-gray-700 dark:text-gray-300 transition-all duration-300 group-hover:text-yellow-500 group-hover:rotate-12 relative z-10" />
+                                )}
+                            </button>
+
+                            {/* Mobile menu button - Moved to the right */}
+                            <button
+                                onClick={toggleMobileMenu}
+                                className="md:hidden p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-dark-700 transition-all duration-200 hover:scale-105 active:scale-95 relative z-50"
+                                aria-label="Toggle menu"
+                            >
+                                {isMobileMenuOpen ? (
+                                    <X className="h-6 w-6 text-gray-700 dark:text-gray-300 transition-transform duration-200" />
+                                ) : (
+                                    <Menu className="h-6 w-6 text-gray-700 dark:text-gray-300 transition-transform duration-200" />
                                 )}
                             </button>
 
@@ -244,28 +238,64 @@ const Header = () => {
 
                 {/* Enhanced Mobile Menu Overlay */}
                 {isMobileMenuOpen && (
-                    <div className="md:hidden absolute top-full left-0 right-0 bg-white/95 dark:bg-dark-800/95 backdrop-blur-2xl border-b border-gray-200/50 dark:border-dark-600/50 shadow-2xl animate-in slide-in-from-top-2 duration-300">
-                        <div className="absolute inset-0 bg-gradient-to-b from-primary-50/30 to-transparent dark:from-primary-900/20 dark:to-transparent"></div>
-                        <div className="p-4 relative z-10">
-                            <div className="flex items-center justify-between mb-4">
-                                <h3 className="text-lg font-semibold text-gray-900 dark:text-white bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent">Menu</h3>
+                    <div className="md:hidden absolute top-full left-0 right-0 bg-white dark:bg-dark-800 border-b border-gray-200 dark:border-dark-600 shadow-2xl animate-in slide-in-from-top-2 duration-300 max-h-[calc(100vh-4rem)] overflow-y-auto">
+                        <div className="absolute inset-0 bg-gradient-to-b from-primary-50/20 to-transparent dark:from-primary-900/10 dark:to-transparent pointer-events-none"></div>
+                        <div className="p-6 relative z-10">
+                            {/* Search Bar and Theme Toggle */}
+                            <div className="mb-6 space-y-4">
+                                {/* Search Input */}
+                                <div className="relative">
+                                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                        <Search className="h-5 w-5 text-gray-400 dark:text-gray-500" />
+                                    </div>
+                                    <input
+                                        type="text"
+                                        placeholder="Search articles..."
+                                        onClick={() => {
+                                            setIsSearchOpen(true)
+                                            setIsMobileMenuOpen(false)
+                                        }}
+                                        className="w-full pl-12 pr-4 py-3 bg-gray-50 dark:bg-dark-700 border border-gray-200 dark:border-dark-600 rounded-2xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-300 shadow-sm hover:shadow-md"
+                                        readOnly
+                                    />
+                                </div>
+
+                                {/* Theme Toggle Button */}
                                 <button
-                                    onClick={toggleMobileMenu}
-                                    className="p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-dark-700 transition-all duration-300 hover:scale-105 active:scale-95 group"
+                                    onClick={toggleTheme}
+                                    className="w-full flex items-center justify-between px-4 py-3 bg-gray-50 dark:bg-dark-700 border border-gray-200 dark:border-dark-600 rounded-2xl hover:bg-gray-100 dark:hover:bg-dark-600 transition-all duration-300 shadow-sm hover:shadow-md group"
                                 >
-                                    <X className="h-5 w-5 text-gray-700 dark:text-gray-300 transition-transform duration-300 group-hover:rotate-90" />
+                                    <div className="flex items-center space-x-3">
+                                        {theme === 'light' ? (
+                                            <>
+                                                <Moon className="h-5 w-5 text-gray-600 dark:text-gray-400 transition-all duration-300 group-hover:text-blue-600 group-hover:rotate-12" />
+                                                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Dark Mode</span>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Sun className="h-5 w-5 text-gray-600 dark:text-gray-400 transition-all duration-300 group-hover:text-yellow-500 group-hover:rotate-12" />
+                                                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Light Mode</span>
+                                            </>
+                                        )}
+                                    </div>
+                                    <div className={`w-12 h-6 rounded-full transition-colors duration-300 relative ${theme === 'dark' ? 'bg-primary-500' : 'bg-gray-300'}`}>
+                                        <div className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white transition-transform duration-300 ${theme === 'dark' ? 'transform translate-x-6' : ''}`}></div>
+                                    </div>
                                 </button>
                             </div>
+
+                            {/* Navigation Links */}
                             <nav className="space-y-2">
+                                <h3 className="px-4 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">Navigation</h3>
                                 {navigation?.map((item, index) => (
                                     <Link
                                         key={item.name}
                                         to={item.href}
-                                        className={`block px-4 py-3 text-base font-medium rounded-xl transition-all duration-300 transform hover:scale-105 animate-in slide-in-from-left-3 ${location.pathname === item.href
-                                            ? 'text-primary-600 dark:text-primary-400 bg-gradient-to-r from-primary-50 to-primary-100 dark:from-primary-900/30 dark:to-primary-800/20 shadow-lg'
-                                            : 'text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gradient-to-r hover:from-gray-50 hover:to-gray-100 dark:hover:from-dark-700 dark:hover:to-dark-600 hover:shadow-md'
+                                        className={`block px-4 py-3 text-base font-medium rounded-xl transition-all duration-300 transform hover:scale-[1.02] animate-in slide-in-from-left-3 ${location.pathname === item.href
+                                            ? 'text-primary-600 dark:text-primary-400 bg-gradient-to-r from-primary-50 to-primary-100 dark:from-primary-900/30 dark:to-primary-800/20 shadow-md'
+                                            : 'text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gradient-to-r hover:from-gray-50 hover:to-gray-100 dark:hover:from-dark-700 dark:hover:to-dark-600 hover:shadow-sm'
                                             }`}
-                                        style={{ animationDelay: `${index * 100}ms` }}
+                                        style={{ animationDelay: `${index * 50}ms` }}
                                         onClick={() => setIsMobileMenuOpen(false)}
                                     >
                                         {item.name}
