@@ -301,11 +301,13 @@ const CVPage = () => {
 
                             {/* Timeline Container */}
                             <div className="relative">
-                                {/* Central Timeline Line */}
-                                <div className="absolute left-1/2 transform -translate-x-1/2 w-0.5 h-full bg-blue-200 dark:bg-blue-800"></div>
+                                {/* Central Timeline Line - Hidden on mobile, shown on lg screens */}
+                                <div className="hidden lg:block absolute left-1/2 transform -translate-x-1/2 w-0.5 h-full bg-blue-200 dark:bg-blue-800"></div>
+                                {/* Left Timeline Line - Visible on mobile only */}
+                                <div className="lg:hidden absolute left-4 top-0 w-0.5 h-full bg-blue-200 dark:bg-blue-800"></div>
 
                                 {/* Rocket Icon at Top - Continuous Improvement */}
-                                <div className="absolute left-1/2 transform -translate-x-1/2 -top-6 z-20">
+                                <div className="absolute left-4 lg:left-1/2 transform lg:-translate-x-1/2 -top-6 z-20">
                                     <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center shadow-xl animate-pulse border-2 border-white">
                                         <Rocket className="w-5 h-5 text-white transform rotate-45" />
                                     </div>
@@ -315,14 +317,15 @@ const CVPage = () => {
                                 </div>
 
                                 {/* Timeline Items */}
-                                <div className="space-y-12 pt-8">{/* Added pt-8 to give space for rocket */}
-                                    {/* Item 1 - Right Side */}
-                                    <div className="relative flex items-center">
-                                        <div className="w-1/2 pr-8 text-right">
-                                            <div className="bg-blue-50 dark:bg-blue-900/20 p-6 rounded-lg border border-blue-100 dark:border-blue-800 text-center">
-                                                {/* Company Logo/Image - Full Width */}
+                                <div className="space-y-8 lg:space-y-12 pt-8">{/* Added pt-8 to give space for rocket */}
+                                    {/* Item 1 - Right Side (Desktop) / Full Width (Mobile) */}
+                                    <div className="relative flex flex-col lg:flex-row lg:items-center">
+                                        {/* Mobile & Desktop Layout */}
+                                        <div className="lg:w-1/2 lg:pr-8 lg:text-right pl-12 lg:pl-0">
+                                            <div className="bg-blue-50 dark:bg-blue-900/20 p-4 lg:p-6 rounded-lg border border-blue-100 dark:border-blue-800">
+                                                {/* Company Logo/Image */}
                                                 <div className="mb-4">
-                                                    <div className="w-full h-32 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
+                                                    <div className="w-full h-24 lg:h-32 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
                                                         <img
                                                             src="/pictures/maaden.jpg"
                                                             alt="Ma'aden Company"
@@ -330,11 +333,11 @@ const CVPage = () => {
                                                         />
                                                     </div>
                                                 </div>
-                                                {/* Text Content Below Image */}
-                                                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                                                {/* Text Content */}
+                                                <h3 className="text-base lg:text-lg font-semibold text-gray-900 dark:text-white mb-2 text-left lg:text-center">
                                                     Emergency Medicine Doctor
                                                 </h3>
-                                                <p className="text-blue-600 dark:text-blue-400 font-medium text-sm mb-3">
+                                                <p className="text-blue-600 dark:text-blue-400 font-medium text-sm mb-3 text-left lg:text-center">
                                                     Ma'aden wa'ad al-shamaal
                                                 </p>
                                                 <ul className="text-gray-600 dark:text-gray-300 space-y-2 text-sm text-left">
@@ -345,29 +348,31 @@ const CVPage = () => {
                                             </div>
                                         </div>
                                         {/* Timeline Dot */}
-                                        <div className="absolute left-1/2 transform -translate-x-1/2 w-4 h-4 bg-blue-600 rounded-full border-4 border-white dark:border-dark-700 z-10"></div>
+                                        <div className="absolute left-4 lg:left-1/2 transform lg:-translate-x-1/2 top-6 lg:top-auto w-3 h-3 lg:w-4 lg:h-4 bg-blue-600 rounded-full border-2 lg:border-4 border-white dark:border-dark-700 z-10"></div>
                                         {/* Date */}
-                                        <div className="w-1/2 pl-8">
-                                            <div className="bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-medium inline-block">
+                                        <div className="lg:w-1/2 lg:pl-8 pl-12 mt-3 lg:mt-0">
+                                            <div className="bg-blue-600 text-white px-3 py-1.5 lg:px-4 lg:py-2 rounded-full text-xs lg:text-sm font-medium inline-block">
                                                 Feb 2024 - June 2025
                                             </div>
                                         </div>
                                     </div>
 
-                                    {/* Item 2 - Left Side */}
-                                    <div className="relative flex items-center">
-                                        <div className="w-1/2 pr-8 text-right">
-                                            <div className="bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-medium inline-block">
+                                    {/* Item 2 - Left Side (Desktop) / Full Width (Mobile) */}
+                                    <div className="relative flex flex-col lg:flex-row lg:items-center">
+                                        {/* Date - Mobile: bottom, Desktop: left */}
+                                        <div className="lg:w-1/2 lg:pr-8 lg:text-right pl-12 lg:pl-0 order-2 lg:order-1 mt-3 lg:mt-0">
+                                            <div className="bg-blue-600 text-white px-3 py-1.5 lg:px-4 lg:py-2 rounded-full text-xs lg:text-sm font-medium inline-block">
                                                 June 2022 - Oct 2023
                                             </div>
                                         </div>
                                         {/* Timeline Dot */}
-                                        <div className="absolute left-1/2 transform -translate-x-1/2 w-4 h-4 bg-blue-600 rounded-full border-4 border-white dark:border-dark-700 z-10"></div>
-                                        <div className="w-1/2 pl-8">
-                                            <div className="bg-blue-50 dark:bg-blue-900/20 p-6 rounded-lg border border-blue-100 dark:border-blue-800 text-center">
-                                                {/* Company Logo/Image - Full Width */}
+                                        <div className="absolute left-4 lg:left-1/2 transform lg:-translate-x-1/2 top-6 lg:top-auto w-3 h-3 lg:w-4 lg:h-4 bg-blue-600 rounded-full border-2 lg:border-4 border-white dark:border-dark-700 z-10"></div>
+                                        {/* Content - Mobile: top, Desktop: right */}
+                                        <div className="lg:w-1/2 lg:pl-8 pl-12 lg:pl-8 order-1 lg:order-2">
+                                            <div className="bg-blue-50 dark:bg-blue-900/20 p-4 lg:p-6 rounded-lg border border-blue-100 dark:border-blue-800">
+                                                {/* Company Logo/Image */}
                                                 <div className="mb-4">
-                                                    <div className="w-full h-32 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
+                                                    <div className="w-full h-24 lg:h-32 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
                                                         <img
                                                             src="/pictures/edc.jpg"
                                                             alt="Egyptian Drilling Company"
@@ -375,11 +380,11 @@ const CVPage = () => {
                                                         />
                                                     </div>
                                                 </div>
-                                                {/* Text Content Below Image */}
-                                                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                                                {/* Text Content */}
+                                                <h3 className="text-base lg:text-lg font-semibold text-gray-900 dark:text-white mb-2 text-left lg:text-center">
                                                     Emergency Medicine Doctor
                                                 </h3>
-                                                <p className="text-blue-600 dark:text-blue-400 font-medium text-sm mb-3">
+                                                <p className="text-blue-600 dark:text-blue-400 font-medium text-sm mb-3 text-left lg:text-center">
                                                     Egyptian Drilling Company
                                                 </p>
                                                 <ul className="text-gray-600 dark:text-gray-300 space-y-2 text-sm text-left">
@@ -392,13 +397,14 @@ const CVPage = () => {
                                         </div>
                                     </div>
 
-                                    {/* Item 3 - Right Side */}
-                                    <div className="relative flex items-center">
-                                        <div className="w-1/2 pr-8 text-right">
-                                            <div className="bg-blue-50 dark:bg-blue-900/20 p-6 rounded-lg border border-blue-100 dark:border-blue-800 text-center">
-                                                {/* Company Logo/Image - Full Width */}
+                                    {/* Item 3 - Right Side (Desktop) / Full Width (Mobile) */}
+                                    <div className="relative flex flex-col lg:flex-row lg:items-center">
+                                        {/* Content */}
+                                        <div className="lg:w-1/2 lg:pr-8 lg:text-right pl-12 lg:pl-0">
+                                            <div className="bg-blue-50 dark:bg-blue-900/20 p-4 lg:p-6 rounded-lg border border-blue-100 dark:border-blue-800">
+                                                {/* Company Logo/Image */}
                                                 <div className="mb-4">
-                                                    <div className="w-full h-32 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
+                                                    <div className="w-full h-24 lg:h-32 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
                                                         <img
                                                             src="/pictures/petrofarah.png"
                                                             alt="Petrofarah Petroleum Co."
@@ -406,11 +412,11 @@ const CVPage = () => {
                                                         />
                                                     </div>
                                                 </div>
-                                                {/* Text Content Below Image */}
-                                                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                                                {/* Text Content */}
+                                                <h3 className="text-base lg:text-lg font-semibold text-gray-900 dark:text-white mb-2 text-left lg:text-center">
                                                     Emergency Medicine Doctor
                                                 </h3>
-                                                <p className="text-blue-600 dark:text-blue-400 font-medium text-sm mb-3">
+                                                <p className="text-blue-600 dark:text-blue-400 font-medium text-sm mb-3 text-left lg:text-center">
                                                     Petrofarah Petroleum Co. Apex Energy
                                                 </p>
                                                 <ul className="text-gray-600 dark:text-gray-300 space-y-2 text-sm text-left">
@@ -420,33 +426,35 @@ const CVPage = () => {
                                             </div>
                                         </div>
                                         {/* Timeline Dot */}
-                                        <div className="absolute left-1/2 transform -translate-x-1/2 w-4 h-4 bg-blue-600 rounded-full border-4 border-white dark:border-dark-700 z-10"></div>
+                                        <div className="absolute left-4 lg:left-1/2 transform lg:-translate-x-1/2 top-6 lg:top-auto w-3 h-3 lg:w-4 lg:h-4 bg-blue-600 rounded-full border-2 lg:border-4 border-white dark:border-dark-700 z-10"></div>
                                         {/* Date */}
-                                        <div className="w-1/2 pl-8">
-                                            <div className="bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-medium inline-block">
+                                        <div className="lg:w-1/2 lg:pl-8 pl-12 mt-3 lg:mt-0">
+                                            <div className="bg-blue-600 text-white px-3 py-1.5 lg:px-4 lg:py-2 rounded-full text-xs lg:text-sm font-medium inline-block">
                                                 July 2023 - Aug 2023
                                             </div>
                                         </div>
                                     </div>
 
-                                    {/* Item 4 - Left Side */}
-                                    <div className="relative flex items-center">
-                                        <div className="w-1/2 pr-8 text-right">
-                                            <div className="bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-medium inline-block">
+                                    {/* Item 4 - Left Side (Desktop) / Full Width (Mobile) */}
+                                    <div className="relative flex flex-col lg:flex-row lg:items-center">
+                                        {/* Date - Mobile: bottom, Desktop: left */}
+                                        <div className="lg:w-1/2 lg:pr-8 lg:text-right pl-12 lg:pl-0 order-2 lg:order-1 mt-3 lg:mt-0">
+                                            <div className="bg-blue-600 text-white px-3 py-1.5 lg:px-4 lg:py-2 rounded-full text-xs lg:text-sm font-medium inline-block">
                                                 April 2022 - July 2023
                                             </div>
                                         </div>
                                         {/* Timeline Dot */}
-                                        <div className="absolute left-1/2 transform -translate-x-1/2 w-4 h-4 bg-blue-600 rounded-full border-4 border-white dark:border-dark-700 z-10"></div>
-                                        <div className="w-1/2 pl-8">
-                                            <div className="bg-blue-50 dark:bg-blue-900/20 p-6 rounded-lg border border-blue-100 dark:border-blue-800">
-                                                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                                        <div className="absolute left-4 lg:left-1/2 transform lg:-translate-x-1/2 top-6 lg:top-auto w-3 h-3 lg:w-4 lg:h-4 bg-blue-600 rounded-full border-2 lg:border-4 border-white dark:border-dark-700 z-10"></div>
+                                        {/* Content - Mobile: top, Desktop: right */}
+                                        <div className="lg:w-1/2 lg:pl-8 pl-12 order-1 lg:order-2">
+                                            <div className="bg-blue-50 dark:bg-blue-900/20 p-4 lg:p-6 rounded-lg border border-blue-100 dark:border-blue-800">
+                                                <h3 className="text-base lg:text-lg font-semibold text-gray-900 dark:text-white mb-2 text-left">
                                                     Emergency Medicine Doctor
                                                 </h3>
-                                                <p className="text-blue-600 dark:text-blue-400 font-medium text-sm mb-3">
+                                                <p className="text-blue-600 dark:text-blue-400 font-medium text-sm mb-3 text-left">
                                                     Saad Hospital
                                                 </p>
-                                                <ul className="text-gray-600 dark:text-gray-300 space-y-2 text-sm">
+                                                <ul className="text-gray-600 dark:text-gray-300 space-y-2 text-sm text-left">
                                                     <li>• Rapid response to hospital codes with advanced resuscitation</li>
                                                     <li>• Collaborative healthcare team coordination</li>
                                                     <li>• Ensured continuity of patient care</li>
@@ -455,77 +463,81 @@ const CVPage = () => {
                                         </div>
                                     </div>
 
-                                    {/* Item 5 - Right Side */}
-                                    <div className="relative flex items-center">
-                                        <div className="w-1/2 pr-8 text-right">
-                                            <div className="bg-blue-50 dark:bg-blue-900/20 p-6 rounded-lg border border-blue-100 dark:border-blue-800">
-                                                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                                    {/* Item 5 - Right Side (Desktop) / Full Width (Mobile) */}
+                                    <div className="relative flex flex-col lg:flex-row lg:items-center">
+                                        {/* Content */}
+                                        <div className="lg:w-1/2 lg:pr-8 lg:text-right pl-12 lg:pl-0">
+                                            <div className="bg-blue-50 dark:bg-blue-900/20 p-4 lg:p-6 rounded-lg border border-blue-100 dark:border-blue-800">
+                                                <h3 className="text-base lg:text-lg font-semibold text-gray-900 dark:text-white mb-2 text-left">
                                                     Emergency Medicine Doctor
                                                 </h3>
-                                                <p className="text-blue-600 dark:text-blue-400 font-medium text-sm mb-3">
+                                                <p className="text-blue-600 dark:text-blue-400 font-medium text-sm mb-3 text-left">
                                                     Al-Amriah Hospital
                                                 </p>
-                                                <ul className="text-gray-600 dark:text-gray-300 space-y-2 text-sm">
+                                                <ul className="text-gray-600 dark:text-gray-300 space-y-2 text-sm text-left">
                                                     <li>• Critical care and immediate medical attention in emergencies</li>
                                                     <li>• Comprehensive patient documentation and record keeping</li>
                                                 </ul>
                                             </div>
                                         </div>
                                         {/* Timeline Dot */}
-                                        <div className="absolute left-1/2 transform -translate-x-1/2 w-4 h-4 bg-blue-600 rounded-full border-4 border-white dark:border-dark-700 z-10"></div>
+                                        <div className="absolute left-4 lg:left-1/2 transform lg:-translate-x-1/2 top-6 lg:top-auto w-3 h-3 lg:w-4 lg:h-4 bg-blue-600 rounded-full border-2 lg:border-4 border-white dark:border-dark-700 z-10"></div>
                                         {/* Date */}
-                                        <div className="w-1/2 pl-8">
-                                            <div className="bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-medium inline-block">
+                                        <div className="lg:w-1/2 lg:pl-8 pl-12 mt-3 lg:mt-0">
+                                            <div className="bg-blue-600 text-white px-3 py-1.5 lg:px-4 lg:py-2 rounded-full text-xs lg:text-sm font-medium inline-block">
                                                 April 2022 - June 2022
                                             </div>
                                         </div>
                                     </div>
 
-                                    {/* Item 6 - Left Side */}
-                                    <div className="relative flex items-center">
-                                        <div className="w-1/2 pr-8 text-right">
-                                            <div className="bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-medium inline-block">
+                                    {/* Item 6 - Left Side (Desktop) / Full Width (Mobile) */}
+                                    <div className="relative flex flex-col lg:flex-row lg:items-center">
+                                        {/* Date - Mobile: bottom, Desktop: left */}
+                                        <div className="lg:w-1/2 lg:pr-8 lg:text-right pl-12 lg:pl-0 order-2 lg:order-1 mt-3 lg:mt-0">
+                                            <div className="bg-blue-600 text-white px-3 py-1.5 lg:px-4 lg:py-2 rounded-full text-xs lg:text-sm font-medium inline-block">
                                                 March 2022 - April 2022
                                             </div>
                                         </div>
                                         {/* Timeline Dot */}
-                                        <div className="absolute left-1/2 transform -translate-x-1/2 w-4 h-4 bg-blue-600 rounded-full border-4 border-white dark:border-dark-700 z-10"></div>
-                                        <div className="w-1/2 pl-8">
-                                            <div className="bg-blue-50 dark:bg-blue-900/20 p-6 rounded-lg border border-blue-100 dark:border-blue-800">
-                                                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                                        <div className="absolute left-4 lg:left-1/2 transform lg:-translate-x-1/2 top-6 lg:top-auto w-3 h-3 lg:w-4 lg:h-4 bg-blue-600 rounded-full border-2 lg:border-4 border-white dark:border-dark-700 z-10"></div>
+                                        {/* Content - Mobile: top, Desktop: right */}
+                                        <div className="lg:w-1/2 lg:pl-8 pl-12 order-1 lg:order-2">
+                                            <div className="bg-blue-50 dark:bg-blue-900/20 p-4 lg:p-6 rounded-lg border border-blue-100 dark:border-blue-800">
+                                                <h3 className="text-base lg:text-lg font-semibold text-gray-900 dark:text-white mb-2 text-left">
                                                     ICU Intern
                                                 </h3>
-                                                <p className="text-blue-600 dark:text-blue-400 font-medium text-sm mb-3">
+                                                <p className="text-blue-600 dark:text-blue-400 font-medium text-sm mb-3 text-left">
                                                     Ras Elteen Hospital
                                                 </p>
-                                                <ul className="text-gray-600 dark:text-gray-300 space-y-2 text-sm">
+                                                <ul className="text-gray-600 dark:text-gray-300 space-y-2 text-sm text-left">
                                                     <li>• Intensive care experience with critically ill patients</li>
                                                 </ul>
                                             </div>
                                         </div>
                                     </div>
 
-                                    {/* Item 7 - Right Side */}
-                                    <div className="relative flex items-center">
-                                        <div className="w-1/2 pr-8 text-right">
-                                            <div className="bg-blue-50 dark:bg-blue-900/20 p-6 rounded-lg border border-blue-100 dark:border-blue-800">
-                                                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                                    {/* Item 7 - Right Side (Desktop) / Full Width (Mobile) */}
+                                    <div className="relative flex flex-col lg:flex-row lg:items-center">
+                                        {/* Content */}
+                                        <div className="lg:w-1/2 lg:pr-8 lg:text-right pl-12 lg:pl-0">
+                                            <div className="bg-blue-50 dark:bg-blue-900/20 p-4 lg:p-6 rounded-lg border border-blue-100 dark:border-blue-800">
+                                                <h3 className="text-base lg:text-lg font-semibold text-gray-900 dark:text-white mb-2 text-left">
                                                     House Officer
                                                 </h3>
-                                                <p className="text-blue-600 dark:text-blue-400 font-medium text-sm mb-3">
+                                                <p className="text-blue-600 dark:text-blue-400 font-medium text-sm mb-3 text-left">
                                                     Alexandria School of Medicine
                                                 </p>
-                                                <ul className="text-gray-600 dark:text-gray-300 space-y-2 text-sm">
+                                                <ul className="text-gray-600 dark:text-gray-300 space-y-2 text-sm text-left">
                                                     <li>• Hands-on experience in various medical specialties</li>
                                                     <li>• Comprehensive patient care and treatment</li>
                                                 </ul>
                                             </div>
                                         </div>
                                         {/* Timeline Dot */}
-                                        <div className="absolute left-1/2 transform -translate-x-1/2 w-4 h-4 bg-blue-600 rounded-full border-4 border-white dark:border-dark-700 z-10"></div>
+                                        <div className="absolute left-4 lg:left-1/2 transform lg:-translate-x-1/2 top-6 lg:top-auto w-3 h-3 lg:w-4 lg:h-4 bg-blue-600 rounded-full border-2 lg:border-4 border-white dark:border-dark-700 z-10"></div>
                                         {/* Date */}
-                                        <div className="w-1/2 pl-8">
-                                            <div className="bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-medium inline-block">
+                                        <div className="lg:w-1/2 lg:pl-8 pl-12 mt-3 lg:mt-0">
+                                            <div className="bg-blue-600 text-white px-3 py-1.5 lg:px-4 lg:py-2 rounded-full text-xs lg:text-sm font-medium inline-block">
                                                 March 2021 - Feb 2022
                                             </div>
                                         </div>
@@ -533,7 +545,7 @@ const CVPage = () => {
                                 </div>
 
                                 {/* Start Icon at Bottom - The Beginning */}
-                                <div className="absolute left-1/2 transform -translate-x-1/2 -bottom-6 z-20">
+                                <div className="absolute left-4 lg:left-1/2 transform lg:-translate-x-1/2 -bottom-6 z-20">
                                     <div className="w-10 h-10 bg-gradient-to-r from-green-500 to-blue-500 rounded-full flex items-center justify-center shadow-xl border-2 border-white">
                                         <Play className="w-5 h-5 text-white" />
                                     </div>
