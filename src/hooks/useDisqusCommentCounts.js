@@ -22,28 +22,6 @@ export const useDisqusCommentCounts = (posts) => {
         return postsArray.map(post => post.slug).sort().join(',')
     }, [postsArray])
 
-    const generateFallbackCounts = useCallback((postsToProcess) => {
-        const counts = {}
-        postsToProcess.forEach(post => {
-            const postAge = Date.now() - new Date(post.date).getTime()
-            const daysSincePublished = Math.floor(postAge / (1000 * 60 * 60 * 24))
-
-            const ageBonus = Math.min(daysSincePublished / 15, 8)
-
-            const titleWords = post.title.toLowerCase()
-            const isEngaging = titleWords.includes('style') || titleWords.includes('travel') ||
-                titleWords.includes('music') || titleWords.includes('indulgence')
-            const engagementBonus = isEngaging ? 5 : 0
-
-            const slugHash = post.slug.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0)
-            const baseComments = slugHash % 8
-
-            const totalComments = Math.floor(baseComments + ageBonus + engagementBonus)
-            counts[post.slug] = Math.max(0, totalComments)
-        })
-        return counts
-    }, [])
-
     useEffect(() => {
         // Only run if posts have changed and not already processed
         if (!postsArray.length || processedSlugsRef.current === postSlugs) {
@@ -73,26 +51,25 @@ export const useDisqusCommentCounts = (posts) => {
                 if (!isMounted) return
 
                 const counts = {}
-                let hasRealCounts = false
 
-                // Try to get real Disqus counts
+                // Get real Disqus counts from the DOM elements
                 postsArray.forEach(post => {
                     const element = document.querySelector(`[data-disqus-identifier="${post.slug}"]`)
-                    if (element && element.textContent && element.textContent.trim() !== '0') {
+                    if (element && element.textContent) {
                         const countText = element.textContent.trim()
                         const match = countText.match(/(\d+)/)
-                        if (match && parseInt(match[1]) > 0) {
+                        if (match) {
+                            // Use actual Disqus count (including 0)
                             counts[post.slug] = parseInt(match[1])
-                            hasRealCounts = true
+                        } else {
+                            // If no number found, set to 0
+                            counts[post.slug] = 0
                         }
+                    } else {
+                        // If element doesn't exist yet, set to 0
+                        counts[post.slug] = 0
                     }
                 })
-
-                // If no real counts found, use fallback
-                if (!hasRealCounts) {
-                    const fallbackCounts = generateFallbackCounts(postsArray)
-                    Object.assign(counts, fallbackCounts)
-                }
 
                 if (isMounted) {
                     setCommentCounts(counts)
@@ -105,7 +82,12 @@ export const useDisqusCommentCounts = (posts) => {
                 console.error('Error fetching Disqus comment counts:', err)
                 if (isMounted) {
                     setError(err.message)
-                    setCommentCounts(generateFallbackCounts(postsArray))
+                    // Set all counts to 0 on error instead of using fake fallback
+                    const zeroCounts = {}
+                    postsArray.forEach(post => {
+                        zeroCounts[post.slug] = 0
+                    })
+                    setCommentCounts(zeroCounts)
                     setLoading(false)
                     processedSlugsRef.current = postSlugs
                     initializedRef.current = true
@@ -118,7 +100,7 @@ export const useDisqusCommentCounts = (posts) => {
         return () => {
             isMounted = false
         }
-    }, [postSlugs, generateFallbackCounts])
+    }, [postSlugs])
 
     // Memoize sorted posts to prevent unnecessary recalculations
     const sortedByComments = useMemo(() => {

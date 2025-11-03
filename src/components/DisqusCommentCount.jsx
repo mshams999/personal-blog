@@ -3,21 +3,6 @@ import { MessageCircle } from 'lucide-react'
 import { disqusConfig, getDisqusConfig, isDisqusConfigured } from '../config/disqus'
 
 /**
- * Generate a consistent comment count based on post slug
- * This ensures the same post always shows the same comment count
- */
-const generateConsistentCommentCount = (slug) => {
-    let hash = 0
-    for (let i = 0; i < slug.length; i++) {
-        const char = slug.charCodeAt(i)
-        hash = ((hash << 5) - hash) + char
-        hash = hash & hash // Convert to 32bit integer
-    }
-    // Generate a number between 0-15
-    return Math.abs(hash) % 16
-}
-
-/**
  * Simple Disqus Comment Counter that avoids DOM manipulation issues
  * Uses the Disqus count API directly instead of the problematic CommentCount component
  */
@@ -94,11 +79,10 @@ const SimpleDisqusCounter = ({ post, currentUrl }) => {
     }, [post.slug, currentUrl])
 
     if (!isDisqusConfigured()) {
-        const placeholderCount = generateConsistentCommentCount(post.slug)
         return (
             <div className="flex items-center gap-1 text-gray-500 dark:text-gray-400">
                 <MessageCircle className="w-3 h-3" />
-                <span className="text-xs">{placeholderCount} Comments</span>
+                <span className="text-xs">0 Comments</span>
             </div>
         )
     }
