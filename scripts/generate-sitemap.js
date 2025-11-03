@@ -47,29 +47,57 @@ async function generateSitemap() {
         const postsResponse = await client.queries.postConnection();
         const posts = postsResponse.data.postConnection.edges || [];
 
-        // Static routes
+        // Static routes with different priorities and change frequencies
         const staticRoutes = [
-            '/',
-            '/blog',
-            '/about'
+            {
+                url: '/',
+                priority: '1.0',
+                changefreq: 'weekly',
+                lastmod: new Date().toISOString()
+            },
+            {
+                url: '/blog',
+                priority: '0.9',
+                changefreq: 'daily',
+                lastmod: new Date().toISOString()
+            },
+            {
+                url: '/about',
+                priority: '0.8',
+                changefreq: 'monthly',
+                lastmod: new Date().toISOString()
+            }
         ];
 
-        // Generate post routes
-        const postRoutes = posts.map(post => `/blog/${post.node._sys.filename}`);
+        // Generate post routes with proper metadata
+        const postRoutes = posts.map(post => {
+            // Get the last modified date from the post data if available
+            const lastModified = post.node.date || post.node._sys.createdAt || new Date().toISOString();
+
+            return {
+                url: `/blog/${post.node._sys.filename}`,
+                priority: '0.7',
+                changefreq: 'weekly',
+                lastmod: new Date(lastModified).toISOString()
+            };
+        });
 
         // Combine all routes
         const allRoutes = [...staticRoutes, ...postRoutes];
 
-        // Generate sitemap XML
+        // Generate sitemap XML with proper formatting and metadata
         const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  ${allRoutes.map(route => `
-  <url>
-    <loc>https://mohamedshams.com${route}</loc>
-    <lastmod>${new Date().toISOString()}</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>`).join('')}
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:news="http://www.google.com/schemas/sitemap-news/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+        xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
+${allRoutes.map(route => `  <url>
+    <loc>https://mohamedshams.com${route.url}</loc>
+    <lastmod>${route.lastmod}</lastmod>
+    <changefreq>${route.changefreq}</changefreq>
+    <priority>${route.priority}</priority>
+  </url>`).join('\n')}
 </urlset>`;
 
         // Write sitemap to the dist directory
