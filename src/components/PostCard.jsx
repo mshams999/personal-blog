@@ -44,7 +44,7 @@ const PostCard = ({ post, index = 0 }) => {
             onClick={handleCardClick}
         >
             {/* Featured Image with hover zoom effect */}
-            <div className="relative h-48 overflow-hidden img-hover-zoom">
+            <div className="relative h-52 sm:h-56 md:h-60 lg:h-48 overflow-hidden img-hover-zoom">
                 <img
                     src={post.featuredImage}
                     alt={post.title}

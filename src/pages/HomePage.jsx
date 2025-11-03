@@ -173,7 +173,7 @@ const HomePage = () => {
                 to={`/post/${post.slug}`}
                 className={`block rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 group cursor-pointer transform hover:-translate-y-1 card-hover-glow ${config.size} ${currentTheme.container}`}
             >
-                <div className={`relative ${isLargeCard ? 'h-64' : 'h-48'} overflow-hidden`}>
+                <div className={`relative ${isLargeCard ? 'h-56 sm:h-64 md:h-72 lg:h-64' : 'h-52 sm:h-56 md:h-60 lg:h-48'} overflow-hidden`}>
                     <img
                         src={post.featuredImage}
                         alt={post.title}

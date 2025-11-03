@@ -68,7 +68,7 @@ const CategoryPage = () => {
                 to={`/post/${post.slug}`}
                 className="block bg-white dark:bg-dark-700 rounded-2xl overflow-hidden shadow-sm border border-gray-100 dark:border-dark-600 hover:shadow-lg transition-all duration-300 group cursor-pointer"
             >
-                <div className="relative h-48 overflow-hidden">
+                <div className="relative h-52 sm:h-56 md:h-60 lg:h-48 overflow-hidden">
                     <img
                         src={post.featuredImage}
                         alt={post.title}
