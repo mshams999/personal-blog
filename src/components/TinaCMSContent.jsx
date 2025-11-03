@@ -11,9 +11,9 @@ const components = {
     // Callout component for highlighting important information
     Callout: ({ type, title, content }) => (
         <div className={`callout callout-${type} p-6 rounded-lg my-8 border-l-4 shadow-sm ${type === 'info' ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-500 text-blue-900 dark:text-blue-100' :
-                type === 'warning' ? 'bg-yellow-50 dark:bg-yellow-900/20 border-yellow-500 text-yellow-900 dark:text-yellow-100' :
-                    type === 'error' ? 'bg-red-50 dark:bg-red-900/20 border-red-500 text-red-900 dark:text-red-100' :
-                        'bg-green-50 dark:bg-green-900/20 border-green-500 text-green-900 dark:text-green-100'
+            type === 'warning' ? 'bg-yellow-50 dark:bg-yellow-900/20 border-yellow-500 text-yellow-900 dark:text-yellow-100' :
+                type === 'error' ? 'bg-red-50 dark:bg-red-900/20 border-red-500 text-red-900 dark:text-red-100' :
+                    'bg-green-50 dark:bg-green-900/20 border-green-500 text-green-900 dark:text-green-100'
             }`}>
             {title && <h4 className="font-semibold mb-3 text-lg">{title}</h4>}
             <div className="prose prose-sm max-w-none">
@@ -110,17 +110,26 @@ const components = {
         </li>
     ),
 
-    // Link styling
-    a: ({ href, children }) => (
-        <a
-            href={href}
-            className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 underline transition-colors"
-            target={href?.startsWith('http') ? '_blank' : undefined}
-            rel={href?.startsWith('http') ? 'noopener noreferrer' : undefined}
-        >
-            {children}
-        </a>
-    ),
+    // Link styling (TinaCMS uses 'url' prop for links in rich-text)
+    a: (props) => {
+        // TinaCMS passes 'url' for links in rich-text, but also support 'href' for compatibility
+        const linkUrl = props.url || props.href;
+        const linkTitle = props.title;
+
+        console.log('🔗 Link component rendering:', { url: linkUrl, title: linkTitle });
+
+        return (
+            <a
+                href={linkUrl}
+                title={linkTitle}
+                className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 underline transition-colors cursor-pointer"
+                target={linkUrl?.startsWith('http') ? '_blank' : undefined}
+                rel={linkUrl?.startsWith('http') ? 'noopener noreferrer' : undefined}
+            >
+                {props.children}
+            </a>
+        );
+    },
 
     // Blockquote styling
     blockquote: ({ children }) => (
@@ -129,21 +138,34 @@ const components = {
         </blockquote>
     ),
 
-    // Image component
-    img: ({ src, alt }) => (
-        <div className="my-8">
-            <img
-                src={src}
-                alt={alt}
-                className="w-full rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300"
-            />
-            {alt && (
-                <p className="text-sm text-gray-600 dark:text-gray-400 mt-2 text-center italic">
-                    {alt}
-                </p>
-            )}
-        </div>
-    ),
+    // Image component with path fixing (TinaCMS uses 'url' prop for images)
+    img: (props) => {
+        // TinaCMS passes 'url' for images in rich-text, but also support 'src' for compatibility
+        const imageUrl = props.url || props.src;
+        const altText = props.alt || props.caption || '';
+
+        // Fix image paths that start with /public/uploads/ to /uploads/
+        const fixedUrl = imageUrl?.startsWith('/public/uploads/')
+            ? imageUrl.replace('/public/uploads/', '/uploads/')
+            : imageUrl;
+
+        console.log('🖼️ Image component rendering:', { original: imageUrl, fixed: fixedUrl });
+
+        return (
+            <div className="my-8">
+                <img
+                    src={fixedUrl}
+                    alt={altText}
+                    className="w-full rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300"
+                />
+                {altText && (
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-2 text-center italic">
+                        {altText}
+                    </p>
+                )}
+            </div>
+        );
+    },
 }
 
 /**
@@ -154,9 +176,52 @@ export const TinaCMSContent = ({ content }) => {
         return <div className="text-gray-500 dark:text-gray-400 italic">No content available</div>
     }
 
+    // Process content to fix image paths recursively
+    const processContent = (node) => {
+        if (!node) return node;
+
+        // Handle string content (markdown)
+        if (typeof node === 'string') {
+            return node.replace(/!\[([^\]]*)\]\(\/public\/uploads\//g, '![$1](/uploads/');
+        }
+
+        // Handle arrays
+        if (Array.isArray(node)) {
+            return node.map(processContent);
+        }
+
+        // Handle objects (rich-text nodes)
+        if (typeof node === 'object') {
+            // Fix image URL
+            if (node.type === 'img' && node.url?.startsWith('/public/uploads/')) {
+                console.log('🖼️ Fixing image path:', node.url);
+                return {
+                    ...node,
+                    url: node.url.replace('/public/uploads/', '/uploads/'),
+                    children: node.children ? processContent(node.children) : node.children
+                };
+            }
+
+            // Process children recursively
+            if (node.children) {
+                return {
+                    ...node,
+                    children: processContent(node.children)
+                };
+            }
+
+            return node;
+        }
+
+        return node;
+    };
+
+    const processedContent = processContent(content);
+    console.log('📝 TinaCMSContent rendering with processed content');
+
     return (
         <div className="prose prose-lg max-w-none">
-            <TinaMarkdown content={content} components={components} />
+            <TinaMarkdown content={processedContent} components={components} />
         </div>
     )
 }

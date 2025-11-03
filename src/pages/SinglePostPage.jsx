@@ -118,12 +118,27 @@ const SinglePostPage = () => {
 
         // Check if the body is a string (markdown) or rich-text object
         if (typeof post.body === 'string') {
-          // Simple markdown/text content
+          // Process markdown content to fix image paths and convert to HTML
+          let processedBody = post.body
+            .replace(/!\[([^\]]*)\]\(\/public\/uploads\//g, '![$1](/uploads/') // Fix image paths
+            .replace(/\n/g, '<br/>'); // Convert line breaks
+
+          // Basic markdown to HTML conversion for better display
+          processedBody = processedBody
+            .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 underline transition-colors" target="_blank" rel="noopener noreferrer">$1</a>') // Convert markdown links
+            .replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<div class="my-6"><img src="$2" alt="$1" class="w-full rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300" /><p class="text-sm text-gray-600 dark:text-gray-400 mt-2 text-center italic">$1</p></div>'); // Convert markdown images
+
           const content = (
-            <div className="animate-fade-in prose prose-lg max-w-none dark:prose-invert">
+            <div className="animate-fade-in prose prose-lg max-w-none dark:prose-invert arabic-text" dir="rtl">
               <div
-                className="tinacms-content"
-                dangerouslySetInnerHTML={{ __html: post.body.replace(/\n/g, '<br/>') }}
+                className="tinacms-content arabic-text"
+                dir="rtl"
+                style={{
+                  direction: 'rtl',
+                  textAlign: 'right',
+                  fontFamily: '"Amiri", "Noto Sans Arabic", system-ui, -apple-system, sans-serif'
+                }}
+                dangerouslySetInnerHTML={{ __html: processedBody }}
               />
             </div>
           )
@@ -131,7 +146,7 @@ const SinglePostPage = () => {
         } else {
           // Rich text content - use TinaMarkdown
           const content = (
-            <div className="animate-fade-in prose prose-lg max-w-none dark:prose-invert">
+            <div className="animate-fade-in prose prose-lg max-w-none dark:prose-invert arabic-text" dir="rtl">
               <TinaCMSContent content={post.body} />
             </div>
           )
@@ -142,27 +157,33 @@ const SinglePostPage = () => {
 
         // Fallback to excerpt if no body content
         const content = (
-          <div className="animate-fade-in prose prose-lg max-w-none dark:prose-invert">
-            <p className="text-lg leading-relaxed text-gray-700 dark:text-gray-300 mb-8">
+          <div className="animate-fade-in prose prose-lg max-w-none dark:prose-invert arabic-text" dir="rtl">
+            <p className="text-lg leading-relaxed text-gray-700 dark:text-gray-300 mb-8 arabic-text"
+              dir="rtl"
+              style={{
+                direction: 'rtl',
+                textAlign: 'right',
+                fontFamily: '"Amiri", "Noto Sans Arabic", system-ui, -apple-system, sans-serif'
+              }}>
               {post.excerpt}
             </p>
 
-            <div className="my-10 p-6 bg-gray-50 dark:bg-dark-700 rounded-xl border border-gray-100 dark:border-dark-600 shadow-sm">
-              <h4 className="text-lg font-semibold mb-2 text-yellow-600 dark:text-yellow-400">
-                📝 Content Not Available
+            <div className="my-10 p-6 bg-gray-50 dark:bg-dark-700 rounded-xl border border-gray-100 dark:border-dark-600 shadow-sm" dir="rtl">
+              <h4 className="text-lg font-semibold mb-2 text-yellow-600 dark:text-yellow-400 arabic-text" dir="rtl">
+                📝 المحتوى غير متوفر
               </h4>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                This post doesn't have full content available. This could be because:
+              <p className="text-sm text-gray-600 dark:text-gray-400 arabic-text" dir="rtl">
+                هذا المقال لا يحتوي على محتوى كامل. قد يكون السبب:
               </p>
-              <ul className="text-sm text-gray-600 dark:text-gray-400 mt-2 ml-4">
-                <li>• The post body is empty in TinaCMS</li>
-                <li>• The content failed to load</li>
-                <li>• This is a legacy post</li>
+              <ul className="text-sm text-gray-600 dark:text-gray-400 mt-2 mr-4 arabic-text" dir="rtl">
+                <li>• محتوى المقال فارغ في TinaCMS</li>
+                <li>• فشل في تحميل المحتوى</li>
+                <li>• هذا مقال قديم</li>
               </ul>
-              <p className="text-sm text-gray-600 dark:text-gray-400 mt-3">
+              <p className="text-sm text-gray-600 dark:text-gray-400 mt-3 arabic-text" dir="rtl">
                 <a href="/admin" className="text-primary-600 hover:text-primary-700 underline">
-                  Edit this post in TinaCMS
-                </a> to add content.
+                  تحرير هذا المقال في TinaCMS
+                </a> لإضافة المحتوى.
               </p>
             </div>
           </div>
@@ -250,15 +271,15 @@ const SinglePostPage = () => {
         publishedTime={new Date(post.date).toISOString()}
       />
 
-      <article className="min-h-screen pb-16 animate-fade-in">
+      <article className="min-h-screen pb-16 animate-fade-in" dir="rtl">
         {/* Back Button - Fixed position over the header */}
-        <div className="absolute top-6 left-6 z-30">
+        <div className="absolute top-6 right-6 z-30">
           <Link
             to="/"
             className="inline-flex items-center text-sm font-medium text-white hover:text-gray-200 transition-colors group bg-black/20 backdrop-blur-sm rounded-full px-4 py-2"
           >
-            <ArrowLeft className="h-4 w-4 mr-2 transition-transform group-hover:-translate-x-1" />
-            Back to posts
+            <ArrowLeft className="h-4 w-4 ml-2 transition-transform group-hover:translate-x-1" />
+            العودة للمقالات
           </Link>
         </div>
 
@@ -283,7 +304,7 @@ const SinglePostPage = () => {
           <div className="absolute inset-0 bg-black/50 z-10"></div>
 
           {/* Header Content */}
-          <div className="relative z-20 flex flex-col justify-center items-start h-full max-w-4xl mx-auto px-4 py-16 md:py-20 text-left">
+          <div className="relative z-20 flex flex-col justify-center items-end h-full max-w-4xl mx-auto px-4 py-16 md:py-20 text-right">
             {/* Category Tag */}
             {category && (
               <div className="mb-6 animate-fade-in">
@@ -297,14 +318,19 @@ const SinglePostPage = () => {
             )}
 
             {/* Post Title */}
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight mb-8 drop-shadow-lg animate-slide-up max-w-4xl">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight mb-8 drop-shadow-lg animate-slide-up max-w-4xl text-right arabic-heading"
+              dir="rtl"
+              style={{
+                fontFamily: '"Amiri", "Noto Sans Arabic", system-ui, -apple-system, sans-serif',
+                direction: 'rtl',
+                textAlign: 'right',
+                lineHeight: '1.3'
+              }}>
               {post.title}
-            </h1>
-
-            {/* Post Metadata */}
-            <div className="flex flex-wrap items-center gap-2 text-sm text-gray-200 animate-fade-in delay-200 mb-4">
+            </h1>            {/* Post Metadata */}
+            <div className="flex flex-wrap items-center gap-2 text-sm text-gray-200 animate-fade-in delay-200 mb-4 justify-end" dir="rtl">
               {/* Author */}
-              <span className="text-gray-300">by</span>
+              <span className="text-gray-300">بواسطة</span>
               {author && (
                 <span className="font-medium text-white">{author.name}</span>
               )}
@@ -312,12 +338,12 @@ const SinglePostPage = () => {
               <span className="text-gray-400">—</span>
 
               {/* Date */}
-              <span className="text-gray-300">5 Years Ago</span>
+              <span className="text-gray-300">منذ ٥ سنوات</span>
 
               <span className="text-gray-400">—</span>
 
               {/* Updated date */}
-              <span className="text-gray-300">Updated: 2 Hours Ago</span>
+              <span className="text-gray-300">آخر تحديث: منذ ساعتين</span>
 
               <span className="text-gray-400">—</span>
 
@@ -330,7 +356,7 @@ const SinglePostPage = () => {
             </div>
 
             {/* Star Rating */}
-            <div className="flex items-center gap-4 animate-fade-in delay-300">
+            <div className="flex items-center gap-4 animate-fade-in delay-300 justify-end">
               <div className="flex items-center gap-2">
                 <ReactStars
                   count={5}
@@ -342,7 +368,7 @@ const SinglePostPage = () => {
                   edit={false}
                 />
                 <span className="text-white font-medium text-lg">
-                  {averageRating.toFixed(1)}/5 ({totalRatings} ratings)
+                  {averageRating.toFixed(1)}/5 ({totalRatings} تقييم)
                 </span>
               </div>
             </div>
@@ -352,7 +378,7 @@ const SinglePostPage = () => {
         {/* Content */}
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           {/* Social Sharing Sidebar - Desktop */}
-          <div className="hidden md:flex flex-col fixed right-8 top-1/3 items-center space-y-4 z-30">
+          <div className="hidden md:flex flex-col fixed left-8 top-1/3 items-center space-y-4 z-30">
             {/* Applause Button for sidebar */}
             <div className="bg-gray-100/90 backdrop-blur-sm rounded-full p-2 dark:bg-dark-700" title="Applaud this post">
               <ApplauseButton
@@ -371,11 +397,11 @@ const SinglePostPage = () => {
           </div>
 
           {/* Post Header */}
-          <header className="mb-12 animate-slide-up">
+          <header className="mb-12 animate-slide-up" dir="rtl">
             {/* Post Meta - Additional details */}
-            <div className="flex flex-wrap items-center gap-6 text-sm text-gray-600 dark:text-gray-400 mb-8">
+            <div className="flex flex-wrap items-center gap-6 text-sm text-gray-600 dark:text-gray-400 mb-8 justify-end">
               {author && (
-                <div className="flex items-center space-x-3">
+                <div className="flex items-center space-x-3 space-x-reverse">
                   <img
                     src={author.avatar}
                     alt={author.name}
@@ -385,9 +411,9 @@ const SinglePostPage = () => {
                 </div>
               )}
 
-              <div className="flex items-center space-x-1">
+              <div className="flex items-center space-x-1 space-x-reverse">
                 <Clock className="h-4 w-4" />
-                <span>{post.readTime} min read</span>
+                <span>{post.readTime} دقيقة قراءة</span>
               </div>
 
               <ViewCounter
@@ -401,7 +427,7 @@ const SinglePostPage = () => {
 
 
             {post.tags && post.tags.length > 0 && (
-              <div className="flex flex-wrap gap-2 mt-6">
+              <div className="flex flex-wrap gap-2 mt-6 justify-end" dir="rtl">
                 {post.tags.map((tag) => (
                   <span
                     key={tag}
@@ -415,36 +441,47 @@ const SinglePostPage = () => {
           </header>
 
           {/* Post Content */}
-          <div className="prose prose-lg dark:prose-dark max-w-none" dir="rtl">
+          <div className="prose prose-lg dark:prose-dark max-w-none arabic-text"
+            dir="rtl"
+            style={{
+              fontFamily: '"Amiri", "Noto Sans Arabic", system-ui, -apple-system, sans-serif',
+              lineHeight: '1.8',
+              textAlign: 'right',
+              direction: 'rtl'
+            }}>
             {loading ? (
-              <div className="animate-pulse space-y-6">
-                <div className="h-4 bg-gray-200 dark:bg-dark-600 rounded w-3/4"></div>
-                <div className="h-4 bg-gray-200 dark:bg-dark-600 rounded w-1/2"></div>
-                <div className="h-4 bg-gray-200 dark:bg-dark-600 rounded w-2/3"></div>
-                <div className="h-4 bg-gray-200 dark:bg-dark-600 rounded w-4/5"></div>
-                <div className="h-4 bg-gray-200 dark:bg-dark-600 rounded w-3/5"></div>
+              <div className="animate-pulse space-y-6" dir="rtl">
+                <div className="h-4 bg-gray-200 dark:bg-dark-600 rounded w-3/4 ml-auto"></div>
+                <div className="h-4 bg-gray-200 dark:bg-dark-600 rounded w-1/2 ml-auto"></div>
+                <div className="h-4 bg-gray-200 dark:bg-dark-600 rounded w-2/3 ml-auto"></div>
+                <div className="h-4 bg-gray-200 dark:bg-dark-600 rounded w-4/5 ml-auto"></div>
+                <div className="h-4 bg-gray-200 dark:bg-dark-600 rounded w-3/5 ml-auto"></div>
               </div>
             ) : post?.isTinaPost ? (
               // Render TinaCMS content with rich components
-              <TinaCMSContent content={post.body} />
+              <div dir="rtl" className="arabic-text">
+                <TinaCMSContent content={post.body} />
+              </div>
             ) : (
               // Render static content or fallback
-              mdxContent || <StaticContent content={post?.excerpt} />
+              <div dir="rtl" className="arabic-text">
+                {mdxContent || <StaticContent content={post?.excerpt} />}
+              </div>
             )}
           </div>
 
 
-          <div className="mt-16 p-8 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-dark-800 dark:to-dark-700 rounded-2xl border border-blue-100 dark:border-dark-600 relative overflow-hidden">
+          <div className="mt-16 p-8 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-dark-800 dark:to-dark-700 rounded-2xl border border-blue-100 dark:border-dark-600 relative overflow-hidden" dir="rtl">
             {/* Background decoration */}
-            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-200/20 to-indigo-200/20 rounded-full -translate-y-16 translate-x-16"></div>
+            <div className="absolute top-0 left-0 w-32 h-32 bg-gradient-to-br from-blue-200/20 to-indigo-200/20 rounded-full -translate-y-16 -translate-x-16"></div>
 
             <div className="relative z-10">
               <div className="text-center mb-6">
                 <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-                  Rate This Article
+                  قيّم هذا المقال
                 </h3>
                 <p className="text-gray-600 dark:text-gray-300">
-                  Your feedback helps us create better content
+                  تقييمك يساعدنا في تحسين المحتوى
                 </p>
               </div>
 
@@ -462,7 +499,7 @@ const SinglePostPage = () => {
                       edit={false}
                     />
                     <span className="text-sm text-gray-600 dark:text-gray-400">
-                      {averageRating.toFixed(1)} average ({totalRatings} ratings)
+                      متوسط {averageRating.toFixed(1)} ({totalRatings} تقييم)
                     </span>
                   </div>
                 </div>
@@ -470,7 +507,7 @@ const SinglePostPage = () => {
                 {/* User rating input */}
                 <div className="text-center">
                   <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
-                    {userRating > 0 ? 'Your rating:' : 'Click to rate:'}
+                    {userRating > 0 ? 'تقييمك:' : 'اضغط للتقييم:'}
                   </p>
                   <ReactStars
                     count={5}
@@ -484,7 +521,7 @@ const SinglePostPage = () => {
                   />
                   {userRating > 0 && (
                     <p className="text-sm text-green-600 dark:text-green-400 mt-2">
-                      Thanks for rating! You gave {userRating} star{userRating !== 1 ? 's' : ''}
+                      شكراً لك! لقد أعطيت {userRating} {userRating === 1 ? 'نجمة' : 'نجوم'}
                     </p>
                   )}
                 </div>
@@ -492,7 +529,7 @@ const SinglePostPage = () => {
                 {/* Rating confirmation message */}
                 {showRatingMessage && (
                   <div className="bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-200 px-4 py-2 rounded-full text-sm animate-fade-in">
-                    ✨ Thank you for your rating!
+                    ✨ شكراً لك على التقييم!
                   </div>
                 )}
               </div>

@@ -5,9 +5,9 @@ import { TinaMarkdown } from "tinacms/dist/rich-text"
 const components = {
     Callout: ({ type, title, content }) => (
         <div className={`callout callout-${type} p-4 rounded-lg my-6 border-l-4 ${type === 'info' ? 'bg-blue-50 border-blue-500 text-blue-900' :
-                type === 'warning' ? 'bg-yellow-50 border-yellow-500 text-yellow-900' :
-                    type === 'error' ? 'bg-red-50 border-red-500 text-red-900' :
-                        'bg-green-50 border-green-500 text-green-900'
+            type === 'warning' ? 'bg-yellow-50 border-yellow-500 text-yellow-900' :
+                type === 'error' ? 'bg-red-50 border-red-500 text-red-900' :
+                    'bg-green-50 border-green-500 text-green-900'
             }`}>
             {title && <h4 className="font-semibold mb-2">{title}</h4>}
             <TinaMarkdown content={content} />
@@ -27,22 +27,70 @@ const components = {
 
     ImageGallery: ({ images }) => (
         <div className="image-gallery grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 my-6">
-            {images?.map((image, index) => (
-                <figure key={index} className="relative">
-                    <img
-                        src={image.src}
-                        alt={image.alt}
-                        className="w-full h-48 object-cover rounded-lg"
-                    />
-                    {image.caption && (
-                        <figcaption className="text-sm text-gray-600 mt-2 text-center">
-                            {image.caption}
-                        </figcaption>
-                    )}
-                </figure>
-            ))}
+            {images?.map((image, index) => {
+                // Fix image paths
+                const fixedSrc = image.src?.startsWith('/public/uploads/')
+                    ? image.src.replace('/public/uploads/', '/uploads/')
+                    : image.src;
+
+                return (
+                    <figure key={index} className="relative">
+                        <img
+                            src={fixedSrc}
+                            alt={image.alt}
+                            className="w-full h-48 object-cover rounded-lg"
+                        />
+                        {image.caption && (
+                            <figcaption className="text-sm text-gray-600 mt-2 text-center">
+                                {image.caption}
+                            </figcaption>
+                        )}
+                    </figure>
+                );
+            })}
         </div>
     ),
+
+    // Add explicit link component (TinaCMS uses 'url' prop)
+    a: (props) => {
+        const linkUrl = props.url || props.href;
+        return (
+            <a
+                href={linkUrl}
+                className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 underline transition-colors cursor-pointer"
+                target={linkUrl?.startsWith('http') ? '_blank' : undefined}
+                rel={linkUrl?.startsWith('http') ? 'noopener noreferrer' : undefined}
+            >
+                {props.children}
+            </a>
+        );
+    },
+
+    // Add explicit image component with path fixing (TinaCMS uses 'url' prop)
+    img: (props) => {
+        const imageUrl = props.url || props.src;
+        const altText = props.alt || props.caption || '';
+
+        // Fix image paths that start with /public/uploads/ to /uploads/
+        const fixedUrl = imageUrl?.startsWith('/public/uploads/')
+            ? imageUrl.replace('/public/uploads/', '/uploads/')
+            : imageUrl;
+
+        return (
+            <div className="my-6">
+                <img
+                    src={fixedUrl}
+                    alt={altText}
+                    className="w-full rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300"
+                />
+                {altText && (
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-2 text-center italic">
+                        {altText}
+                    </p>
+                )}
+            </div>
+        );
+    },
 }
 
 // TinaCMS Post Component
