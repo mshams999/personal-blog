@@ -346,3 +346,205 @@ function generateDefaultEmailHTML(templateData = {}) {
 </html>
   `;
 }
+
+/**
+ * Sync Disqus comment counts to Firestore
+ * Scheduled to run every 10 minutes
+ * Note: Disqus API has rate limits of 1000 requests/hour
+ */
+const { onSchedule } = require('firebase-functions/v2/scheduler');
+
+exports.syncDisqusComments = onSchedule({
+    schedule: 'every 10 minutes',
+    timeZone: 'America/New_York',
+    secrets: ['DISQUS_API_KEY']
+}, async (event) => {
+    const db = admin.firestore();
+
+    // Get Disqus credentials from environment
+    const DISQUS_API_KEY = process.env.DISQUS_API_KEY;
+    const DISQUS_SHORTNAME = 'mohamedshams-1'; // Your Disqus shortname
+
+    if (!DISQUS_API_KEY) {
+        logger.error('DISQUS_API_KEY not configured');
+        return;
+    }
+
+    try {
+        logger.info('🔄 Starting full Disqus forum sync...');
+
+        let syncedCount = 0;
+        let errorCount = 0;
+        let cursor = null;
+        let hasMore = true;
+
+        // Fetch ALL threads from Disqus forum
+        while (hasMore) {
+            try {
+                let url = `https://disqus.com/api/3.0/threads/list.json?` +
+                    `api_key=${DISQUS_API_KEY}&` +
+                    `forum=${DISQUS_SHORTNAME}&` +
+                    `limit=100`;
+
+                if (cursor) {
+                    url += `&cursor=${cursor}`;
+                }
+
+                const response = await fetch(url);
+                const data = await response.json();
+
+                if (data.code !== 0 || !data.response) {
+                    throw new Error(`Disqus API error: ${data.code}`);
+                }
+
+                // Process each thread
+                for (const thread of data.response) {
+                    // Use the first identifier from the thread
+                    const identifier = thread.identifiers && thread.identifiers.length > 0
+                        ? thread.identifiers[0]
+                        : thread.slug;
+
+                    const count = thread.posts || 0;
+
+                    try {
+                        // Update Firestore with the thread's identifier
+                        await db.collection('commentCounts').doc(identifier).set({
+                            count,
+                            lastUpdated: admin.firestore.FieldValue.serverTimestamp(),
+                            postSlug: identifier,
+                            threadId: thread.id,
+                            title: thread.title
+                        }, { merge: true });
+
+                        syncedCount++;
+                        if (count > 0) {
+                            logger.info(`✅ Synced ${identifier}: ${count} comments`);
+                        }
+                    } catch (error) {
+                        errorCount++;
+                        logger.error(`❌ Error syncing ${identifier}:`, error.message);
+                    }
+                }
+
+                // Check if there are more pages
+                hasMore = data.cursor && data.cursor.hasNext;
+                cursor = data.cursor?.next;
+
+                // Small delay to avoid rate limiting
+                await new Promise(resolve => setTimeout(resolve, 500));
+
+            } catch (error) {
+                logger.error('Error fetching threads:', error);
+                errorCount++;
+                hasMore = false;
+            }
+        }
+
+        logger.info(`🎉 Full sync complete! Success: ${syncedCount}, Errors: ${errorCount}`);
+
+    } catch (error) {
+        logger.error('❌ Sync error:', error);
+        throw error;
+    }
+});
+
+/**
+ * Manual trigger for syncing comments (HTTP endpoint)
+ * Call this endpoint to manually trigger a sync
+ * This will sync ALL threads from Disqus forum
+ */
+exports.syncDisqusCommentsManual = onRequest({
+    cors: true,
+    secrets: ['DISQUS_API_KEY']
+}, async (req, res) => {
+    const db = admin.firestore();
+
+    const DISQUS_API_KEY = process.env.DISQUS_API_KEY;
+    const DISQUS_SHORTNAME = 'mohamedshams-1';
+
+    if (!DISQUS_API_KEY) {
+        return res.status(500).json({ error: 'DISQUS_API_KEY not configured' });
+    }
+
+    try {
+        logger.info('🔄 Manual sync triggered - syncing ALL threads from Disqus...');
+
+        let syncedCount = 0;
+        let errorCount = 0;
+        const results = [];
+        let cursor = null;
+        let hasMore = true;
+
+        // Fetch ALL threads from Disqus forum
+        while (hasMore) {
+            try {
+                let url = `https://disqus.com/api/3.0/threads/list.json?` +
+                    `api_key=${DISQUS_API_KEY}&` +
+                    `forum=${DISQUS_SHORTNAME}&` +
+                    `limit=100`;
+
+                if (cursor) {
+                    url += `&cursor=${cursor}`;
+                }
+
+                const response = await fetch(url);
+                const data = await response.json();
+
+                if (data.code !== 0 || !data.response) {
+                    throw new Error(`Disqus API error: ${data.code}`);
+                }
+
+                // Process each thread
+                for (const thread of data.response) {
+                    // Use the first identifier from the thread
+                    const identifier = thread.identifiers && thread.identifiers.length > 0
+                        ? thread.identifiers[0]
+                        : thread.slug;
+
+                    const count = thread.posts || 0;
+
+                    try {
+                        // Update Firestore with the thread's identifier
+                        await db.collection('commentCounts').doc(identifier).set({
+                            count,
+                            lastUpdated: admin.firestore.FieldValue.serverTimestamp(),
+                            postSlug: identifier,
+                            threadId: thread.id,
+                            title: thread.title
+                        }, { merge: true });
+
+                        syncedCount++;
+                        results.push({ slug: identifier, count, status: 'success', title: thread.title });
+                    } catch (error) {
+                        errorCount++;
+                        results.push({ slug: identifier, status: 'error', error: error.message });
+                    }
+                }
+
+                // Check if there are more pages
+                hasMore = data.cursor && data.cursor.hasNext;
+                cursor = data.cursor?.next;
+
+                // Small delay to avoid rate limiting
+                await new Promise(resolve => setTimeout(resolve, 500));
+
+            } catch (error) {
+                logger.error('Error fetching threads:', error);
+                errorCount++;
+                hasMore = false;
+            }
+        }
+
+        res.status(200).json({
+            success: true,
+            message: 'Full sync complete',
+            synced: syncedCount,
+            errors: errorCount,
+            results
+        });
+
+    } catch (error) {
+        logger.error('❌ Manual sync error:', error);
+        res.status(500).json({ error: error.message });
+    }
+});

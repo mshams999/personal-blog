@@ -7,12 +7,12 @@ import Newsletter from '../components/Newsletter'
 import Categories from '../components/Categories'
 import Carousel from '../components/Carousel'
 import Hero from '../components/Hero'
-import DisqusCommentCount from '../components/DisqusCommentCount'
+import FirebaseCommentCount from '../components/FirebaseCommentCount'
 import ViewCounter from '../components/ViewCounter'
 import { useBulkArticleViews, formatViewCount } from '../hooks/useFirebaseViews'
 import { formatRating } from '../utils/ratings'
 import { useBulkPostRatings, getRatingFromBulk } from '../hooks/useRatings'
-import { useDisqusCommentCounts } from '../hooks/useDisqusCommentCounts'
+import { useCommentCounts } from '../hooks/useCommentCounts'
 
 /**
  * HomePage component displaying all blog posts in a masonry layout
@@ -66,8 +66,8 @@ const HomePage = () => {
             .sort((a, b) => b.viewCount - a.viewCount)
     }, [recentPosts, viewCounts, getViewCount])
 
-    // Fetch Disqus comment counts for Most Commented section
-    const { sortedByComments, getCommentCount, loading: commentsLoading } = useDisqusCommentCounts(recentPosts)
+    // Fetch Firebase comment counts for Most Commented section
+    const { sortedByComments, getCommentCount, loading: commentsLoading } = useCommentCounts(recentPosts)
 
     // Define the layout pattern for masonry effect with themes
     const getCardConfig = (index) => {
@@ -253,9 +253,9 @@ const HomePage = () => {
                             Continue Reading →
                         </span>
                         <div className="flex items-center space-x-3 text-xs">
-                            <DisqusCommentCount
+                            <FirebaseCommentCount
                                 post={post}
-                                currentUrl={`${window.location.origin}/post/${post.slug}`}
+                                showIcon={true}
                                 className={currentTheme.meta}
                             />
                             <div className="flex items-center space-x-1">

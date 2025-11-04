@@ -5,7 +5,7 @@ import ReactStars from 'react-stars'
 import { useHybridData } from '../contexts/HybridDataContext'
 import AuthorBio from '../components/AuthorBio'
 import DisqusComments from '../components/DisqusComments'
-import DisqusCommentCount from '../components/DisqusCommentCount'
+import FirebaseCommentCount from '../components/FirebaseCommentCount'
 import ViewCounter from '../components/ViewCounter'
 import ApplauseButton from '../components/ApplauseButton'
 import SocialShareButton from '../components/SocialShareButton'
@@ -351,11 +351,13 @@ const SinglePostPage = () => {
               <span className="text-gray-400">—</span>
 
               {/* Comments */}
-              <DisqusCommentCount
-                post={post}
-                currentUrl={window.location.href}
-                className="text-gray-300"
-              />
+              <div className="text-gray-300">
+                <FirebaseCommentCount
+                  post={post}
+                  showIcon={false}
+                  compact={false}
+                />
+              </div>
             </div>
 
             {/* Star Rating */}
