@@ -37,6 +37,42 @@ service cloud.firestore {
              request.auth.token.email == 'mohamedshams3467@gmail.com';
     }
     
+    // Article ratings collection - allows public read and write
+    match /ratings/{articleSlug} {
+      // Allow anyone to read ratings
+      allow read: if true;
+      
+      // Allow anyone to create/update ratings
+      allow create, update: if isValidRating(request.resource.data);
+      
+      // No deleting ratings (keep data for integrity)
+      allow delete: if false;
+    }
+    
+    // Helper function to validate rating data
+    function isValidRating(data) {
+      return data.keys().hasAll(['ratings', 'totalRatings', 'averageRating', 'slug']) &&
+             data.ratings is map &&
+             data.totalRatings is number &&
+             data.totalRatings > 0 &&
+             data.averageRating is number &&
+             data.averageRating >= 1 &&
+             data.averageRating <= 5 &&
+             data.slug is string;
+    }
+    
+    // Article views collection - allows public read and write
+    match /articles/{articleSlug} {
+      // Allow anyone to read view counts
+      allow read: if true;
+      
+      // Allow anyone to increment view counts
+      allow create, update: if true;
+      
+      // No deleting articles (keep data for analytics)
+      allow delete: if false;
+    }
+    
     // Allow all other operations for authenticated users (for your existing content)
     match /{document=**} {
       allow read, write: if request.auth != null;

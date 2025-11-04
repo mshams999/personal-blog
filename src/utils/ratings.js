@@ -1,16 +1,67 @@
 /**
  * Utility functions for handling article ratings
+ * 
+ * This now uses Firestore for persistent, shared ratings across all users.
+ * Falls back to localStorage when offline or when Firestore is unavailable.
  */
 
-// Local storage key generator
+import { getRating, saveRating as saveRatingToFirestore, isRatingsConfigured } from '../services/ratingService'
+
+// Local storage key generator for fallback
 export const getRatingsStorageKey = (postSlug) => `ratings_${postSlug}`
+const getLocalUserRatingKey = (postSlug) => `user_rating_${postSlug}`
 
 /**
  * Get average rating and total count for a post
+ * Priority: Firestore > localStorage fallback
+ * @param {string} postSlug - The post slug
+ * @returns {Promise<Object>|Object} { averageRating, totalRatings } - Promise if using Firestore, Object if fallback
+ */
+export const getPostRating = async (postSlug) => {
+    try {
+        // Try Firestore first if configured
+        if (isRatingsConfigured()) {
+            const result = await getRating(postSlug)
+
+            // If we got real data from Firestore, return it
+            if (result.totalRatings > 0) {
+                return {
+                    averageRating: result.averageRating,
+                    totalRatings: result.totalRatings
+                }
+            }
+
+            // No ratings in Firestore yet, return zeros
+            return {
+                averageRating: 0,
+                totalRatings: 0
+            }
+        }
+
+        // Fallback to localStorage if Firestore not available
+        return getLocalStorageRating(postSlug)
+    } catch (error) {
+        console.error('Error getting post rating from Firestore, using localStorage fallback:', error)
+        return getLocalStorageRating(postSlug)
+    }
+}
+
+/**
+ * Synchronous version for backwards compatibility
+ * Use this when you need immediate results (will use cached data)
  * @param {string} postSlug - The post slug
  * @returns {Object} { averageRating, totalRatings }
  */
-export const getPostRating = (postSlug) => {
+export const getPostRatingSync = (postSlug) => {
+    return getLocalStorageRating(postSlug)
+}
+
+/**
+ * Get rating from localStorage (fallback method)
+ * @param {string} postSlug - The post slug
+ * @returns {Object} { averageRating, totalRatings }
+ */
+const getLocalStorageRating = (postSlug) => {
     try {
         const ratingsKey = getRatingsStorageKey(postSlug)
         const storedRatings = localStorage.getItem(ratingsKey)
@@ -25,44 +76,70 @@ export const getPostRating = (postSlug) => {
                 totalRatings: total
             }
         } else {
-            // Initialize with some sample ratings for demo based on post characteristics
-            const baseRating = 3.5 + (postSlug.charCodeAt(0) % 3) * 0.5 // 3.5 to 5.0
-            const ratingCount = 3 + (postSlug.length % 8) // 3 to 10 ratings
-            const sampleRatings = Array.from({ length: ratingCount }, (_, i) => {
-                // Generate ratings around the base rating with some variance
-                const variance = (Math.random() - 0.5) * 1.0 // ±0.5 variance
-                return Math.max(1, Math.min(5, baseRating + variance))
-            })
-
-            // Store the sample ratings
-            localStorage.setItem(ratingsKey, JSON.stringify(sampleRatings))
-
-            const average = sampleRatings.reduce((sum, rating) => sum + rating, 0) / sampleRatings.length
+            // No ratings yet
             return {
-                averageRating: average,
-                totalRatings: sampleRatings.length
+                averageRating: 0,
+                totalRatings: 0
             }
         }
     } catch (error) {
-        console.error('Error getting post rating:', error)
-        // Fallback rating
+        console.error('Error getting post rating from localStorage:', error)
         return {
-            averageRating: 4.0 + (postSlug.charCodeAt(0) % 10) * 0.1,
-            totalRatings: 5
+            averageRating: 0,
+            totalRatings: 0
         }
     }
 }
 
 /**
  * Save a user rating for a post
+ * Priority: Firestore > localStorage fallback
  * @param {string} postSlug - The post slug
  * @param {number} rating - The rating value (1-5)
- * @returns {Object} { averageRating, totalRatings }
+ * @returns {Promise<Object>} { averageRating, totalRatings, success }
  */
-export const savePostRating = (postSlug, rating) => {
+export const savePostRating = async (postSlug, rating) => {
+    try {
+        // Validate rating
+        if (rating < 1 || rating > 5) {
+            console.error('Invalid rating value:', rating)
+            return { averageRating: 0, totalRatings: 0, success: false }
+        }
+
+        // Try Firestore first if configured
+        if (isRatingsConfigured()) {
+            const result = await saveRatingToFirestore(postSlug, rating)
+
+            if (result.success) {
+                // Also save to localStorage for offline/cache
+                saveLocalStorageRating(postSlug, rating)
+
+                return {
+                    averageRating: result.averageRating,
+                    totalRatings: result.totalRatings,
+                    success: true
+                }
+            }
+        }
+
+        // Fallback to localStorage
+        return saveLocalStorageRating(postSlug, rating)
+    } catch (error) {
+        console.error('Error saving post rating to Firestore, using localStorage fallback:', error)
+        return saveLocalStorageRating(postSlug, rating)
+    }
+}
+
+/**
+ * Save rating to localStorage (fallback method)
+ * @param {string} postSlug - The post slug
+ * @param {number} rating - The rating value (1-5)
+ * @returns {Object} { averageRating, totalRatings, success }
+ */
+const saveLocalStorageRating = (postSlug, rating) => {
     try {
         const ratingsKey = getRatingsStorageKey(postSlug)
-        const userRatingKey = `user_rating_${postSlug}`
+        const userRatingKey = getLocalUserRatingKey(postSlug)
         const storedRatings = localStorage.getItem(ratingsKey)
         let ratings = storedRatings ? JSON.parse(storedRatings) : []
 
@@ -85,30 +162,53 @@ export const savePostRating = (postSlug, rating) => {
         localStorage.setItem(userRatingKey, rating.toString())
 
         // Calculate new average
-        const average = ratings.reduce((sum, r) => sum + r, 0) / ratings.length
+        const average = ratings.length > 0 ? ratings.reduce((sum, r) => sum + r, 0) / ratings.length : 0
 
         return {
             averageRating: average,
-            totalRatings: ratings.length
+            totalRatings: ratings.length,
+            success: true
         }
     } catch (error) {
-        console.error('Error saving post rating:', error)
-        return getPostRating(postSlug) // Fallback to current ratings
+        console.error('Error saving post rating to localStorage:', error)
+        return { averageRating: 0, totalRatings: 0, success: false }
     }
 }
 
 /**
  * Get user's rating for a specific post
+ * Priority: Firestore > localStorage fallback
+ * @param {string} postSlug - The post slug
+ * @returns {Promise<number>} User's rating (0 if not rated)
+ */
+export const getUserRating = async (postSlug) => {
+    try {
+        // Try Firestore first if configured
+        if (isRatingsConfigured()) {
+            const result = await getRating(postSlug)
+            return result.userRating || 0
+        }
+
+        // Fallback to localStorage
+        return getLocalUserRating(postSlug)
+    } catch (error) {
+        console.error('Error getting user rating from Firestore, using localStorage fallback:', error)
+        return getLocalUserRating(postSlug)
+    }
+}
+
+/**
+ * Get user's rating from localStorage (synchronous fallback)
  * @param {string} postSlug - The post slug
  * @returns {number} User's rating (0 if not rated)
  */
-export const getUserRating = (postSlug) => {
+const getLocalUserRating = (postSlug) => {
     try {
-        const userRatingKey = `user_rating_${postSlug}`
+        const userRatingKey = getLocalUserRatingKey(postSlug)
         const userRating = localStorage.getItem(userRatingKey)
         return userRating ? parseFloat(userRating) : 0
     } catch (error) {
-        console.error('Error getting user rating:', error)
+        console.error('Error getting user rating from localStorage:', error)
         return 0
     }
 }

@@ -10,7 +10,8 @@ import Hero from '../components/Hero'
 import DisqusCommentCount from '../components/DisqusCommentCount'
 import ViewCounter from '../components/ViewCounter'
 import { useBulkArticleViews, formatViewCount } from '../hooks/useFirebaseViews'
-import { getPostRating, formatRating } from '../utils/ratings'
+import { formatRating } from '../utils/ratings'
+import { useBulkPostRatings, getRatingFromBulk } from '../hooks/useRatings'
 import { useDisqusCommentCounts } from '../hooks/useDisqusCommentCounts'
 
 /**
@@ -48,6 +49,10 @@ const HomePage = () => {
 
     // Fetch article view counts using Firebase Firestore
     const { viewCounts, getViewCount, loading: viewsLoading } = useBulkArticleViews(recentPosts)
+
+    // Fetch article ratings using Firebase Firestore
+    const postSlugs = useMemo(() => recentPosts.map(post => post.slug), [recentPosts])
+    const { ratings: ratingsData, loading: ratingsLoading } = useBulkPostRatings(postSlugs)
 
     // Create sorted posts with consistent view counts
     const sortedPosts = useMemo(() => {
@@ -87,8 +92,9 @@ const HomePage = () => {
         const isLargeCard = config.size.includes('row-span-2')
         const theme = config.theme
 
-        // Get dynamic rating for this post
-        const { averageRating, totalRatings } = getPostRating(post.slug)
+        // Get dynamic rating for this post from Firestore
+        const ratingInfo = getRatingFromBulk(ratingsData, post.slug)
+        const { averageRating, totalRatings } = ratingInfo
 
         // Theme configurations
         const themeStyles = {

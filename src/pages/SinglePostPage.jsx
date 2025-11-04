@@ -14,7 +14,8 @@ import { TinaCMSContent, StaticContent } from '../components/TinaCMSContent'
 import { format } from 'date-fns'
 import PostCard from '../components/PostCard'
 import { useArticleViews } from '../hooks/useFirebaseViews'
-import { getPostRating, savePostRating, getUserRating } from '../utils/ratings'
+import { usePostRating } from '../hooks/useRatings'
+import { savePostRating } from '../utils/ratings'
 
 /**
  * SinglePostPage component for displaying individual blog posts
@@ -38,14 +39,22 @@ const SinglePostPage = () => {
   const [loading, setLoading] = useState(true)
   const [scrollPosition, setScrollPosition] = useState(0)
   const [showScrollTop, setShowScrollTop] = useState(false)
-  const [userRating, setUserRating] = useState(0)
-  const [averageRating, setAverageRating] = useState(0)
-  const [totalRatings, setTotalRatings] = useState(0)
   const [showRatingMessage, setShowRatingMessage] = useState(false)
 
   const post = getPostBySlug(slug)
   const author = post ? getAuthorById(post.authorId) : null
   const category = post ? getCategoryById(post.categoryId) : null
+
+  // Use a key to force refresh of ratings after user rates
+  const [ratingsRefreshKey, setRatingsRefreshKey] = useState(0)
+
+  // Fetch ratings from Firestore using hook
+  const {
+    averageRating,
+    totalRatings,
+    userRating,
+    loading: ratingsLoading
+  } = usePostRating(post?.slug + '_' + ratingsRefreshKey)
 
   // Get all posts for navigation
   const allPosts = getAllPosts()
@@ -101,8 +110,7 @@ const SinglePostPage = () => {
       // Scroll to top when post changes
       window.scrollTo(0, 0)
 
-      // Load ratings for this post
-      loadRatings()
+      // Note: Ratings are now loaded via usePostRating hook
     }
   }, [post])
 
@@ -202,31 +210,26 @@ const SinglePostPage = () => {
     }
   }
 
-  // Rating helper functions using utility
-  const loadRatings = () => {
+  // Handle rating change - save to Firestore and trigger re-render
+  const handleRatingChange = async (newRating) => {
     if (!post) return
 
-    const { averageRating, totalRatings } = getPostRating(post.slug)
-    const userRating = getUserRating(post.slug)
+    try {
+      const result = await savePostRating(post.slug, newRating)
 
-    setAverageRating(averageRating)
-    setTotalRatings(totalRatings)
-    setUserRating(userRating)
-  }
+      if (result.success) {
+        // Show confirmation message
+        setShowRatingMessage(true)
+        setTimeout(() => setShowRatingMessage(false), 3000)
 
-  const handleRatingChange = (newRating) => {
-    if (!post) return
-
-    const { averageRating, totalRatings } = savePostRating(post.slug, newRating)
-
-    // Update state
-    setUserRating(newRating)
-    setTotalRatings(totalRatings)
-    setAverageRating(averageRating)
-
-    // Show confirmation message
-    setShowRatingMessage(true)
-    setTimeout(() => setShowRatingMessage(false), 3000)
+        // Trigger re-fetch of ratings by changing the refresh key
+        setRatingsRefreshKey(prev => prev + 1)
+      } else {
+        console.error('Failed to save rating')
+      }
+    } catch (error) {
+      console.error('Error saving rating:', error)
+    }
   }
 
   if (!post) {
