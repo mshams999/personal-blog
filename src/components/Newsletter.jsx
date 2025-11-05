@@ -120,17 +120,13 @@ const Newsletter = () => {
         <div className="mb-6">
           <h2 className="text-3xl md:text-4xl font-bold mb-2">
             <span className="bg-gradient-to-r from-violet-600 via-purple-600 to-indigo-600 dark:from-violet-400 dark:via-purple-400 dark:to-indigo-400 bg-clip-text text-transparent">
-              انضم إلى المغامرة!
+             جاهز تنضم لعالم الأفكار؟
             </span>
           </h2>
           <p className="text-lg text-gray-700 dark:text-gray-300">
-            احصل على رؤى حصرية وتحديثات
+           اشترك لتكون أول من يطّلع على المقالات الجديدة.
           </p>
         </div>
-
-        <p className="text-base text-gray-600 dark:text-gray-300 mb-8">
-          كن أول من يكتشف المحتوى الجديد واحصل على رؤى من وراء الكواليس.
-        </p>
 
         {/* Newsletter form */}
         <form onSubmit={handleSubmit} className="max-w-md mx-auto">
@@ -195,7 +191,7 @@ const Newsletter = () => {
 
         {/* Subtle call to action */}
         <p className="mt-6 text-xs text-gray-500 dark:text-gray-400">
-          بالاشتراك، فإنك توافق على تلقي رسائل بريد إلكتروني من حين لآخر.
+        لا سبام. لا إزعاج. فقط محتوى يستحق القراءة.
         </p>
 
         {/* Email service status (dev mode only) */}

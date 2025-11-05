@@ -10,13 +10,13 @@ const ACLSCertificate = () => {
     const navigate = useNavigate()
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-dark-900 dark:via-dark-800 dark:to-dark-900 py-8">
+        <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-dark-900 dark:via-dark-800 dark:to-dark-900 py-8" dir="ltr" lang="en">
             <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Back Button */}
                 <div className="mb-8">
                     <button
                         onClick={() => navigate(-1)}
-                        className="inline-flex items-center space-x-2 text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 transition-colors"
+                        className="inline-flex items-center gap-2 text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 transition-colors"
                     >
                         <ArrowLeft className="w-4 h-4" />
                         <span>Back to CV</span>
@@ -27,7 +27,7 @@ const ACLSCertificate = () => {
                 <div className="bg-white dark:bg-dark-800 rounded-2xl shadow-xl overflow-hidden">
                     {/* Header Section */}
                     <div className="bg-gradient-to-r from-red-600 to-red-700 text-white p-8">
-                        <div className="flex items-center space-x-4 mb-4">
+                        <div className="flex items-center gap-4 mb-4">
                             <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
                                 <Heart className="w-6 h-6 text-white" />
                             </div>
@@ -44,7 +44,7 @@ const ACLSCertificate = () => {
                             {/* Certificate Details */}
                             <div className="space-y-6">
                                 <div className="space-y-4">
-                                    <div className="flex items-center space-x-3">
+                                    <div className="flex items-center gap-3">
                                         <Building className="w-5 h-5 text-red-600 dark:text-red-400" />
                                         <div>
                                             <h3 className="font-semibold text-gray-900 dark:text-white">Issuing Organization</h3>
@@ -52,7 +52,7 @@ const ACLSCertificate = () => {
                                         </div>
                                     </div>
 
-                                    <div className="flex items-center space-x-3">
+                                    <div className="flex items-center gap-3">
                                         <Calendar className="w-5 h-5 text-green-600" />
                                         <div>
                                             <h3 className="font-semibold text-gray-900 dark:text-white">Issue Date</h3>
@@ -60,7 +60,7 @@ const ACLSCertificate = () => {
                                         </div>
                                     </div>
 
-                                    <div className="flex items-center space-x-3">
+                                    <div className="flex items-center gap-3">
                                         <Calendar className="w-5 h-5 text-red-600" />
                                         <div>
                                             <h3 className="font-semibold text-gray-900 dark:text-white">Expiration Date</h3>
@@ -83,23 +83,23 @@ const ACLSCertificate = () => {
                                 <div>
                                     <h3 className="font-semibold text-gray-900 dark:text-white mb-3">Skills & Competencies</h3>
                                     <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-300">
-                                        <li className="flex items-center space-x-2">
+                                        <li className="flex items-center gap-2">
                                             <div className="w-2 h-2 bg-red-500 rounded-full"></div>
                                             <span>Advanced airway management</span>
                                         </li>
-                                        <li className="flex items-center space-x-2">
+                                        <li className="flex items-center gap-2">
                                             <div className="w-2 h-2 bg-red-500 rounded-full"></div>
                                             <span>ECG rhythm recognition and interpretation</span>
                                         </li>
-                                        <li className="flex items-center space-x-2">
+                                        <li className="flex items-center gap-2">
                                             <div className="w-2 h-2 bg-red-500 rounded-full"></div>
                                             <span>Pharmacology for cardiovascular emergencies</span>
                                         </li>
-                                        <li className="flex items-center space-x-2">
+                                        <li className="flex items-center gap-2">
                                             <div className="w-2 h-2 bg-red-500 rounded-full"></div>
                                             <span>Team dynamics and effective communication</span>
                                         </li>
-                                        <li className="flex items-center space-x-2">
+                                        <li className="flex items-center gap-2">
                                             <div className="w-2 h-2 bg-red-500 rounded-full"></div>
                                             <span>Post-cardiac arrest care</span>
                                         </li>
@@ -127,7 +127,7 @@ const ACLSCertificate = () => {
                             >
                                 Back to CV
                             </Link>
-                            <button className="inline-flex items-center space-x-2 px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-colors">
+                            <button className="inline-flex items-center gap-2 px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-colors">
                                 <Download className="w-4 h-4" />
                                 <span>Download Certificate</span>
                             </button>

@@ -145,7 +145,7 @@ const Footer = () => {
                             مدونة د. شمس
                         </h3>
                         <p className="text-sm text-gray-600 dark:text-gray-400">
-                            استكشاف تطوير الويب والتكنولوجيا والحياة. لنتواصل ونبني شيئاً رائعاً معاً.
+أؤمن أن الفضول هو بداية كل معرفة.
                         </p>
                         <div className="flex flex-wrap gap-2">
                             {socialLinks.map((social) => (
@@ -176,7 +176,7 @@ const Footer = () => {
                     <div>
                         <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center">
                             <Eye className="w-5 h-5 me-2 text-orange-500" />
-                            الأكثر شعبية
+                            الأكثر قراءة
                         </h3>
                         <div className="space-y-3">
                             {renderPostList(sortedPosts, 'views')}
@@ -210,7 +210,7 @@ const Footer = () => {
                             <Heart className="w-4 h-4 text-red-500 animate-pulse" />
                             <span>بواسطة د. شمس</span>
                         </div>
-                        <div>© {currentYear} مدونة د. شمس. جميع الحقوق محفوظة.</div>
+                        <div>© {currentYear} جميع الحقوق محفوظة</div>
                     </div>
                 </div>
             </div>

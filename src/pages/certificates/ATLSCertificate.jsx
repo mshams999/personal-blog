@@ -10,13 +10,13 @@ const ATLSCertificate = () => {
     const navigate = useNavigate()
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-dark-900 dark:via-dark-800 dark:to-dark-900 py-8">
+        <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-dark-900 dark:via-dark-800 dark:to-dark-900 py-8" dir="ltr" lang="en">
             <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Back Button */}
                 <div className="mb-8">
                     <button
                         onClick={() => navigate(-1)}
-                        className="inline-flex items-center space-x-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
+                        className="inline-flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
                     >
                         <ArrowLeft className="w-4 h-4" />
                         <span>Back to CV</span>
@@ -27,7 +27,7 @@ const ATLSCertificate = () => {
                 <div className="bg-white dark:bg-dark-800 rounded-2xl shadow-xl overflow-hidden">
                     {/* Header Section */}
                     <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-8">
-                        <div className="flex items-center space-x-4 mb-4">
+                        <div className="flex items-center gap-4 mb-4">
                             <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
                                 <Award className="w-6 h-6 text-white" />
                             </div>
@@ -44,7 +44,7 @@ const ATLSCertificate = () => {
                             {/* Certificate Details */}
                             <div className="space-y-6">
                                 <div className="space-y-4">
-                                    <div className="flex items-center space-x-3">
+                                    <div className="flex items-center gap-3">
                                         <Building className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                                         <div>
                                             <h3 className="font-semibold text-gray-900 dark:text-white">Issuing Organization</h3>
@@ -52,7 +52,7 @@ const ATLSCertificate = () => {
                                         </div>
                                     </div>
 
-                                    <div className="flex items-center space-x-3">
+                                    <div className="flex items-center gap-3">
                                         <Calendar className="w-5 h-5 text-green-600" />
                                         <div>
                                             <h3 className="font-semibold text-gray-900 dark:text-white">Issue Date</h3>
@@ -60,7 +60,7 @@ const ATLSCertificate = () => {
                                         </div>
                                     </div>
 
-                                    <div className="flex items-center space-x-3">
+                                    <div className="flex items-center gap-3">
                                         <Calendar className="w-5 h-5 text-red-600" />
                                         <div>
                                             <h3 className="font-semibold text-gray-900 dark:text-white">Expiration Date</h3>
@@ -83,19 +83,19 @@ const ATLSCertificate = () => {
                                 <div>
                                     <h3 className="font-semibold text-gray-900 dark:text-white mb-3">Skills & Competencies</h3>
                                     <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-300">
-                                        <li className="flex items-center space-x-2">
+                                        <li className="flex items-center gap-2">
                                             <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
                                             <span>Primary and secondary trauma assessment</span>
                                         </li>
-                                        <li className="flex items-center space-x-2">
+                                        <li className="flex items-center gap-2">
                                             <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
                                             <span>Airway management and breathing support</span>
                                         </li>
-                                        <li className="flex items-center space-x-2">
+                                        <li className="flex items-center gap-2">
                                             <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
                                             <span>Shock recognition and management</span>
                                         </li>
-                                        <li className="flex items-center space-x-2">
+                                        <li className="flex items-center gap-2">
                                             <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
                                             <span>Trauma team leadership and coordination</span>
                                         </li>
@@ -123,7 +123,7 @@ const ATLSCertificate = () => {
                             >
                                 Back to CV
                             </Link>
-                            <button className="inline-flex items-center space-x-2 px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-colors">
+                            <button className="inline-flex items-center gap-2 px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-colors">
                                 <Download className="w-4 h-4" />
                                 <span>Download Certificate</span>
                             </button>

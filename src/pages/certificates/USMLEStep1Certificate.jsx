@@ -10,13 +10,13 @@ const USMLEStep1Certificate = () => {
     const navigate = useNavigate()
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-blue-900/20 dark:via-indigo-900/20 dark:to-purple-900/20 py-8">
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-blue-900/20 dark:via-indigo-900/20 dark:to-purple-900/20 py-8" dir="ltr" lang="en">
             <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Back Button */}
                 <div className="mb-8">
                     <button
                         onClick={() => navigate(-1)}
-                        className="inline-flex items-center space-x-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
+                        className="inline-flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
                     >
                         <ArrowLeft className="w-4 h-4" />
                         <span>Back to CV</span>
@@ -40,7 +40,7 @@ const USMLEStep1Certificate = () => {
                             <Star className="w-4 h-4 text-indigo-200 animate-pulse" style={{ animationDelay: '1s' }} />
                         </div>
 
-                        <div className="flex items-center space-x-6 mb-6 relative z-10">
+                        <div className="flex items-center gap-6 mb-6 relative z-10">
                             <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm border-2 border-white/30">
                                 <GraduationCap className="w-8 h-8 text-white" />
                             </div>
@@ -58,7 +58,7 @@ const USMLEStep1Certificate = () => {
                             {/* Certificate Details */}
                             <div className="space-y-8">
                                 <div className="space-y-6">
-                                    <div className="flex items-center space-x-4 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl border border-blue-200 dark:border-blue-700">
+                                    <div className="flex items-center gap-4 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl border border-blue-200 dark:border-blue-700">
                                         <Building className="w-6 h-6 text-blue-600 dark:text-blue-400" />
                                         <div>
                                             <h3 className="font-bold text-gray-900 dark:text-white text-lg">Examination Authority</h3>
@@ -67,7 +67,7 @@ const USMLEStep1Certificate = () => {
                                         </div>
                                     </div>
 
-                                    <div className="flex items-center space-x-4 p-4 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-xl border border-green-200 dark:border-green-700">
+                                    <div className="flex items-center gap-4 p-4 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-xl border border-green-200 dark:border-green-700">
                                         <Calendar className="w-6 h-6 text-green-600" />
                                         <div>
                                             <h3 className="font-bold text-gray-900 dark:text-white text-lg">Examination Date</h3>
@@ -76,7 +76,7 @@ const USMLEStep1Certificate = () => {
                                         </div>
                                     </div>
 
-                                    <div className="flex items-center space-x-4 p-4 bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-purple-900/20 dark:to-indigo-900/20 rounded-xl border border-purple-200 dark:border-purple-700">
+                                    <div className="flex items-center gap-4 p-4 bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-purple-900/20 dark:to-indigo-900/20 rounded-xl border border-purple-200 dark:border-purple-700">
                                         <Trophy className="w-6 h-6 text-purple-600 dark:text-purple-400" />
                                         <div>
                                             <h3 className="font-bold text-gray-900 dark:text-white text-lg">Achievement Level</h3>
@@ -88,7 +88,7 @@ const USMLEStep1Certificate = () => {
 
                                 {/* Achievement Description */}
                                 <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 p-8 rounded-2xl border-2 border-blue-200 dark:border-blue-700">
-                                    <h3 className="font-bold text-gray-900 dark:text-white mb-4 text-xl flex items-center space-x-2">
+                                    <h3 className="font-bold text-gray-900 dark:text-white mb-4 text-xl flex items-center gap-2">
                                         <GraduationCap className="w-6 h-6 text-blue-600" />
                                         <span>About USMLE Step 1</span>
                                     </h3>
@@ -108,27 +108,27 @@ const USMLEStep1Certificate = () => {
                                 <div>
                                     <h3 className="font-bold text-gray-900 dark:text-white mb-4 text-xl">Knowledge Areas Assessed</h3>
                                     <ul className="space-y-3">
-                                        <li className="flex items-center space-x-3">
+                                        <li className="flex items-center gap-3">
                                             <div className="w-3 h-3 bg-gradient-to-r from-blue-400 to-indigo-500 rounded-full"></div>
                                             <span className="text-gray-700 dark:text-gray-300">Anatomy and Cell Biology</span>
                                         </li>
-                                        <li className="flex items-center space-x-3">
+                                        <li className="flex items-center gap-3">
                                             <div className="w-3 h-3 bg-gradient-to-r from-blue-400 to-indigo-500 rounded-full"></div>
                                             <span className="text-gray-700 dark:text-gray-300">Biochemistry and Molecular Biology</span>
                                         </li>
-                                        <li className="flex items-center space-x-3">
+                                        <li className="flex items-center gap-3">
                                             <div className="w-3 h-3 bg-gradient-to-r from-blue-400 to-indigo-500 rounded-full"></div>
                                             <span className="text-gray-700 dark:text-gray-300">Microbiology and Immunology</span>
                                         </li>
-                                        <li className="flex items-center space-x-3">
+                                        <li className="flex items-center gap-3">
                                             <div className="w-3 h-3 bg-gradient-to-r from-blue-400 to-indigo-500 rounded-full"></div>
                                             <span className="text-gray-700 dark:text-gray-300">Pathology and Pathophysiology</span>
                                         </li>
-                                        <li className="flex items-center space-x-3">
+                                        <li className="flex items-center gap-3">
                                             <div className="w-3 h-3 bg-gradient-to-r from-blue-400 to-indigo-500 rounded-full"></div>
                                             <span className="text-gray-700 dark:text-gray-300">Pharmacology and Therapeutics</span>
                                         </li>
-                                        <li className="flex items-center space-x-3">
+                                        <li className="flex items-center gap-3">
                                             <div className="w-3 h-3 bg-gradient-to-r from-blue-400 to-indigo-500 rounded-full"></div>
                                             <span className="text-gray-700 dark:text-gray-300">Physiology and Biophysics</span>
                                         </li>
@@ -181,7 +181,7 @@ const USMLEStep1Certificate = () => {
                                 <ArrowLeft className="w-5 h-5 mr-2" />
                                 Back to CV
                             </Link>
-                            <button className="inline-flex items-center space-x-2 px-8 py-4 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+                            <button className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
                                 <Download className="w-5 h-5" />
                                 <span>Download Certificate</span>
                             </button>

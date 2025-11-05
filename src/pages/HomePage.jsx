@@ -189,7 +189,7 @@ const HomePage = () => {
                                     <span>{post.readTime} دقيقة</span>
                                 </div>
                                 <div className="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400">
-                                    
+
                                     <ViewCounter articleSlug={post.slug} />
                                 </div>
                             </div>
@@ -297,10 +297,10 @@ const HomePage = () => {
                 <div className="mb-12">
                     <div className="text-center mb-8 animate-fadeInUp">
                         <h2 className="text-3xl font-bold text-gradient-animated mb-2">
-                            أحدث المقالات
+                        آخر الحكايات والأفكار
                         </h2>
                         <p className="text-gray-600 dark:text-gray-300">
-                            اكتشف أحدث محتوانا
+                            اكتشف أحدث مانشرناه - التجربة الحياتية الخاصة بي من ضفاف الرحلة الى أعماق المغامرة
                         </p>
                         <div className="mt-4 w-32 h-1 bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 mx-auto rounded-full"></div>
                     </div>
@@ -345,57 +345,96 @@ const HomePage = () => {
                         </div>
 
                         {/* Load More Button */}
-                        <div className="text-center mt-12">
-                            <button className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-primary-500 to-purple-600 hover:from-primary-600 hover:to-purple-700 text-white rounded-full font-medium transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl">
-                                <span>Load More Articles</span>
-                                <div className="ms-2 w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        <div className="text-center mt-16 animate-fadeInUp">
+                            <button className="group inline-flex items-center gap-3 px-10 py-5 bg-gradient-to-r from-pink-500 via-purple-600 to-blue-600 hover:from-pink-600 hover:via-purple-700 hover:to-blue-700 text-white rounded-full font-bold text-lg transition-all duration-500 transform hover:scale-110 shadow-2xl hover:shadow-pink-500/50 relative overflow-hidden">
+                                {/* Animated gradient overlay */}
+                                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+
+                                <span className="relative z-10">تحميل المزيد من المقالات</span>
+
+                                {/* Animated arrow */}
+                                <svg
+                                    className="relative z-10 w-5 h-5 transform group-hover:translate-y-1 transition-transform duration-300"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                                </svg>
                             </button>
                         </div>
                     </div>
 
                     {/* Sidebar */}
                     <div className="lg:col-span-1 space-y-8">
-                        {/* Top Posts */}
-                        <div className="bg-white/80 dark:bg-dark-700/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-gray-100/50 dark:border-dark-600/50 hover:shadow-xl transition-all duration-300 glass animate-slideInRight">
-                            <div className="flex items-center justify-between mb-6">
-                                <div className="flex items-center gap-2">
-                                    <TrendingUp className="w-5 h-5 text-primary-500" />
-                                    <h3 className="text-lg font-bold text-gray-900 dark:text-white">أفضل المقالات</h3>
+                        {/* Top Posts - أفضل المقالات */}
+                        <div className="bg-gradient-to-br from-white/95 to-gray-50/95 dark:from-dark-700/95 dark:to-dark-800/95 backdrop-blur-sm rounded-3xl p-8 shadow-xl border border-gray-100/50 dark:border-dark-600/50 hover:shadow-2xl transition-all duration-500 glass animate-slideInRight overflow-hidden relative">
+                            {/* Decorative gradient overlay */}
+                            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary-500 via-purple-500 to-pink-500"></div>
+
+                            {/* Header */}
+                            <div className="flex items-center justify-between mb-8 pb-4 border-b border-gray-200/50 dark:border-dark-600/50">
+                                <div className="flex items-center gap-3">
+                                    <div className="p-2 bg-gradient-to-br from-primary-500 to-purple-500 rounded-xl shadow-lg">
+                                        <TrendingUp className="w-5 h-5 text-white" />
+                                    </div>
+                                    <h3 className="text-xl font-bold text-gray-900 dark:text-white">الأكثر قراءة</h3>
                                 </div>
                                 {viewsLoading && (
-                                    <div className="text-xs text-gray-500 dark:text-gray-400 animate-pulse">جاري التحميل...</div>
+                                    <div className="text-xs text-gray-500 dark:text-gray-400 animate-pulse flex items-center gap-1">
+                                        <span className="w-1.5 h-1.5 bg-primary-500 rounded-full animate-bounce"></span>
+                                        <span className="w-1.5 h-1.5 bg-primary-500 rounded-full animate-bounce delay-100"></span>
+                                        <span className="w-1.5 h-1.5 bg-primary-500 rounded-full animate-bounce delay-200"></span>
+                                    </div>
                                 )}
                             </div>
-                            <div className="space-y-4">
+
+                            {/* Posts List */}
+                            <div className="space-y-5">
                                 {sortedPosts.slice(0, 4).map((post, index) => {
                                     const author = getAuthorById(post.authorId)
+                                    const rankColors = [
+                                        'from-yellow-400 to-amber-500',
+                                        'from-gray-300 to-gray-400',
+                                        'from-orange-400 to-amber-600',
+                                        'from-blue-400 to-indigo-500'
+                                    ]
                                     return (
                                         <Link key={post.id} to={`/post/${post.slug}`} className="block group">
-                                            <div className={`flex items-start gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-dark-600 transition-colors duration-200 animate-fadeInUp stagger-${index + 1}`}>
+                                            <div className={`flex items-start gap-4 p-4 rounded-2xl bg-white/50 dark:bg-dark-600/50 hover:bg-gradient-to-l hover:from-primary-50 hover:to-purple-50 dark:hover:from-primary-900/20 dark:hover:to-purple-900/20 border border-transparent hover:border-primary-200 dark:hover:border-primary-800 transition-all duration-300 animate-fadeInUp stagger-${index + 1}`}>
+                                                {/* Rank Badge */}
                                                 <div className="flex-shrink-0 relative">
-                                                    <span className="flex w-8 h-8 bg-gradient-to-r from-primary-500 to-purple-500 text-white rounded-full items-center justify-center text-xs font-bold shadow-lg">
+                                                    <div className={`flex w-10 h-10 bg-gradient-to-br ${rankColors[index]} text-white rounded-xl items-center justify-center text-base font-bold shadow-lg group-hover:scale-110 group-hover:rotate-6 transition-all duration-300`}>
                                                         {index + 1}
-                                                    </span>
+                                                    </div>
                                                     {index === 0 && (
-                                                        <Sparkles className="absolute -top-1 -right-1 w-4 h-4 text-yellow-400 fill-yellow-400 animate-pulse" />
+                                                        <div className="absolute -top-1.5 -left-1.5 w-5 h-5 bg-yellow-400 rounded-full flex items-center justify-center shadow-lg animate-pulse">
+                                                            <Sparkles className="w-3 h-3 text-white fill-white" />
+                                                        </div>
                                                     )}
                                                 </div>
-                                                <div className="flex-1 min-w-0">
-                                                    <h4 className="text-sm font-medium text-gray-900 dark:text-white line-clamp-2 group-hover:text-primary-500 transition-colors">
+
+                                                {/* Content */}
+                                                <div className="flex-1 min-w-0 space-y-2.5">
+                                                    <h4 className="text-sm font-semibold text-gray-900 dark:text-white line-clamp-2 leading-snug group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors duration-300">
                                                         {post.title}
                                                     </h4>
-                                                    <div className="flex items-center justify-between mt-2">
-                                                        <p className="text-xs text-gray-500 dark:text-gray-400">
-                                                            {author?.name} • {formatDateArabicShort(post.date)}
+                                                    <div className="flex items-center justify-between gap-3 text-xs">
+                                                        <p className="text-gray-600 dark:text-gray-400 truncate">
+                                                            <span className="font-medium">{author?.name}</span>
+                                                            <span className="mx-1.5">•</span>
+                                                            <span>{formatDateArabicShort(post.date)}</span>
                                                         </p>
-                                                        <ViewCounter
-                                                            articleSlug={post.slug}
-                                                            fallbackCount={getViewCount(post.slug)}
-                                                            shouldIncrement={false}
-                                                            size="sm"
-                                                            variant="minimal"
-                                                            articleDate={post.date}
-                                                        />
+                                                        <div className="flex-shrink-0">
+                                                            <ViewCounter
+                                                                articleSlug={post.slug}
+                                                                fallbackCount={getViewCount(post.slug)}
+                                                                shouldIncrement={false}
+                                                                size="sm"
+                                                                variant="minimal"
+                                                                articleDate={post.date}
+                                                            />
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -405,51 +444,78 @@ const HomePage = () => {
                             </div>
                         </div>
 
-                        {/* Most Commented */}
-                        <div className="bg-white/80 dark:bg-dark-700/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-gray-100/50 dark:border-dark-600/50 hover:shadow-xl transition-all duration-300 glass animate-slideInRight stagger-2">
-                            <div className="flex items-center gap-2 mb-6">
-                                <MessageCircle className="w-5 h-5 text-blue-500" />
-                                <h3 className="text-lg font-bold text-gray-900 dark:text-white">
-                                    الأكثر تعليقاً
-                                    {commentsLoading && (
-                                        <span className="ms-2 text-sm text-gray-500 dark:text-gray-400">(جارٍ التحميل...)</span>
-                                    )}
-                                </h3>
+                        {/* Most Commented - الأكثر تعليقاً */}
+                        <div className="bg-gradient-to-br from-white/95 to-blue-50/95 dark:from-dark-700/95 dark:to-blue-900/10 backdrop-blur-sm rounded-3xl p-8 shadow-xl border border-blue-100/50 dark:border-blue-900/30 hover:shadow-2xl transition-all duration-500 glass animate-slideInRight stagger-2 overflow-hidden relative">
+                            {/* Decorative gradient overlay */}
+                            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500"></div>
+
+                            {/* Header */}
+                            <div className="flex items-center justify-between mb-8 pb-4 border-b border-blue-200/30 dark:border-blue-800/30">
+                                <div className="flex items-center gap-3">
+                                    <div className="p-2 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl shadow-lg">
+                                        <MessageCircle className="w-5 h-5 text-white" />
+                                    </div>
+                                    <h3 className="text-xl font-bold text-gray-900 dark:text-white">
+                                        الأكثر تعليقاً
+                                    </h3>
+                                </div>
+                                {commentsLoading && (
+                                    <div className="text-xs text-gray-500 dark:text-gray-400 animate-pulse flex items-center gap-1">
+                                        <span className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-bounce"></span>
+                                        <span className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-bounce delay-100"></span>
+                                        <span className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-bounce delay-200"></span>
+                                    </div>
+                                )}
                             </div>
-                            <div className="space-y-4">
+
+                            {/* Posts List */}
+                            <div className="space-y-5">
                                 {(sortedByComments && sortedByComments.length > 0 ? sortedByComments : recentPosts || [])
                                     .slice(0, 3)
                                     .map((post, index) => {
                                         if (!post) return null
                                         const commentCount = getCommentCount ? getCommentCount(post.slug) : 0
+                                        const rankBadgeColors = [
+                                            'from-pink-500 to-rose-600',
+                                            'from-purple-500 to-indigo-600',
+                                            'from-blue-500 to-cyan-600'
+                                        ]
                                         return (
-                                            <Link key={post.id} to={`/post/${post.slug}`} className={`flex items-center gap-3 group p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-dark-600 transition-colors duration-200 animate-fadeInUp stagger-${index + 1}`}>
-                                                <div className="relative">
-                                                    <img
-                                                        src={post.featuredImage}
-                                                        alt={post.title}
-                                                        className="w-14 h-14 rounded-xl object-cover ring-2 ring-white dark:ring-dark-600 shadow-md group-hover:scale-105 transition-transform duration-200"
-                                                    />
-                                                    <span className="absolute -top-2 -end-2 w-6 h-6 bg-blue-500 text-white text-xs rounded-full flex items-center justify-center font-bold shadow-lg animate-bounceIn">
-                                                        {index + 1}
-                                                    </span>
-                                                </div>
-                                                <div className="flex-1 min-w-0">
-                                                    <h4 className="text-sm font-medium text-gray-900 dark:text-white line-clamp-2 group-hover:text-primary-500 transition-colors">
-                                                        {post.title}
-                                                    </h4>
-                                                    <div className="flex items-center text-xs text-gray-500 dark:text-gray-400 mt-1 gap-2">
-                                                        <span>{formatDateArabicShort(post.date)}</span>
-                                                        <span>—</span>
-                                                        <div className="flex items-center gap-1">
-                                                            <MessageCircle className="w-3 h-3" />
-                                                            <span>
-                                                                {commentsLoading ? (
-                                                                    <span className="animate-pulse">جارٍ التحميل...</span>
-                                                                ) : (
-                                                                    `${commentCount} ${commentCount === 0 ? 'تعليق' : commentCount === 1 ? 'تعليق واحد' : commentCount === 2 ? 'تعليقان' : 'تعليقات'}`
-                                                                )}
+                                            <Link key={post.id} to={`/post/${post.slug}`} className="block group">
+                                                <div className={`flex items-center gap-4 p-4 rounded-2xl bg-white/60 dark:bg-dark-600/60 hover:bg-gradient-to-l hover:from-blue-50 hover:to-indigo-50 dark:hover:from-blue-900/20 dark:hover:to-indigo-900/20 border border-transparent hover:border-blue-200 dark:hover:border-blue-800 transition-all duration-300 animate-fadeInUp stagger-${index + 1}`}>
+                                                    {/* Image with Rank Badge */}
+                                                    <div className="relative flex-shrink-0 group-hover:scale-105 transition-transform duration-300">
+                                                        <img
+                                                            src={post.featuredImage}
+                                                            alt={post.title}
+                                                            className="w-16 h-16 rounded-2xl object-cover ring-2 ring-white dark:ring-dark-600 shadow-lg"
+                                                        />
+                                                        <div className={`absolute -top-2 -left-2 w-7 h-7 bg-gradient-to-br ${rankBadgeColors[index]} text-white text-xs rounded-full flex items-center justify-center font-bold shadow-xl group-hover:rotate-12 transition-transform duration-300`}>
+                                                            {index + 1}
+                                                        </div>
+                                                    </div>
+
+                                                    {/* Content */}
+                                                    <div className="flex-1 min-w-0 space-y-2">
+                                                        <h4 className="text-sm font-semibold text-gray-900 dark:text-white line-clamp-2 leading-snug group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300">
+                                                            {post.title}
+                                                        </h4>
+                                                        <div className="flex flex-col gap-1.5">
+                                                            <span className="text-xs text-gray-600 dark:text-gray-400">
+                                                                {formatDateArabicShort(post.date)}
                                                             </span>
+                                                            <div className="flex items-center gap-2">
+                                                                <div className="flex items-center gap-1.5 px-2.5 py-1 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
+                                                                    <MessageCircle className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
+                                                                    <span className="text-xs font-medium text-blue-700 dark:text-blue-300">
+                                                                        {commentsLoading ? (
+                                                                            <span className="animate-pulse">...</span>
+                                                                        ) : (
+                                                                            `${commentCount} ${commentCount === 0 ? 'تعليق' : commentCount === 1 ? 'تعليق' : commentCount === 2 ? 'تعليقان' : 'تعليقات'}`
+                                                                        )}
+                                                                    </span>
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -462,22 +528,22 @@ const HomePage = () => {
                 </div>
             </div>
 
-            {/* Categories Section */}
-            <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-                <div className="text-center mb-12">
-                    <Link to="/categories" className="group">
-                        <h2 className="text-4xl font-bold bg-gradient-to-r from-gray-900 via-purple-600 to-pink-600 dark:from-white dark:via-purple-300 dark:to-pink-300 bg-clip-text text-transparent mb-4 group-hover:scale-105 transition-transform duration-300 inline-block">
-                            Explore by Category
+            {/* Categories Section - استكشف حسب التصنيف */}
+            <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+                <div className="text-center mb-16 animate-fadeInUp">
+                    <Link to="/categories" className="group inline-block">
+                        <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-gray-900 via-purple-600 to-pink-600 dark:from-white dark:via-purple-300 dark:to-pink-300 bg-clip-text text-transparent mb-6 group-hover:scale-105 transition-all duration-500">
+                            تصفح الموضوعات حسب التصنيف
                         </h2>
                     </Link>
-                    <p className="text-gray-600 dark:text-gray-300 text-lg">
-                        Discover articles organized by your interests
+                    <p className="text-gray-600 dark:text-gray-300 text-lg md:text-xl font-medium max-w-2xl mx-auto leading-relaxed">
+                        مقالات مُنظَّمة حسب اهتماماتك
                     </p>
-                    <div className="mt-4 w-24 h-1 bg-gradient-to-r from-purple-500 to-pink-500 mx-auto rounded-full"></div>
+                    <div className="mt-6 w-32 h-1.5 bg-gradient-to-r from-purple-500 via-pink-500 to-rose-500 mx-auto rounded-full shadow-lg"></div>
                 </div>
                 <Categories
                     showTitle={false}
-                    className="transform hover:scale-105 transition-transform duration-300"
+                    className="transform transition-all duration-300"
                     columns="lg:grid-cols-6"
                 />
             </div>

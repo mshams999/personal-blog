@@ -10,13 +10,13 @@ const MaadenCertificate = () => {
     const navigate = useNavigate()
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-yellow-50 via-orange-50 to-amber-50 dark:from-yellow-900/20 dark:via-orange-900/20 dark:to-amber-900/20 py-8">
+        <div className="min-h-screen bg-gradient-to-br from-yellow-50 via-orange-50 to-amber-50 dark:from-yellow-900/20 dark:via-orange-900/20 dark:to-amber-900/20 py-8" dir="ltr" lang="en">
             <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Back Button */}
                 <div className="mb-8">
                     <button
                         onClick={() => navigate(-1)}
-                        className="inline-flex items-center space-x-2 text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300 transition-colors"
+                        className="inline-flex items-center gap-2 text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300 transition-colors"
                     >
                         <ArrowLeft className="w-4 h-4" />
                         <span>Back to CV</span>
@@ -37,7 +37,7 @@ const MaadenCertificate = () => {
                             <Star className="w-6 h-6 text-yellow-200 animate-ping" />
                         </div>
 
-                        <div className="flex items-center space-x-6 mb-6 relative z-10">
+                        <div className="flex items-center gap-6 mb-6 relative z-10">
                             <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm border-2 border-white/30">
                                 <Trophy className="w-8 h-8 text-white" />
                             </div>
@@ -55,7 +55,7 @@ const MaadenCertificate = () => {
                             {/* Certificate Details */}
                             <div className="space-y-8">
                                 <div className="space-y-6">
-                                    <div className="flex items-center space-x-4 p-4 bg-gradient-to-r from-yellow-50 to-amber-50 dark:from-yellow-900/20 dark:to-amber-900/20 rounded-xl border border-yellow-200 dark:border-yellow-700">
+                                    <div className="flex items-center gap-4 p-4 bg-gradient-to-r from-yellow-50 to-amber-50 dark:from-yellow-900/20 dark:to-amber-900/20 rounded-xl border border-yellow-200 dark:border-yellow-700">
                                         <Building className="w-6 h-6 text-amber-600 dark:text-amber-400" />
                                         <div>
                                             <h3 className="font-bold text-gray-900 dark:text-white text-lg">Issuing Organization</h3>
@@ -64,7 +64,7 @@ const MaadenCertificate = () => {
                                         </div>
                                     </div>
 
-                                    <div className="flex items-center space-x-4 p-4 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-xl border border-green-200 dark:border-green-700">
+                                    <div className="flex items-center gap-4 p-4 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-xl border border-green-200 dark:border-green-700">
                                         <Calendar className="w-6 h-6 text-green-600" />
                                         <div>
                                             <h3 className="font-bold text-gray-900 dark:text-white text-lg">Award Period</h3>
@@ -73,7 +73,7 @@ const MaadenCertificate = () => {
                                         </div>
                                     </div>
 
-                                    <div className="flex items-center space-x-4 p-4 bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-purple-900/20 dark:to-indigo-900/20 rounded-xl border border-purple-200 dark:border-purple-700">
+                                    <div className="flex items-center gap-4 p-4 bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-purple-900/20 dark:to-indigo-900/20 rounded-xl border border-purple-200 dark:border-purple-700">
                                         <Award className="w-6 h-6 text-purple-600 dark:text-purple-400" />
                                         <div>
                                             <h3 className="font-bold text-gray-900 dark:text-white text-lg">Recognition</h3>
@@ -85,7 +85,7 @@ const MaadenCertificate = () => {
 
                                 {/* Achievement Description */}
                                 <div className="bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 p-8 rounded-2xl border-2 border-amber-200 dark:border-amber-700">
-                                    <h3 className="font-bold text-gray-900 dark:text-white mb-4 text-xl flex items-center space-x-2">
+                                    <h3 className="font-bold text-gray-900 dark:text-white mb-4 text-xl flex items-center gap-2">
                                         <Trophy className="w-6 h-6 text-amber-600" />
                                         <span>About This Achievement</span>
                                     </h3>
@@ -103,23 +103,23 @@ const MaadenCertificate = () => {
                                 <div>
                                     <h3 className="font-bold text-gray-900 dark:text-white mb-4 text-xl">Key Achievements Recognized</h3>
                                     <ul className="space-y-3">
-                                        <li className="flex items-center space-x-3">
+                                        <li className="flex items-center gap-3">
                                             <div className="w-3 h-3 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full"></div>
                                             <span className="text-gray-700 dark:text-gray-300">Outstanding dedication to employee health and safety</span>
                                         </li>
-                                        <li className="flex items-center space-x-3">
+                                        <li className="flex items-center gap-3">
                                             <div className="w-3 h-3 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full"></div>
                                             <span className="text-gray-700 dark:text-gray-300">Exceptional leadership in medical emergency response</span>
                                         </li>
-                                        <li className="flex items-center space-x-3">
+                                        <li className="flex items-center gap-3">
                                             <div className="w-3 h-3 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full"></div>
                                             <span className="text-gray-700 dark:text-gray-300">Comprehensive medical services in industrial environment</span>
                                         </li>
-                                        <li className="flex items-center space-x-3">
+                                        <li className="flex items-center gap-3">
                                             <div className="w-3 h-3 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full"></div>
                                             <span className="text-gray-700 dark:text-gray-300">Innovation in workplace health protocols</span>
                                         </li>
-                                        <li className="flex items-center space-x-3">
+                                        <li className="flex items-center gap-3">
                                             <div className="w-3 h-3 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full"></div>
                                             <span className="text-gray-700 dark:text-gray-300">Mentorship and team development excellence</span>
                                         </li>
@@ -157,7 +157,7 @@ const MaadenCertificate = () => {
                                 <ArrowLeft className="w-5 h-5 mr-2" />
                                 Back to CV
                             </Link>
-                            <button className="inline-flex items-center space-x-2 px-8 py-4 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+                            <button className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
                                 <Download className="w-5 h-5" />
                                 <span>Download Certificate</span>
                             </button>

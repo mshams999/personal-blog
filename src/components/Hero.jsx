@@ -19,36 +19,37 @@ const Hero = () => {
           {/* Text Content */}
           <div className="space-y-8">
             <div className="space-y-4">
-              <div className="flex items-center gap-2 text-primary-600 dark:text-primary-400">
-                <div className="w-2 h-2 bg-green-500 rounded-full animate-ping"></div>
-                <span className="text-sm font-medium tracking-wide uppercase">ما وراء الشكوى الرئيسية:</span>
-              </div>
 
-              <h1 className="text-4xl lg:text-6xl font-bold text-gray-900 dark:text-white leading-tight">
-                قصص وعلوم <br />
-                <span className="text-primary-600 dark:text-primary-400">مع د. شمس</span>
+
+              <h1 className="text-4xl lg:text-6xl font-bold text-gray-900 dark:text-white leading-tight mb-6">
+                مرحباً بك <br />
+                
+                <span className="text-primary-600 dark:text-primary-400 ">أنا د. محمد شمس.</span>
               </h1>
 
-              <p className="text-xl text-gray-600 dark:text-gray-300 leading-relaxed max-w-lg">
-                انضم إلي في هذه الرحلة المثيرة عبر عالم الطب والشفاء والقصص الإنسانية. من الحالات السريرية إلى رؤى الصحة العالمية، من نوبات الاستدعاء في وقت متأخر من الليل إلى الاختراقات التي تنقذ الأرواح - هذا هو المكان الذي أشارك فيه الحياة الخام والحقيقية والرائعة لكوني طبيباً. دعونا نغوص في الطب بقلب وجهد وجرعة من الإنسانية.
-              </p>
+              <div className="space-y-4 text-lg text-gray-700 dark:text-gray-300 leading-relaxed max-w-2xl">
+                <p className="text-xl font-medium">
+                  طبيب مصري أعيش وأعمل في المملكة العربية السعودية، لكن رحلتي أكبر من غرفة الكشف أو سماعة الطبيب.
+                </p>
+
+                <p>
+                  هنا على هذا الموقع أكتب عن الطب كما أراه: علمٌ نابض بالحياة، وإنسانية لا تُفارق المريض ولا الطبيب.
+                  أشاركك قصصي من العيادات، خواطري من المناوبات الطويلة، وتجربتي في السعي وراء المعرفة — من التحضير للـUSMLE إلى التأمل في معنى الشفاء نفسه.
+                </p>
+
+                <p className="font-medium text-primary-700 dark:text-primary-300">
+                  من قلب التجربة، إلى عُمق الفكرة.
+                </p>
+
+
+
+                <p className="text-xl font-semibold text-gray-800 dark:text-gray-100 pt-2">
+                  أهلاً بك في عالمي، حيث تلتقي القصة بالعلم، والطبّ بالشغف، والعقل بالقلب. <span className="text-red-500">❤️</span>
+                </p>
+              </div>
             </div>
 
-            {/* Stats/Info */}
-            <div className="flex flex-wrap gap-6">
-              <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
-                <MapPin className="w-5 h-5 text-primary-500" />
-                <span className="text-sm font-medium">مقيم في المملكة العربية السعودية</span>
-              </div>
-              <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
-                <HeartPulse className="w-5 h-5 text-primary-500" />
-                <span className="text-sm font-medium">طبيب صحة</span>
-              </div>
-              <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
-                <Camera className="w-5 h-5 text-primary-500" />
-                <span className="text-sm font-medium">راوي قصص الرعاية الصحية</span>
-              </div>
-            </div>
+
 
 
           </div>
