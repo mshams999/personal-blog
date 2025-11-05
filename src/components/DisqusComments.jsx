@@ -80,10 +80,10 @@ const DisqusComments = ({ post, currentUrl }) => {
         <div className="mt-12 pt-8 border-t border-gray-200 dark:border-gray-700">
             <div className="mb-6">
                 <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-                    Comments
+                    التعليقات
                 </h3>
                 <p className="text-gray-600 dark:text-gray-400">
-                    Join the conversation and share your thoughts!
+                    انضم إلى المحادثة وشارك أفكارك!
                 </p>
             </div>
 

@@ -48,14 +48,14 @@ const AuthorBio = ({ author }) => {
                 {/* Author Info */}
                 <div className="flex-1 text-center md:text-left">
                     <h3 className="text-xl font-heading font-bold text-gray-900 dark:text-white mb-2">
-                        About {authorData.name}
+                        عن {authorData.name}
                     </h3>
                     <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
                         {authorData.bio}
                     </p>
 
                     {/* Social Links */}
-                    <div className="flex items-center space-x-4 justify-center md:justify-start">
+                    <div className="flex items-center gap-4 justify-center md:justify-start">
                         {authorData.social?.github && (
                             <a
                                 href={authorData.social.github}

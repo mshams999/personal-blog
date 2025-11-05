@@ -21,20 +21,19 @@ const AllCategoriesPage = () => {
       {/* Breadcrumb */}
       <nav className="flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400 mb-8">
         <Link to="/" className="hover:text-primary-500 transition-colors">
-          Home
+          الرئيسية
         </Link>
         <span>/</span>
-        <span className="text-gray-900 dark:text-white">All Categories</span>
+        <span className="text-gray-900 dark:text-white">جميع التصنيفات</span>
       </nav>
 
       {/* Page Header */}
       <div className="text-center mb-16">
         <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
-          Browse by Category
+          تصفح حسب التصنيف
         </h1>
         <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-          Discover articles organized by topics that interest you. From Medical mysteries and Social Articles to travel and lifestyle,
-          find exactly what you're looking for.
+          اكتشف المقالات المنظمة حسب المواضيع التي تهمك. من الألغاز الطبية والمقالات الاجتماعية إلى السفر وأسلوب الحياة، ابحث عن ما تبحث عنه بالضبط.
         </p>
       </div>
 

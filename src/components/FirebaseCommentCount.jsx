@@ -20,7 +20,7 @@ const FirebaseCommentCount = ({ post, showIcon = true, compact = false, classNam
 
     const displayText = compact
         ? count.toString()
-        : `${count} Comment${count !== 1 ? 's' : ''}`
+        : `${count} ${count === 0 ? 'تعليق' : count === 1 ? 'تعليق' : count === 2 ? 'تعليقان' : 'تعليقات'}`
 
     return (
         <div className={`flex items-center gap-1 text-gray-500 dark:text-gray-400 ${className}`}>

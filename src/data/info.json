@@ -5,11 +5,11 @@
     "popularPosts": []
   },
   "siteMetadata": {
-    "title": "Mohamed Shams Blog",
-    "description": "the official blog for Dr. Mohamed Shams",
+    "title": "مدونة محمد شمس",
+    "description": "المدونة الرسمية للدكتور محمد شمس",
     "author": {
-      "name": "Your Name",
-      "summary": "who lives and works in a beautiful city, building useful things."
+      "name": "محمد شمس",
+      "summary": "طبيب طوارئ يعيش ويعمل في مدينة جميلة، يبني أشياء مفيدة."
     },
     "social": {
       "twitter": "https://x.com/MohamedShams936",
@@ -19,24 +19,24 @@
   },
   "navigation": [
     {
-      "name": "Home",
+      "name": "الرئيسية",
       "href": "/"
     },
     {
-      "name": "Categories",
+      "name": "التصنيفات",
       "href": "/categories"
     },
     {
-      "name": "CV",
+      "name": "السيرة الذاتية",
       "href": "/cv"
     }
   ],
   "authors": [
     {
       "id": "author-1",
-      "name": "Mohamed Shams Abdelaziz",
+      "name": "محمد شمس عبد العزيز",
       "avatar": "https://placehold.co/100x100/3B82F6/FFFFFF?text=MS",
-      "bio": "Emergency Medicine Doctor and Medical Professional with expertise in acute care management, clinical research, and patient care. Passionate about combining medical knowledge with technology to improve healthcare outcomes.",
+      "bio": "طبيب طوارئ ومحترف طبي متخصص في إدارة الرعاية الحادة، الأبحاث السريرية، ورعاية المرضى. شغوف بدمج المعرفة الطبية مع التكنولوجيا لتحسين نتائج الرعاية الصحية.",
       "social": {
         "github": "https://github.com/mshams999",
         "linkedin": "https://www.linkedin.com/in/mohamedshamsms/",
@@ -49,12 +49,12 @@
   "categories": [
     {
       "id": "cat-1",
-      "name": "Medical",
+      "name": "طبي",
       "slug": "Medical"
     },
     {
       "id": "cat-2",
-      "name": "Social Articles",
+      "name": "مقالات اجتماعية",
       "slug": "Social Articles"
     }
   ]

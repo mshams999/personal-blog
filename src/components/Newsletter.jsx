@@ -19,13 +19,13 @@ const Newsletter = () => {
     e.preventDefault()
 
     if (!email.trim()) {
-      setError('Please enter your email address')
+      setError('الرجاء إدخال عنوان بريدك الإلكتروني')
       if (trackNewsletter) trackNewsletter('error', { error_type: 'missing_email' })
       return
     }
 
     if (!newsletterService.isValidEmail(email)) {
-      setError('Please enter a valid email address')
+      setError('الرجاء إدخال عنوان بريد إلكتروني صالح')
       if (trackNewsletter) trackNewsletter('error', { error_type: 'invalid_email' })
       return
     }
@@ -54,7 +54,7 @@ const Newsletter = () => {
 
       } else {
         // Handle subscription errors
-        setError(result.error || 'Subscription failed. Please try again.')
+        setError(result.error || 'فشل الاشتراك. الرجاء المحاولة مرة أخرى.')
         setIsLoading(false)
 
         if (trackNewsletter) {
@@ -68,7 +68,7 @@ const Newsletter = () => {
 
     } catch (error) {
       console.error('Newsletter subscription error:', error)
-      setError('Unable to subscribe. Please check your connection and try again.')
+      setError('تعذر الاشتراك. يرجى التحقق من اتصالك والمحاولة مرة أخرى.')
       setIsLoading(false)
 
       if (trackNewsletter) {
@@ -88,17 +88,17 @@ const Newsletter = () => {
             <Check className="w-8 h-8 text-white" />
           </div>
           <h2 className="text-2xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 dark:from-emerald-400 dark:to-teal-400 bg-clip-text text-transparent mb-3">
-            Welcome Aboard!
+            مرحباً بك معنا!
           </h2>
           <p className="text-base text-gray-700 dark:text-gray-300 mb-6">
-            🎉 You're now part of an amazing community!
+            🎉 أنت الآن جزء من مجتمع رائع!
           </p>
           <button
             onClick={() => setIsSubscribed(false)}
             className="inline-flex items-center gap-2 px-5 py-2 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-full font-medium shadow-lg hover:shadow-xl transition-all duration-300"
           >
             <Mail className="w-4 h-4" />
-            Subscribe Another
+            اشتراك آخر
           </button>
         </div>
       </div>
@@ -120,16 +120,16 @@ const Newsletter = () => {
         <div className="mb-6">
           <h2 className="text-3xl md:text-4xl font-bold mb-2">
             <span className="bg-gradient-to-r from-violet-600 via-purple-600 to-indigo-600 dark:from-violet-400 dark:via-purple-400 dark:to-indigo-400 bg-clip-text text-transparent">
-              Join the Adventure!
+              انضم إلى المغامرة!
             </span>
           </h2>
           <p className="text-lg text-gray-700 dark:text-gray-300">
-            Get exclusive insights & updates
+            احصل على رؤى حصرية وتحديثات
           </p>
         </div>
 
         <p className="text-base text-gray-600 dark:text-gray-300 mb-8">
-          Be the first to discover new content and get behind-the-scenes insights.
+          كن أول من يكتشف المحتوى الجديد واحصل على رؤى من وراء الكواليس.
         </p>
 
         {/* Newsletter form */}
@@ -139,7 +139,7 @@ const Newsletter = () => {
             <div className="relative flex bg-white dark:bg-gray-800 rounded-full p-1.5 shadow-lg">
               <input
                 type="email"
-                placeholder="Enter your email..."
+                placeholder="أدخل بريدك الإلكتروني..."
                 value={email}
                 onChange={(e) => {
                   setEmail(e.target.value)
@@ -156,12 +156,12 @@ const Newsletter = () => {
                 {isLoading ? (
                   <>
                     <Loader2 className="w-5 h-5 animate-spin" />
-                    <span className="hidden sm:inline">Joining...</span>
+                    <span className="hidden sm:inline">جارٍ الانضمام...</span>
                   </>
                 ) : (
                   <>
                     <Mail className="w-5 h-5" />
-                    <span className="hidden sm:inline">Join Now</span>
+                    <span className="hidden sm:inline">انضم الآن</span>
                   </>
                 )}
               </button>
@@ -185,25 +185,25 @@ const Newsletter = () => {
         <div className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-gray-500 dark:text-gray-400">
           <div className="flex items-center gap-2">
             <Check className="w-4 h-4 text-green-500" />
-            <span>No Spam</span>
+            <span>بدون بريد مزعج</span>
           </div>
           <div className="flex items-center gap-2">
             <Check className="w-4 h-4 text-green-500" />
-            <span>Unsubscribe Anytime</span>
+            <span>إلغاء الاشتراك في أي وقت</span>
           </div>
         </div>
 
         {/* Subtle call to action */}
         <p className="mt-6 text-xs text-gray-500 dark:text-gray-400">
-          By subscribing, you agree to receive occasional emails.
+          بالاشتراك، فإنك توافق على تلقي رسائل بريد إلكتروني من حين لآخر.
         </p>
 
         {/* Email service status (dev mode only) */}
         {import.meta.env.DEV && (
           <div className="mt-4 p-2 bg-gray-100 dark:bg-gray-800 rounded text-xs text-gray-600 dark:text-gray-400">
-            📧 Welcome emails ({newsletterService.getEmailServiceStatus().service}): {newsletterService.getEmailServiceStatus().configured ?
-              <span className="text-green-600 dark:text-green-400">✅ Configured</span> :
-              <span className="text-yellow-600 dark:text-yellow-400">⚠️ Not configured</span>
+            📧 رسائل الترحيب ({newsletterService.getEmailServiceStatus().service}): {newsletterService.getEmailServiceStatus().configured ?
+              <span className="text-green-600 dark:text-green-400">✅ مُهيأ</span> :
+              <span className="text-yellow-600 dark:text-yellow-400">⚠️ غير مُهيأ</span>
             }
           </div>
         )}

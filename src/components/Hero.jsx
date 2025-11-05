@@ -19,34 +19,34 @@ const Hero = () => {
           {/* Text Content */}
           <div className="space-y-8">
             <div className="space-y-4">
-              <div className="flex items-center space-x-2 text-primary-600 dark:text-primary-400">
+              <div className="flex items-center gap-2 text-primary-600 dark:text-primary-400">
                 <div className="w-2 h-2 bg-green-500 rounded-full animate-ping"></div>
-                <span className="text-sm font-medium tracking-wide uppercase">Beyond the Chief Complaint:</span>
+                <span className="text-sm font-medium tracking-wide uppercase">ما وراء الشكوى الرئيسية:</span>
               </div>
 
               <h1 className="text-4xl lg:text-6xl font-bold text-gray-900 dark:text-white leading-tight">
-                Stories & Science <br />
-                <span className="text-primary-600 dark:text-primary-400">with Dr. Shams.</span>
+                قصص وعلوم <br />
+                <span className="text-primary-600 dark:text-primary-400">مع د. شمس</span>
               </h1>
 
               <p className="text-xl text-gray-600 dark:text-gray-300 leading-relaxed max-w-lg">
-                Join me on this exciting journey through the world of medicine, healing, and human stories. From clinical cases to global health insights, from late-night call shifts to breakthroughs that save lives — this is where I share the raw, real, and remarkable life of being a doctor. Let's dive into medicine with heart, hustle, and a dose of humanity.
+                انضم إلي في هذه الرحلة المثيرة عبر عالم الطب والشفاء والقصص الإنسانية. من الحالات السريرية إلى رؤى الصحة العالمية، من نوبات الاستدعاء في وقت متأخر من الليل إلى الاختراقات التي تنقذ الأرواح - هذا هو المكان الذي أشارك فيه الحياة الخام والحقيقية والرائعة لكوني طبيباً. دعونا نغوص في الطب بقلب وجهد وجرعة من الإنسانية.
               </p>
             </div>
 
             {/* Stats/Info */}
             <div className="flex flex-wrap gap-6">
-              <div className="flex items-center space-x-2 text-gray-600 dark:text-gray-400">
+              <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
                 <MapPin className="w-5 h-5 text-primary-500" />
-                <span className="text-sm font-medium">Based in Saudi Arabia</span>
+                <span className="text-sm font-medium">مقيم في المملكة العربية السعودية</span>
               </div>
-              <div className="flex items-center space-x-2 text-gray-600 dark:text-gray-400">
+              <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
                 <HeartPulse className="w-5 h-5 text-primary-500" />
-                <span className="text-sm font-medium">Health Physician</span>
+                <span className="text-sm font-medium">طبيب صحة</span>
               </div>
-              <div className="flex items-center space-x-2 text-gray-600 dark:text-gray-400">
+              <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
                 <Camera className="w-5 h-5 text-primary-500" />
-                <span className="text-sm font-medium">Healthcare Storyteller</span>
+                <span className="text-sm font-medium">راوي قصص الرعاية الصحية</span>
               </div>
             </div>
 

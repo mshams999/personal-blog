@@ -105,13 +105,13 @@ const Footer = () => {
             }
 
             return (
-                <Link key={post.id} to={`/post/${post.slug}`} className="group flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-dark-700/50 transition-all duration-200">
+                <Link key={post.id} to={`/post/${post.slug}`} className="group flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-dark-700/50 transition-all duration-200">
                     <img src={post.featuredImage} alt={post.title} className="w-10 h-10 rounded-md object-cover flex-shrink-0 shadow-sm" />
                     <div className="flex-1 min-w-0">
                         <h4 className="font-semibold text-gray-800 dark:text-gray-200 text-sm leading-tight line-clamp-2 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
                             {post.title}
                         </h4>
-                        <div className="flex items-center space-x-1 text-xs text-gray-500 dark:text-gray-400 mt-1">
+                        <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400 mt-1">
                             {meta}
                         </div>
                     </div>
@@ -141,11 +141,11 @@ const Footer = () => {
 
                     <div className="space-y-4">
                         <h3 className="text-lg font-bold text-gray-900 dark:text-white flex items-center">
-                            <Sparkles className="w-5 h-5 mr-2 text-primary-500" />
-                            Dr. Shams' Blog
+                            <Sparkles className="w-5 h-5 me-2 text-primary-500" />
+                            مدونة د. شمس
                         </h3>
                         <p className="text-sm text-gray-600 dark:text-gray-400">
-                            Exploring web development, technology, and life. Let's connect and build something amazing together.
+                            استكشاف تطوير الويب والتكنولوجيا والحياة. لنتواصل ونبني شيئاً رائعاً معاً.
                         </p>
                         <div className="flex flex-wrap gap-2">
                             {socialLinks.map((social) => (
@@ -165,8 +165,8 @@ const Footer = () => {
 
                     <div>
                         <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center">
-                            <MessageCircle className="w-5 h-5 mr-2 text-blue-500" />
-                            Most Commented
+                            <MessageCircle className="w-5 h-5 me-2 text-blue-500" />
+                            الأكثر تعليقاً
                         </h3>
                         <div className="space-y-3">
                             {renderPostList(sortedByComments, 'comments')}
@@ -175,8 +175,8 @@ const Footer = () => {
 
                     <div>
                         <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center">
-                            <Eye className="w-5 h-5 mr-2 text-orange-500" />
-                            Popular
+                            <Eye className="w-5 h-5 me-2 text-orange-500" />
+                            الأكثر شعبية
                         </h3>
                         <div className="space-y-3">
                             {renderPostList(sortedPosts, 'views')}
@@ -185,8 +185,8 @@ const Footer = () => {
 
                     <div>
                         <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center">
-                            <Clock className="w-5 h-5 mr-2 text-green-500" />
-                            Short Reads
+                            <Clock className="w-5 h-5 me-2 text-green-500" />
+                            قراءات سريعة
                         </h3>
                         <div className="space-y-3">
                             {renderPostList(posts.filter(p => p && p.readTime <= 3), 'readTime')}
@@ -196,7 +196,7 @@ const Footer = () => {
 
                 <div className="pt-6 border-t border-gray-200/50 dark:border-dark-700/50 flex flex-col sm:flex-row justify-between items-center gap-4">
                     <div className="flex items-center gap-4">
-                        <span className="text-sm text-gray-600 dark:text-gray-400">Built with:</span>
+                        <span className="text-sm text-gray-600 dark:text-gray-400">بُنيت باستخدام:</span>
                         <div className="flex flex-wrap gap-3">
                             {techStack.map(tech => (
                                 <div key={tech.name} title={tech.name} className="text-xl hover:scale-125 transition-transform duration-200">{tech.icon}</div>
@@ -204,13 +204,13 @@ const Footer = () => {
                         </div>
                     </div>
 
-                    <div className="text-sm text-gray-500 dark:text-gray-400 text-center sm:text-right">
-                        <div className="flex items-center justify-center sm:justify-end gap-1">
-                            <span>Made with</span>
+                    <div className="text-sm text-gray-500 dark:text-gray-400 text-center sm:text-start">
+                        <div className="flex items-center justify-center sm:justify-start gap-1">
+                            <span>صُنعت بـ</span>
                             <Heart className="w-4 h-4 text-red-500 animate-pulse" />
-                            <span>by Dr. Shams</span>
+                            <span>بواسطة د. شمس</span>
                         </div>
-                        <div>© {currentYear} Dr. Shams Blog. All rights reserved.</div>
+                        <div>© {currentYear} مدونة د. شمس. جميع الحقوق محفوظة.</div>
                     </div>
                 </div>
             </div>

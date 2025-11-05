@@ -13,6 +13,29 @@
     body {
         @apply transition-colors duration-300;
     }
+
+    /* RTL Support - Override Tailwind directional utilities */
+    [dir="rtl"] {
+        direction: rtl;
+    }
+
+    [dir="ltr"] {
+        direction: ltr;
+    }
+
+    /* Fix flex-row-reverse for RTL */
+    [dir="rtl"] .flex-row {
+        flex-direction: row-reverse;
+    }
+
+    /* Text alignment fixes */
+    [dir="rtl"] .text-left {
+        text-align: right;
+    }
+
+    [dir="rtl"] .text-right {
+        text-align: left;
+    }
 }
 
 @layer components {

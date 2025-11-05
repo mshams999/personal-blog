@@ -11,7 +11,7 @@ import ApplauseButton from '../components/ApplauseButton'
 import SocialShareButton from '../components/SocialShareButton'
 import MetaTags from '../components/MetaTags_fixed'
 import { TinaCMSContent, StaticContent } from '../components/TinaCMSContent'
-import { format } from 'date-fns'
+import { formatDateArabicFull } from '../utils/dateFormat'
 import PostCard from '../components/PostCard'
 import { useArticleViews } from '../hooks/useFirebaseViews'
 import { usePostRating } from '../hooks/useRatings'
@@ -236,7 +236,7 @@ const SinglePostPage = () => {
     return <Navigate to="/" replace />
   }
 
-  const formattedDate = format(new Date(post.date), 'MMMM dd, yyyy')
+  const formattedDate = formatDateArabicFull(post.date)
 
   // Get related posts based on category
   const { posts } = useHybridData()
@@ -276,12 +276,12 @@ const SinglePostPage = () => {
 
       <article className="min-h-screen pb-16 animate-fade-in" dir="rtl">
         {/* Back Button - Fixed position over the header */}
-        <div className="absolute top-6 right-6 z-30">
+        <div className="absolute top-6 start-6 z-30">
           <Link
             to="/"
             className="inline-flex items-center text-sm font-medium text-white hover:text-gray-200 transition-colors group bg-black/20 backdrop-blur-sm rounded-full px-4 py-2"
           >
-            <ArrowLeft className="h-4 w-4 ml-2 transition-transform group-hover:translate-x-1" />
+            <ArrowLeft className="h-4 w-4 me-2 transition-transform group-hover:-translate-x-1" />
             العودة للمقالات
           </Link>
         </div>
@@ -307,7 +307,7 @@ const SinglePostPage = () => {
           <div className="absolute inset-0 bg-black/50 z-10"></div>
 
           {/* Header Content */}
-          <div className="relative z-20 flex flex-col justify-center items-end h-full max-w-4xl mx-auto px-4 py-16 md:py-20 text-right">
+          <div className="relative z-20 flex flex-col justify-center items-start h-full max-w-4xl mx-auto px-4 py-16 md:py-20 text-start">
             {/* Category Tag */}
             {category && (
               <div className="mb-6 animate-fade-in">
@@ -321,12 +321,12 @@ const SinglePostPage = () => {
             )}
 
             {/* Post Title */}
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight mb-8 drop-shadow-lg animate-slide-up max-w-4xl text-right arabic-heading"
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight mb-8 drop-shadow-lg animate-slide-up max-w-4xl text-start arabic-heading"
               dir="rtl"
               style={{
                 fontFamily: '"Amiri", "Noto Sans Arabic", system-ui, -apple-system, sans-serif',
                 direction: 'rtl',
-                textAlign: 'right',
+                textAlign: 'start',
                 lineHeight: '1.3'
               }}>
               {post.title}
@@ -383,7 +383,7 @@ const SinglePostPage = () => {
         {/* Content */}
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           {/* Social Sharing Sidebar - Desktop */}
-          <div className="hidden md:flex flex-col fixed left-8 top-1/3 items-center space-y-4 z-30">
+          <div className="hidden md:flex flex-col fixed end-8 top-1/3 items-center space-y-4 z-30">
             {/* Applause Button for sidebar */}
             <div className="bg-gray-100/90 backdrop-blur-sm rounded-full p-2 dark:bg-dark-700" title="Applaud this post">
               <ApplauseButton
@@ -456,11 +456,11 @@ const SinglePostPage = () => {
             }}>
             {loading ? (
               <div className="animate-pulse space-y-6" dir="rtl">
-                <div className="h-4 bg-gray-200 dark:bg-dark-600 rounded w-3/4 ml-auto"></div>
-                <div className="h-4 bg-gray-200 dark:bg-dark-600 rounded w-1/2 ml-auto"></div>
-                <div className="h-4 bg-gray-200 dark:bg-dark-600 rounded w-2/3 ml-auto"></div>
-                <div className="h-4 bg-gray-200 dark:bg-dark-600 rounded w-4/5 ml-auto"></div>
-                <div className="h-4 bg-gray-200 dark:bg-dark-600 rounded w-3/5 ml-auto"></div>
+                <div className="h-4 bg-gray-200 dark:bg-dark-600 rounded w-3/4 me-auto"></div>
+                <div className="h-4 bg-gray-200 dark:bg-dark-600 rounded w-1/2 me-auto"></div>
+                <div className="h-4 bg-gray-200 dark:bg-dark-600 rounded w-2/3 me-auto"></div>
+                <div className="h-4 bg-gray-200 dark:bg-dark-600 rounded w-4/5 me-auto"></div>
+                <div className="h-4 bg-gray-200 dark:bg-dark-600 rounded w-3/5 me-auto"></div>
               </div>
             ) : post?.isTinaPost ? (
               // Render TinaCMS content with rich components
@@ -551,7 +551,7 @@ const SinglePostPage = () => {
 
           {/* Categories */}
           <div className="mt-16">
-            <h3 className="text-xl font-semibold mb-6 text-gray-900 dark:text-white">Categories</h3>
+            <h3 className="text-xl font-semibold mb-6 text-gray-900 dark:text-white">التصنيفات</h3>
             <div className="flex flex-wrap gap-3">
               {categories.map((category) => (
                 <Link
@@ -607,13 +607,13 @@ const SinglePostPage = () => {
                   />
                   <div>
                     <span className="inline-block px-3 py-1 text-xs font-medium bg-pink-100 dark:bg-pink-900/20 text-pink-600 dark:text-pink-400 rounded-full mb-2">
-                      Previous Post
+                      المقال السابق
                     </span>
                     <h4 className="text-lg font-semibold text-gray-900 dark:text-white group-hover:text-primary-500 transition-colors line-clamp-2 max-w-xs">
                       {previousPost.title}
                     </h4>
                     <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                      {format(new Date(previousPost.date), 'MMM dd, yyyy')}
+                      {formatDateArabicFull(previousPost.date)}
                     </p>
                   </div>
                 </Link>
@@ -625,17 +625,17 @@ const SinglePostPage = () => {
               {nextPost ? (
                 <Link
                   to={`/post/${nextPost.slug}`}
-                  className="flex items-center space-x-4 text-right group hover:transform hover:scale-105 transition-all duration-300"
+                  className="flex items-center gap-4 text-start group hover:transform hover:scale-105 transition-all duration-300"
                 >
                   <div>
                     <span className="inline-block px-3 py-1 text-xs font-medium bg-pink-100 dark:bg-pink-900/20 text-pink-600 dark:text-pink-400 rounded-full mb-2">
-                      Next Post
+                      المقال التالي
                     </span>
                     <h4 className="text-lg font-semibold text-gray-900 dark:text-white group-hover:text-primary-500 transition-colors line-clamp-2 max-w-xs">
                       {nextPost.title}
                     </h4>
                     <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                      {format(new Date(nextPost.date), 'MMM dd, yyyy')}
+                      {formatDateArabicFull(nextPost.date)}
                     </p>
                   </div>
                   <img
@@ -662,7 +662,7 @@ const SinglePostPage = () => {
         {showScrollTop && (
           <button
             onClick={scrollToTop}
-            className="fixed bottom-8 right-8 p-3 bg-primary-500 hover:bg-primary-600 text-white rounded-full shadow-lg transition-all duration-300 z-30 animate-fade-in"
+            className="fixed bottom-8 start-8 p-3 bg-primary-500 hover:bg-primary-600 text-white rounded-full shadow-lg transition-all duration-300 z-30 animate-fade-in"
             aria-label="Scroll to top"
           >
             <ArrowUp className="h-5 w-5" />

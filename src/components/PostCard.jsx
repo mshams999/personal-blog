@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { Clock, Calendar } from 'lucide-react'
 import { useHybridData } from '../contexts/HybridDataContext'
 import DisqusCommentCount from './DisqusCommentCount'
-import { format } from 'date-fns'
+import { formatDateArabicShort } from '../utils/dateFormat'
 
 /**
  * PostCard component for displaying post previews in a grid
@@ -23,7 +23,7 @@ const PostCard = ({ post, index = 0 }) => {
     const category = getCategoryById(post.categoryId)
 
     // Format the date
-    const formattedDate = format(new Date(post.date), 'MMM dd, yyyy')
+    const formattedDate = formatDateArabicShort(post.date)
 
     // Calculate animation delay based on index
     const delayClass = index > 4 ? 'delay-100' : `delay-${index * 100}`
@@ -54,7 +54,7 @@ const PostCard = ({ post, index = 0 }) => {
 
                 {/* Category Badge */}
                 {category && (
-                    <div className="absolute top-4 left-4">
+                    <div className="absolute top-4 end-4">
                         <span className="inline-block px-3 py-1 text-xs font-medium glass text-gray-900 dark:text-white rounded-full shadow-sm">
                             {category.name}
                         </span>
@@ -64,14 +64,14 @@ const PostCard = ({ post, index = 0 }) => {
 
             <div className="p-5 flex flex-col h-[calc(100%-12rem)]">
                 {/* Post Meta */}
-                <div className="flex items-center text-xs text-gray-500 dark:text-gray-400 mb-3 space-x-4">
-                    <div className="flex items-center space-x-1">
+                <div className="flex items-center text-xs text-gray-500 dark:text-gray-400 mb-3 gap-4">
+                    <div className="flex items-center gap-1">
                         <Calendar className="h-3 w-3" />
                         <span>{formattedDate}</span>
                     </div>
-                    <div className="flex items-center space-x-1">
+                    <div className="flex items-center gap-1">
                         <Clock className="h-3 w-3" />
-                        <span>{post.readTime} min read</span>
+                        <span>{post.readTime} دقيقة</span>
                     </div>
                     <div className="comment-count-container">
                         <DisqusCommentCount
@@ -97,7 +97,7 @@ const PostCard = ({ post, index = 0 }) => {
                         <img
                             src={author.avatar}
                             alt={author.name}
-                            className="w-6 h-6 rounded-full mr-2"
+                            className="w-6 h-6 rounded-full me-2"
                             loading="lazy"
                         />
                         <span className="text-xs font-medium text-gray-700 dark:text-gray-300">

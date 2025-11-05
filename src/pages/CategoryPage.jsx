@@ -2,7 +2,7 @@ import React, { useMemo } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { useHybridData } from '../contexts/HybridDataContext'
 import { Clock, Calendar, ArrowLeft, Eye, Star } from 'lucide-react'
-import { format } from 'date-fns'
+import { formatDateArabicFull } from '../utils/dateFormat'
 import ViewCounter from '../components/ViewCounter'
 
 /**
@@ -43,17 +43,17 @@ const CategoryPage = () => {
             <div className="min-h-screen flex items-center justify-center">
                 <div className="text-center">
                     <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
-                        Category Not Found
+                        التصنيف غير موجود
                     </h1>
                     <p className="text-gray-600 dark:text-gray-300 mb-8">
-                        The category you're looking for doesn't exist.
+                        التصنيف الذي تبحث عنه غير موجود.
                     </p>
                     <Link
                         to="/"
-                        className="inline-flex items-center px-6 py-3 bg-primary-500 text-white rounded-full hover:bg-primary-600 transition-colors"
+                        className="inline-flex items-center gap-2 px-6 py-3 bg-primary-500 text-white rounded-full hover:bg-primary-600 transition-colors"
                     >
-                        <ArrowLeft className="h-4 w-4 mr-2" />
-                        Back to Home
+                        <ArrowLeft className="h-4 w-4" />
+                        العودة للرئيسية
                     </Link>
                 </div>
             </div>
@@ -79,7 +79,7 @@ const CategoryPage = () => {
                         }}
                     />
                     {postCategory && (
-                        <div className="absolute top-4 left-4">
+                        <div className="absolute top-4 end-4">
                             <span className="inline-block px-3 py-1 text-xs font-medium bg-white/90 backdrop-blur-sm text-gray-900 rounded-full shadow-sm">
                                 {postCategory.name}
                             </span>
@@ -96,31 +96,35 @@ const CategoryPage = () => {
                         {post.excerpt}
                     </p>
 
-                    <div className="flex items-center text-xs text-gray-500 dark:text-gray-400 mb-4">
-                        <Calendar className="h-3 w-3 mr-1" />
-                        <span>{format(new Date(post.date), 'MMM d, yyyy')}</span>
-                        <Clock className="h-3 w-3 ml-3 mr-1" />
-                        <span>{post.readTime} min read</span>
+                    <div className="flex items-center text-xs text-gray-500 dark:text-gray-400 mb-4 gap-3">
+                        <div className="flex items-center gap-1">
+                            <Calendar className="h-3 w-3" />
+                            <span>{formatDateArabicFull(post.date)}</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                            <Clock className="h-3 w-3" />
+                            <span>{post.readTime} min read</span>
+                        </div>
                     </div>
 
                     <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
-                        <div className="flex items-center space-x-3">
-                            <div className="flex items-center">
-                                <Eye className="h-3 w-3 mr-1" />
+                        <div className="flex items-center gap-3">
+                            <div className="flex items-center gap-1">
+                                <Eye className="h-3 w-3" />
                                 <ViewCounter slug={post.slug} />
                             </div>
-                            <div className="flex items-center">
-                                <Star className="h-3 w-3 mr-1 text-yellow-400" />
+                            <div className="flex items-center gap-1">
+                                <Star className="h-3 w-3 text-yellow-400" />
                                 <span>4.5 (12)</span>
                             </div>
                         </div>
 
                         {author && (
-                            <div className="flex items-center">
+                            <div className="flex items-center gap-2">
                                 <img
                                     src={author.avatar}
                                     alt={author.name}
-                                    className="h-5 w-5 rounded-full mr-2"
+                                    className="h-5 w-5 rounded-full"
                                 />
                                 <span>{author.name}</span>
                             </div>
@@ -134,12 +138,12 @@ const CategoryPage = () => {
     return (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             {/* Breadcrumb */}
-            <nav className="flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400 mb-8">
+            <nav className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 mb-8">
                 <Link to="/" className="hover:text-primary-500 transition-colors">
-                    Home
+                    الرئيسية
                 </Link>
                 <span>/</span>
-                <span className="text-gray-900 dark:text-white">Categories</span>
+                <span className="text-gray-900 dark:text-white">التصنيفات</span>
                 <span>/</span>
                 <span className="text-gray-900 dark:text-white">{category.name}</span>
             </nav>
@@ -150,7 +154,7 @@ const CategoryPage = () => {
                     {category.name}
                 </h1>
                 <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-                    Discover {categoryPosts.length} {categoryPosts.length === 1 ? 'article' : 'articles'} in the {category.name.toLowerCase()} category
+                    اكتشف {categoryPosts.length} {categoryPosts.length === 1 ? 'مقالة' : categoryPosts.length === 2 ? 'مقالتين' : 'مقالات'} في تصنيف {category.name}
                 </p>
             </div>
 
@@ -164,17 +168,17 @@ const CategoryPage = () => {
             ) : (
                 <div className="text-center py-16">
                     <h3 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4">
-                        No articles found
+                        لم يتم العثور على مقالات
                     </h3>
                     <p className="text-gray-600 dark:text-gray-300 mb-8">
-                        There are currently no articles in the {category.name} category.
+                        لا توجد حالياً مقالات في تصنيف {category.name}.
                     </p>
                     <Link
                         to="/"
-                        className="inline-flex items-center px-6 py-3 bg-primary-500 text-white rounded-full hover:bg-primary-600 transition-colors"
+                        className="inline-flex items-center gap-2 px-6 py-3 bg-primary-500 text-white rounded-full hover:bg-primary-600 transition-colors"
                     >
-                        <ArrowLeft className="h-4 w-4 mr-2" />
-                        Browse All Articles
+                        <ArrowLeft className="h-4 w-4" />
+                        تصفح جميع المقالات
                     </Link>
                 </div>
             )}
@@ -183,7 +187,7 @@ const CategoryPage = () => {
             {otherCategories.length > 0 && (
                 <div className="border-t border-gray-200 dark:border-dark-600 pt-12">
                     <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
-                        Explore Other Categories
+                        استكشف التصنيفات الأخرى
                     </h2>
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
                         {otherCategories.map((cat) => (
@@ -196,7 +200,7 @@ const CategoryPage = () => {
                                     {cat.name}
                                 </h3>
                                 <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                                    {getPostsByCategory(cat.id).length} articles
+                                    {getPostsByCategory(cat.id).length} مقالة
                                 </p>
                             </Link>
                         ))}

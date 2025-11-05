@@ -16,7 +16,7 @@ import { Mail, Phone, MapPin, Globe, Calendar, Award, Briefcase, GraduationCap, 
  */
 const CVPage = () => {
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-dark-900 py-12">
+        <div className="min-h-screen bg-gray-50 dark:bg-dark-900 py-12" dir="ltr" lang="en">
             <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Header Section */}
                 <div className="bg-white dark:bg-dark-700 rounded-2xl shadow-lg p-8 mb-8 border-l-4 border-blue-600">

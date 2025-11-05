@@ -46,8 +46,8 @@ export default {
                 }
             },
             fontFamily: {
-                'sans': ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
-                'heading': ['Nunito', 'system-ui', '-apple-system', 'sans-serif'],
+                'sans': ['Cairo', 'Tajawal', 'Inter', 'system-ui', '-apple-system', 'sans-serif'],
+                'heading': ['Cairo', 'Tajawal', 'Nunito', 'system-ui', '-apple-system', 'sans-serif'],
             },
             typography: {
                 DEFAULT: {

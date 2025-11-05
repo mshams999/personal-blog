@@ -12,7 +12,7 @@ import { useHybridData } from '../contexts/HybridDataContext'
  * - Responsive design
  */
 const Categories = ({
-    title = "Categories",
+    title = "التصنيفات",
     className = "",
     showTitle = true,
     columns = "lg:grid-cols-6"
@@ -45,7 +45,7 @@ const Categories = ({
                                 {category.name}
                             </h3>
                             <p className="text-sm text-gray-500 dark:text-gray-400">
-                                {postCount} {postCount === 1 ? 'article' : 'articles'}
+                                {postCount} {postCount === 1 ? 'مقالة' : postCount === 2 ? 'مقالتان' : 'مقالات'}
                             </p>
                         </Link>
                     )

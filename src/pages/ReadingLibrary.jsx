@@ -364,13 +364,13 @@ const ReadingLibrary = () => {
                             <div className="w-8 h-8 bg-blue-100 rounded flex items-center justify-center">
                                 📚
                             </div>
-                            <span className="font-medium text-gray-900">My Library</span>
-                            <span className="text-gray-500">📁 Private</span>
+                            <span className="font-medium text-gray-900">مكتبتي</span>
+                            <span className="text-gray-500">📁 خاص</span>
                         </div>
                     </div>
                     <div className="flex items-center space-x-2">
-                        <span className="text-sm text-gray-500">Edited Nov 25, 2024</span>
-                        <button className="px-3 py-1 bg-blue-600 text-white rounded text-sm">Share</button>
+                        <span className="text-sm text-gray-500">تم التحرير في 25 نوفمبر 2024</span>
+                        <button className="px-3 py-1 bg-blue-600 text-white rounded text-sm">مشاركة</button>
                         <button className="text-gray-400">
                             <MoreHorizontal className="w-5 h-5" />
                         </button>
@@ -382,20 +382,20 @@ const ReadingLibrary = () => {
                 {/* Left Sidebar */}
                 <div className="w-64 bg-white border-r border-gray-200 min-h-screen">
                     <div className="p-4">
-                        <h2 className="text-lg font-bold text-gray-900 mb-4">My Library</h2>
+                        <h2 className="text-lg font-bold text-gray-900 mb-4">مكتبتي</h2>
 
                         {/* Service Desk */}
                         <div className="mb-6">
-                            <h3 className="text-sm font-medium text-gray-700 mb-3">Service Desk</h3>
+                            <h3 className="text-sm font-medium text-gray-700 mb-3">الخدمات</h3>
                             <div className="space-y-2">
                                 <div className="flex items-center text-sm text-blue-600">
-                                    📚 My Library
+                                    📚 مكتبتي
                                 </div>
                                 <div className="flex items-center text-sm text-gray-600">
-                                    🔍 Want to Read
+                                    🔍 أريد القراءة
                                 </div>
                                 <div className="flex items-center text-sm text-gray-600">
-                                    📖 Reading Challenge
+                                    📖 تحدي القراءة
                                 </div>
                                 <div className="flex items-center text-sm text-gray-600">
                                     ⭐ Goodreads
@@ -405,20 +405,20 @@ const ReadingLibrary = () => {
 
                         {/* Quick Actions */}
                         <div className="mb-6">
-                            <h3 className="text-sm font-medium text-gray-700 mb-3">Quick Actions</h3>
+                            <h3 className="text-sm font-medium text-gray-700 mb-3">إجراءات سريعة</h3>
                             <div className="space-y-2">
                                 <div className="flex items-center text-sm text-gray-600">
-                                    📝 Add Title to Library
+                                    📝 إضافة كتاب للمكتبة
                                 </div>
                                 <div className="flex items-center text-sm text-gray-600">
-                                    💬 Add Quote
+                                    💬 إضافة اقتباس
                                 </div>
                             </div>
                         </div>
 
                         {/* Current Read */}
                         <div className="mb-6">
-                            <h3 className="text-sm font-medium text-gray-700 mb-3">Current Read</h3>
+                            <h3 className="text-sm font-medium text-gray-700 mb-3">القراءة الحالية</h3>
                             <div className="text-sm text-gray-600">
                                 the richest man in babylon
                             </div>
@@ -426,7 +426,7 @@ const ReadingLibrary = () => {
 
                         {/* Deep Work */}
                         <div className="mb-6">
-                            <h3 className="text-sm font-medium text-gray-700 mb-3">Deep Work</h3>
+                            <h3 className="text-sm font-medium text-gray-700 mb-3">عمل عميق</h3>
                             <div className="text-sm text-gray-600">
                                 The five people you meet in heaven
                             </div>
@@ -434,13 +434,13 @@ const ReadingLibrary = () => {
 
                         {/* Rating System */}
                         <div>
-                            <h3 className="text-sm font-medium text-gray-700 mb-3">Rating System</h3>
+                            <h3 className="text-sm font-medium text-gray-700 mb-3">نظام التقييم</h3>
                             <div className="space-y-1 text-xs text-gray-600">
-                                <div>⭐⭐⭐⭐⭐ : love it</div>
-                                <div>⭐⭐⭐⭐ : like it</div>
-                                <div>⭐⭐⭐ : it's okay</div>
-                                <div>⭐⭐ : struggled</div>
-                                <div>⭐ : never again</div>
+                                <div>⭐⭐⭐⭐⭐ : أحببته</div>
+                                <div>⭐⭐⭐⭐ : أعجبني</div>
+                                <div>⭐⭐⭐ : جيد</div>
+                                <div>⭐⭐ : صعب</div>
+                                <div>⭐ : أبداً مرة أخرى</div>
                             </div>
                         </div>
                     </div>

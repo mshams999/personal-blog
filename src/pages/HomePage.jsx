@@ -2,7 +2,7 @@ import React, { useMemo } from 'react'
 import { useHybridData } from '../contexts/HybridDataContext'
 import { Link } from 'react-router-dom'
 import { Clock, MessageCircle, Star, Calendar, Eye, TrendingUp, Sparkles } from 'lucide-react'
-import { format } from 'date-fns'
+import { formatDateArabicShort } from '../utils/dateFormat'
 import Newsletter from '../components/Newsletter'
 import Categories from '../components/Categories'
 import Carousel from '../components/Carousel'
@@ -212,9 +212,9 @@ const HomePage = () => {
 
                     {/* New badge for recent posts */}
                     {new Date(post.date) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) && (
-                        <div className="absolute top-4 right-4 z-10">
+                        <div className="absolute top-4 start-4 z-10">
                             <span className="bg-gradient-to-r from-green-400 to-green-600 text-white text-xs font-bold px-2 py-1 rounded-full shadow-lg animate-pulse-glow">
-                                NEW
+                                جديد
                             </span>
                         </div>
                     )}
@@ -225,8 +225,8 @@ const HomePage = () => {
                         {post.title}
                     </h3>
 
-                    <div className={`flex items-center text-xs mb-3 space-x-4 ${currentTheme.meta}`}>
-                        <div className="flex items-center space-x-1">
+                    <div className={`flex items-center text-xs mb-3 gap-4 ${currentTheme.meta}`}>
+                        <div className="flex items-center gap-1">
                             {author && (
                                 <>
                                     <img
@@ -238,9 +238,9 @@ const HomePage = () => {
                                 </>
                             )}
                         </div>
-                        <div className="flex items-center space-x-1">
+                        <div className="flex items-center gap-1">
                             <Clock className="h-3 w-3" />
-                            <span>{post.readTime} min read</span>
+                            <span>{post.readTime} دقيقة</span>
                         </div>
                     </div>
 
@@ -250,15 +250,15 @@ const HomePage = () => {
 
                     <div className="flex items-center justify-between">
                         <span className={`text-xs font-medium ${currentTheme.continue}`}>
-                            Continue Reading →
+                            متابعة القراءة ←
                         </span>
-                        <div className="flex items-center space-x-3 text-xs">
+                        <div className="flex items-center gap-3 text-xs">
                             <FirebaseCommentCount
                                 post={post}
                                 showIcon={true}
                                 className={currentTheme.meta}
                             />
-                            <div className="flex items-center space-x-1">
+                            <div className="flex items-center gap-1">
                                 <Star className={`h-3 w-3 ${['gradient', 'glass', 'vibrant', 'dark'].includes(theme) ? 'text-yellow-300 fill-yellow-300' : 'text-yellow-400 fill-yellow-400'}`} />
                                 <span className={currentTheme.meta}>
                                     {formatRating(averageRating)} ({totalRatings})
@@ -360,10 +360,10 @@ const HomePage = () => {
                 <div className="mb-12">
                     <div className="text-center mb-8 animate-fadeInUp">
                         <h2 className="text-3xl font-bold text-gradient-animated mb-2">
-                            Latest Articles
+                            أحدث المقالات
                         </h2>
                         <p className="text-gray-600 dark:text-gray-300">
-                            Discover our newest content
+                            اكتشف أحدث محتوانا
                         </p>
                         <div className="mt-4 w-32 h-1 bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 mx-auto rounded-full"></div>
                     </div>
@@ -381,10 +381,10 @@ const HomePage = () => {
                     <div className="lg:col-span-3">
                         <div className="text-center mb-8 animate-fadeInUp">
                             <h2 className="text-2xl font-bold text-gradient-animated mb-2">
-                                All Articles
+                                جميع المقالات
                             </h2>
                             <p className="text-gray-600 dark:text-gray-300">
-                                Explore our diverse collection of stories and insights
+                                استكشف مجموعتنا المتنوعة من القصص والرؤى
                             </p>
                             <div className="mt-4 w-24 h-1 bg-gradient-to-r from-purple-500 to-pink-500 mx-auto rounded-full"></div>
                         </div>
@@ -411,7 +411,7 @@ const HomePage = () => {
                         <div className="text-center mt-12">
                             <button className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-primary-500 to-purple-600 hover:from-primary-600 hover:to-purple-700 text-white rounded-full font-medium transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl">
                                 <span>Load More Articles</span>
-                                <div className="ml-2 w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                                <div className="ms-2 w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin opacity-0 group-hover:opacity-100 transition-opacity"></div>
                             </button>
                         </div>
                     </div>
@@ -421,12 +421,12 @@ const HomePage = () => {
                         {/* Top Posts */}
                         <div className="bg-white/80 dark:bg-dark-700/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-gray-100/50 dark:border-dark-600/50 hover:shadow-xl transition-all duration-300 glass animate-slideInRight">
                             <div className="flex items-center justify-between mb-6">
-                                <div className="flex items-center space-x-2">
+                                <div className="flex items-center gap-2">
                                     <TrendingUp className="w-5 h-5 text-primary-500" />
-                                    <h3 className="text-lg font-bold text-gray-900 dark:text-white">Top Posts</h3>
+                                    <h3 className="text-lg font-bold text-gray-900 dark:text-white">أفضل المقالات</h3>
                                 </div>
                                 {viewsLoading && (
-                                    <div className="text-xs text-gray-500 dark:text-gray-400 animate-pulse">Loading views...</div>
+                                    <div className="text-xs text-gray-500 dark:text-gray-400 animate-pulse">جاري التحميل...</div>
                                 )}
                             </div>
                             <div className="space-y-4">
@@ -434,7 +434,7 @@ const HomePage = () => {
                                     const author = getAuthorById(post.authorId)
                                     return (
                                         <Link key={post.id} to={`/post/${post.slug}`} className="block group">
-                                            <div className={`flex items-start space-x-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-dark-600 transition-colors duration-200 animate-fadeInUp stagger-${index + 1}`}>
+                                            <div className={`flex items-start gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-dark-600 transition-colors duration-200 animate-fadeInUp stagger-${index + 1}`}>
                                                 <div className="flex-shrink-0 relative">
                                                     <span className="flex w-8 h-8 bg-gradient-to-r from-primary-500 to-purple-500 text-white rounded-full items-center justify-center text-xs font-bold shadow-lg">
                                                         {index + 1}
@@ -449,7 +449,7 @@ const HomePage = () => {
                                                     </h4>
                                                     <div className="flex items-center justify-between mt-2">
                                                         <p className="text-xs text-gray-500 dark:text-gray-400">
-                                                            {author?.name} • {format(new Date(post.date), 'MMM dd')}
+                                                            {author?.name} • {formatDateArabicShort(post.date)}
                                                         </p>
                                                         <ViewCounter
                                                             articleSlug={post.slug}
@@ -470,12 +470,12 @@ const HomePage = () => {
 
                         {/* Most Commented */}
                         <div className="bg-white/80 dark:bg-dark-700/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-gray-100/50 dark:border-dark-600/50 hover:shadow-xl transition-all duration-300 glass animate-slideInRight stagger-2">
-                            <div className="flex items-center space-x-2 mb-6">
+                            <div className="flex items-center gap-2 mb-6">
                                 <MessageCircle className="w-5 h-5 text-blue-500" />
                                 <h3 className="text-lg font-bold text-gray-900 dark:text-white">
-                                    Most Commented
+                                    الأكثر تعليقاً
                                     {commentsLoading && (
-                                        <span className="ml-2 text-sm text-gray-500 dark:text-gray-400">(Loading...)</span>
+                                        <span className="ms-2 text-sm text-gray-500 dark:text-gray-400">(جارٍ التحميل...)</span>
                                     )}
                                 </h3>
                             </div>
@@ -486,14 +486,14 @@ const HomePage = () => {
                                         if (!post) return null
                                         const commentCount = getCommentCount ? getCommentCount(post.slug) : 0
                                         return (
-                                            <Link key={post.id} to={`/post/${post.slug}`} className={`flex items-center space-x-3 group p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-dark-600 transition-colors duration-200 animate-fadeInUp stagger-${index + 1}`}>
+                                            <Link key={post.id} to={`/post/${post.slug}`} className={`flex items-center gap-3 group p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-dark-600 transition-colors duration-200 animate-fadeInUp stagger-${index + 1}`}>
                                                 <div className="relative">
                                                     <img
                                                         src={post.featuredImage}
                                                         alt={post.title}
                                                         className="w-14 h-14 rounded-xl object-cover ring-2 ring-white dark:ring-dark-600 shadow-md group-hover:scale-105 transition-transform duration-200"
                                                     />
-                                                    <span className="absolute -top-2 -left-2 w-6 h-6 bg-blue-500 text-white text-xs rounded-full flex items-center justify-center font-bold shadow-lg animate-bounceIn">
+                                                    <span className="absolute -top-2 -end-2 w-6 h-6 bg-blue-500 text-white text-xs rounded-full flex items-center justify-center font-bold shadow-lg animate-bounceIn">
                                                         {index + 1}
                                                     </span>
                                                 </div>
@@ -501,16 +501,16 @@ const HomePage = () => {
                                                     <h4 className="text-sm font-medium text-gray-900 dark:text-white line-clamp-2 group-hover:text-primary-500 transition-colors">
                                                         {post.title}
                                                     </h4>
-                                                    <div className="flex items-center text-xs text-gray-500 dark:text-gray-400 mt-1 space-x-2">
-                                                        <span>{format(new Date(post.date), 'MMM dd')}</span>
+                                                    <div className="flex items-center text-xs text-gray-500 dark:text-gray-400 mt-1 gap-2">
+                                                        <span>{formatDateArabicShort(post.date)}</span>
                                                         <span>—</span>
-                                                        <div className="flex items-center space-x-1">
+                                                        <div className="flex items-center gap-1">
                                                             <MessageCircle className="w-3 h-3" />
                                                             <span>
                                                                 {commentsLoading ? (
-                                                                    <span className="animate-pulse">Loading...</span>
+                                                                    <span className="animate-pulse">جارٍ التحميل...</span>
                                                                 ) : (
-                                                                    `${commentCount} Comment${commentCount !== 1 ? 's' : ''}`
+                                                                    `${commentCount} ${commentCount === 0 ? 'تعليق' : commentCount === 1 ? 'تعليق واحد' : commentCount === 2 ? 'تعليقان' : 'تعليقات'}`
                                                                 )}
                                                             </span>
                                                         </div>

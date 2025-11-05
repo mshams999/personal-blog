@@ -82,7 +82,7 @@ const Header = () => {
                         </div>
 
                         {/* Center: Navigation */}
-                        <nav className="hidden md:flex items-center space-x-2">
+                        <nav className="hidden md:flex items-center gap-2">
                             {navigation?.map((item) => (
                                 <div key={item.name} className="relative group">
                                     <Link
@@ -97,11 +97,11 @@ const Header = () => {
                                     </Link>
 
                                     {/* Enhanced Dropdown indicator */}
-                                    {(item.name === 'Features' || item.name === 'Beauty' || item.name === 'Shop') && (
-                                        <div className="absolute top-full left-0 mt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform group-hover:translate-y-0 translate-y-2 pointer-events-none group-hover:pointer-events-auto z-50">
+                                    {(item.name === 'Features' || item.name === 'Beauty' || item.name === 'Shop' || item.name === 'المميزات' || item.name === 'الجمال' || item.name === 'المتجر') && (
+                                        <div className="absolute top-full start-0 mt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform group-hover:translate-y-0 translate-y-2 pointer-events-none group-hover:pointer-events-auto z-50">
                                             <div className="bg-white/95 dark:bg-dark-800/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-gray-200/50 dark:border-dark-600/50 p-4 min-w-48">
                                                 <div className="text-xs text-gray-500 dark:text-gray-400 p-2 text-center">
-                                                    <div className="animate-pulse">Coming soon...</div>
+                                                    <div className="animate-pulse">قريباً...</div>
                                                 </div>
                                             </div>
                                         </div>
@@ -111,14 +111,14 @@ const Header = () => {
                         </nav>
 
                         {/* Right: Search, Theme Toggle, and Mobile Menu */}
-                        <div className="flex items-center space-x-3">
+                        <div className="flex items-center gap-3">
                             {/* Desktop Search */}
                             <button
                                 onClick={toggleSearch}
-                                className="hidden md:flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-all duration-300 px-3 py-2 rounded-xl hover:bg-gradient-to-r hover:from-gray-50 hover:to-gray-100 dark:hover:from-dark-700 dark:hover:to-dark-600 hover:shadow-md hover:scale-105 group"
+                                className="hidden md:flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-all duration-300 px-3 py-2 rounded-xl hover:bg-gradient-to-r hover:from-gray-50 hover:to-gray-100 dark:hover:from-dark-700 dark:hover:to-dark-600 hover:shadow-md hover:scale-105 group"
                             >
                                 <Search className="h-4 w-4 transition-transform duration-300 group-hover:scale-110" />
-                                <span>Search</span>
+                                <span>بحث</span>
                             </button>
 
                             {/* Desktop Theme Toggle */}
@@ -149,7 +149,7 @@ const Header = () => {
                             </button>
 
                             {/* Social Media Icons */}
-                            <div className="hidden lg:flex items-center space-x-1">
+                            <div className="hidden lg:flex items-center gap-1">
                                 {siteMetadata?.authors?.[0]?.social && (
                                     <>
                                         {siteMetadata.authors[0].social.github && (
@@ -223,7 +223,7 @@ const Header = () => {
                         <div className="absolute inset-0 bg-gradient-to-b from-primary-50/50 to-transparent dark:from-primary-900/20 dark:to-transparent"></div>
                         <div className="max-w-2xl mx-auto p-6 relative z-10">
                             <div className="flex items-center justify-between mb-4">
-                                <h3 className="text-lg font-semibold text-gray-900 dark:text-white bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent">Search</h3>
+                                <h3 className="text-lg font-semibold text-gray-900 dark:text-white bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent">بحث</h3>
                                 <button
                                     onClick={toggleSearch}
                                     className="p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-dark-700 transition-all duration-300 hover:scale-105 active:scale-95 group"
@@ -245,17 +245,17 @@ const Header = () => {
                             <div className="mb-6 space-y-4">
                                 {/* Search Input */}
                                 <div className="relative">
-                                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                    <div className="absolute inset-y-0 end-0 pe-4 flex items-center pointer-events-none">
                                         <Search className="h-5 w-5 text-gray-400 dark:text-gray-500" />
                                     </div>
                                     <input
                                         type="text"
-                                        placeholder="Search articles..."
+                                        placeholder="ابحث في المقالات..."
                                         onClick={() => {
                                             setIsSearchOpen(true)
                                             setIsMobileMenuOpen(false)
                                         }}
-                                        className="w-full pl-12 pr-4 py-3 bg-gray-50 dark:bg-dark-700 border border-gray-200 dark:border-dark-600 rounded-2xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-300 shadow-sm hover:shadow-md"
+                                        className="w-full pe-12 ps-4 py-3 bg-gray-50 dark:bg-dark-700 border border-gray-200 dark:border-dark-600 rounded-2xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-300 shadow-sm hover:shadow-md"
                                         readOnly
                                     />
                                 </div>
@@ -265,28 +265,28 @@ const Header = () => {
                                     onClick={toggleTheme}
                                     className="w-full flex items-center justify-between px-4 py-3 bg-gray-50 dark:bg-dark-700 border border-gray-200 dark:border-dark-600 rounded-2xl hover:bg-gray-100 dark:hover:bg-dark-600 transition-all duration-300 shadow-sm hover:shadow-md group"
                                 >
-                                    <div className="flex items-center space-x-3">
+                                    <div className="flex items-center gap-3">
                                         {theme === 'light' ? (
                                             <>
                                                 <Moon className="h-5 w-5 text-gray-600 dark:text-gray-400 transition-all duration-300 group-hover:text-blue-600 group-hover:rotate-12" />
-                                                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Dark Mode</span>
+                                                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">الوضع الداكن</span>
                                             </>
                                         ) : (
                                             <>
                                                 <Sun className="h-5 w-5 text-gray-600 dark:text-gray-400 transition-all duration-300 group-hover:text-yellow-500 group-hover:rotate-12" />
-                                                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Light Mode</span>
+                                                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">الوضع الفاتح</span>
                                             </>
                                         )}
                                     </div>
                                     <div className={`w-12 h-6 rounded-full transition-colors duration-300 relative ${theme === 'dark' ? 'bg-primary-500' : 'bg-gray-300'}`}>
-                                        <div className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white transition-transform duration-300 ${theme === 'dark' ? 'transform translate-x-6' : ''}`}></div>
+                                        <div className={`absolute top-0.5 start-0.5 w-5 h-5 rounded-full bg-white transition-transform duration-300 ${theme === 'dark' ? 'transform translate-x-6' : ''}`}></div>
                                     </div>
                                 </button>
                             </div>
 
                             {/* Navigation Links */}
                             <nav className="space-y-2">
-                                <h3 className="px-4 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">Navigation</h3>
+                                <h3 className="px-4 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">التنقل</h3>
                                 {navigation?.map((item, index) => (
                                     <Link
                                         key={item.name}
@@ -304,8 +304,8 @@ const Header = () => {
 
                                 {/* Enhanced Mobile Social Media Icons */}
                                 <div className="pt-4 mt-4 border-t border-gray-200/50 dark:border-dark-600/50">
-                                    <h4 className="px-4 text-sm font-medium text-gray-500 dark:text-gray-400 mb-3 bg-gradient-to-r from-gray-600 to-gray-500 bg-clip-text text-transparent">Connect</h4>
-                                    <div className="flex items-center justify-center space-x-4 px-4">
+                                    <h4 className="px-4 text-sm font-medium text-gray-500 dark:text-gray-400 mb-3 bg-gradient-to-r from-gray-600 to-gray-500 bg-clip-text text-transparent">تواصل</h4>
+                                    <div className="flex items-center justify-center gap-4 px-4">
                                         {siteMetadata?.authors?.[0]?.social && (
                                             <>
                                                 {siteMetadata.authors[0].social.github && (

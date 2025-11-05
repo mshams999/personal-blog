@@ -57,7 +57,7 @@ const ViewCounter = ({
             case 'minimal':
                 return 'inline-flex items-center text-gray-500 dark:text-gray-400';
             default:
-                return 'inline-flex items-center space-x-1 text-gray-500 dark:text-gray-400';
+                return 'inline-flex items-center gap-1 text-gray-500 dark:text-gray-400';
         }
     };
 
@@ -75,7 +75,7 @@ const ViewCounter = ({
             <Eye className={iconSizes[size]} />
             <span>{formattedCount}</span>
             {error && (
-                <span className="text-red-500 ml-1" title={`Error: ${error}`}>
+                <span className="text-red-500 ms-1" title={`Error: ${error}`}>
                     !
                 </span>
             )}
@@ -92,7 +92,7 @@ export const TrendingViewBadge = ({ viewCount, threshold = 100, className = '' }
     const formattedCount = useFormatViewCount(viewCount);
 
     return (
-        <div className={`inline-flex items-center space-x-1 px-2 py-1 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-full text-xs font-medium ${className}`}>
+        <div className={`inline-flex items-center gap-1 px-2 py-1 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-full text-xs font-medium ${className}`}>
             <TrendingUp className="w-3 h-3" />
             <span>{formattedCount}</span>
         </div>

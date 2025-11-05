@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { ChevronLeft, ChevronRight, Calendar, Clock, ArrowRight } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import { format } from 'date-fns'
+import { formatDateArabicShort } from '../utils/dateFormat'
 import { useHybridData } from '../contexts/HybridDataContext'
 
 /**
@@ -102,13 +102,13 @@ const Carousel = ({ posts = [], autoSlide = true, slideInterval = 5000 }) => {
                                         <div className="flex items-center gap-3 text-xs text-gray-500 dark:text-gray-400 pt-3 border-t border-gray-100 dark:border-dark-600">
                                             <div className="flex items-center gap-1">
                                                 <Calendar className="w-3 h-3" />
-                                                <span>{format(new Date(post.date), 'MMM dd')}</span>
+                                                <span>{formatDateArabicShort(post.date)}</span>
                                             </div>
                                             <div className="flex items-center gap-1">
                                                 <Clock className="w-3 h-3" />
-                                                <span>{post.readTime} min read</span>
+                                                <span>{post.readTime} دقيقة</span>
                                             </div>
-                                            <div className="ml-auto">
+                                            <div className="me-auto">
                                                 <ArrowRight className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                                             </div>
                                         </div>
@@ -154,13 +154,13 @@ const Carousel = ({ posts = [], autoSlide = true, slideInterval = 5000 }) => {
                                             <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
                                                 <div className="flex items-center gap-1">
                                                     <Calendar className="w-4 h-4" />
-                                                    <span>{format(new Date(post.date), 'MMM dd, yyyy')}</span>
+                                                    <span>{formatDateArabicShort(post.date)}</span>
                                                 </div>
                                                 <div className="flex items-center gap-1">
                                                     <Clock className="w-4 h-4" />
-                                                    <span>{post.readTime} min read</span>
+                                                    <span>{post.readTime} دقيقة</span>
                                                 </div>
-                                                <div className="ml-auto">
+                                                <div className="me-auto">
                                                     <ArrowRight className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                                                 </div>
                                             </div>
@@ -182,7 +182,7 @@ const Carousel = ({ posts = [], autoSlide = true, slideInterval = 5000 }) => {
                             e.stopPropagation()
                             prevSlide()
                         }}
-                        className="hidden lg:flex absolute left-4 top-1/2 -translate-y-1/2 p-2 bg-white/90 dark:bg-dark-800/90 backdrop-blur-sm rounded-full shadow-lg hover:bg-white dark:hover:bg-dark-700 transition-colors duration-300 group z-10"
+                        className="hidden lg:flex absolute end-4 top-1/2 -translate-y-1/2 p-2 bg-white/90 dark:bg-dark-800/90 backdrop-blur-sm rounded-full shadow-lg hover:bg-white dark:hover:bg-dark-700 transition-colors duration-300 group z-10"
                         aria-label="Previous slide"
                     >
                         <ChevronLeft className="w-6 h-6 text-gray-700 dark:text-gray-300 group-hover:text-blue-600 dark:group-hover:text-blue-400" />
@@ -193,7 +193,7 @@ const Carousel = ({ posts = [], autoSlide = true, slideInterval = 5000 }) => {
                             e.stopPropagation()
                             nextSlide()
                         }}
-                        className="hidden lg:flex absolute right-4 top-1/2 -translate-y-1/2 p-2 bg-white/90 dark:bg-dark-800/90 backdrop-blur-sm rounded-full shadow-lg hover:bg-white dark:hover:bg-dark-700 transition-colors duration-300 group z-10"
+                        className="hidden lg:flex absolute start-4 top-1/2 -translate-y-1/2 p-2 bg-white/90 dark:bg-dark-800/90 backdrop-blur-sm rounded-full shadow-lg hover:bg-white dark:hover:bg-dark-700 transition-colors duration-300 group z-10"
                         aria-label="Next slide"
                     >
                         <ChevronRight className="w-6 h-6 text-gray-700 dark:text-gray-300 group-hover:text-blue-600 dark:group-hover:text-blue-400" />
@@ -203,7 +203,7 @@ const Carousel = ({ posts = [], autoSlide = true, slideInterval = 5000 }) => {
 
             {/* Dot Indicators - Below the card */}
             {posts.length > 1 && (
-                <div className="flex justify-center items-center space-x-2 mt-6 mb-2">
+                <div className="flex justify-center items-center gap-2 mt-6 mb-2">
                     {posts.map((_, index) => (
                         <button
                             key={index}
@@ -222,7 +222,7 @@ const Carousel = ({ posts = [], autoSlide = true, slideInterval = 5000 }) => {
 
                     {/* Auto-play Indicator */}
                     {isAutoPlaying && (
-                        <div className="ml-3 flex items-center gap-1.5 px-2.5 py-1 bg-gray-100 dark:bg-dark-700 rounded-full">
+                        <div className="ms-3 flex items-center gap-1.5 px-2.5 py-1 bg-gray-100 dark:bg-dark-700 rounded-full">
                             <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
                             <span className="text-xs text-gray-600 dark:text-gray-400">Auto</span>
                         </div>
