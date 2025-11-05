@@ -28,23 +28,21 @@ const isTinaCMSAvailable = () => {
  */
 export const fetchTinaPosts = async () => {
     if (!isTinaCMSAvailable()) {
-        console.log('TinaCMS not available, returning empty array for posts')
         return []
     }
 
     // In production, try to load from pre-built static content first
     if (process.env.NODE_ENV === 'production') {
         try {
-            console.log('🔄 Loading TinaCMS posts from static build...')
             // Try to import the generated client if available
             const { client } = await import('../../tina/__generated__/client.js')
             const response = await client.queries.postConnection()
-            
+
             if (response?.data?.postConnection?.edges) {
                 const posts = response.data.postConnection.edges.map(edge => {
                     const post = edge.node
                     const slug = post._sys.filename.replace('.mdx', '')
-                    
+
                     return {
                         id: post.id,
                         slug: slug,
@@ -61,18 +59,14 @@ export const fetchTinaPosts = async () => {
                         _source: 'tinacms'
                     }
                 })
-                
-                console.log(`✅ Successfully loaded ${posts.length} posts from TinaCMS static build`)
+
                 return posts
             }
         } catch (error) {
-            console.warn('⚠️ Failed to load TinaCMS static content, trying direct MDX loader:', error.message)
             // Try the static MDX loader as final fallback
             return await loadStaticTinaPosts()
         }
     }
-
-    console.log('🔄 Fetching posts from TinaCMS GraphQL API...')
 
     try {
         // Create timeout promise (5 seconds)
@@ -147,20 +141,15 @@ export const fetchTinaPosts = async () => {
                 }
             })
 
-            console.log(`✅ Successfully fetched ${posts.length} posts from TinaCMS`)
             return posts
         }
-        console.log('⚠️ No posts found in TinaCMS response')
         return []
     } catch (error) {
-        console.error('❌ Failed to fetch TinaCMS posts:', error.message)
-        
         // In production, try the static loader as final fallback
         if (process.env.NODE_ENV === 'production') {
-            console.log('🔄 Trying static MDX loader as fallback...')
             return await loadStaticTinaPosts()
         }
-        
+
         return []
     }
 }
@@ -172,7 +161,6 @@ export const fetchTinaPosts = async () => {
  */
 export const fetchTinaPost = async (filename) => {
     if (!isTinaCMSAvailable()) {
-        console.log('TinaCMS not available, returning null for single post')
         return null
     }
 
@@ -249,10 +237,6 @@ export const fetchTinaPost = async (filename) => {
  * @returns {Object} Blog post format
  */
 export const convertTinaPostToBlogFormat = (tinaPost) => {
-    console.log('🔄 Converting TinaCMS post to blog format:', tinaPost.title)
-    console.log('📝 Original body content:', tinaPost.body)
-    console.log('📝 Body type:', typeof tinaPost.body)
-
     const converted = {
         ...tinaPost,
         // Ensure required fields are present
@@ -269,7 +253,6 @@ export const convertTinaPostToBlogFormat = (tinaPost) => {
         _source: 'tinacms'
     }
 
-    console.log('✅ Converted body content:', converted.body)
     return converted
 }
 

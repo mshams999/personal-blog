@@ -57,7 +57,6 @@ const getUserId = () => {
  */
 export const saveRating = async (articleSlug, rating) => {
     if (!articleSlug || !db) {
-        console.warn('Article slug or Firebase not configured');
         return { success: false, averageRating: 0, totalRatings: 0 };
     }
 
@@ -93,8 +92,6 @@ export const saveRating = async (articleSlug, rating) => {
                 slug: articleSlug
             });
 
-            console.log(`✅ Updated rating for ${articleSlug}: ${averageRating.toFixed(2)} (${totalRatings} ratings)`);
-
             return {
                 success: true,
                 averageRating: averageRating,
@@ -112,8 +109,6 @@ export const saveRating = async (articleSlug, rating) => {
                 slug: articleSlug,
                 firstRatedAt: serverTimestamp()
             });
-
-            console.log(`✅ Created new rating for ${articleSlug}: ${rating} (1 rating)`);
 
             return {
                 success: true,
@@ -134,7 +129,6 @@ export const saveRating = async (articleSlug, rating) => {
  */
 export const getRating = async (articleSlug) => {
     if (!articleSlug || !db) {
-        console.warn('Article slug or Firebase not configured');
         return { averageRating: 0, totalRatings: 0, userRating: 0 };
     }
 

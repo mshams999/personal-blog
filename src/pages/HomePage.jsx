@@ -27,14 +27,10 @@ import { useCommentCounts } from '../hooks/useCommentCounts'
 const HomePage = () => {
     const { siteMetadata, getRecentPosts, getAuthorById, getCategoryById, loading, error } = useHybridData()
 
-    // Debug logging
-    console.log('HomePage render - loading:', loading, 'error:', error)
-
     // Memoize posts to prevent infinite re-renders
     const recentPosts = useMemo(() => {
         try {
             const posts = getRecentPosts().sort((a, b) => new Date(b.date) - new Date(a.date)) // Sort by newest first
-            console.log('HomePage recentPosts:', posts.length, 'posts:', posts)
             return posts
         } catch (err) {
             console.error('Error getting recent posts:', err)
@@ -297,7 +293,7 @@ const HomePage = () => {
                 <div className="mb-12">
                     <div className="text-center mb-8 animate-fadeInUp">
                         <h2 className="text-3xl font-bold text-gradient-animated mb-2">
-                        آخر الحكايات والأفكار
+                            آخر الحكايات والأفكار
                         </h2>
                         <p className="text-gray-600 dark:text-gray-300">
                             اكتشف أحدث مانشرناه - التجربة الحياتية الخاصة بي من ضفاف الرحلة الى أعماق المغامرة

@@ -35,9 +35,7 @@ export const HybridDataProvider = ({ children }) => {
 
                 const convertedPosts = posts.map(convertTinaPostToBlogFormat)
                 setTinaPosts(convertedPosts)
-                console.log(`✅ Loaded ${convertedPosts.length} TinaCMS posts`)
             } catch (err) {
-                console.warn('⚠️ TinaCMS unavailable, using static posts only:', err.message)
                 setError(err)
                 setTinaPosts([]) // Fallback to static posts only
             } finally {
@@ -54,10 +52,6 @@ export const HybridDataProvider = ({ children }) => {
     const getAllPosts = () => {
         const staticPosts = blogData.posts || []
         const tinaPostSlugs = new Set(tinaPosts.map(post => post.slug))
-
-        console.log('getAllPosts - staticPosts:', staticPosts.length, 'tinaPosts:', tinaPosts.length)
-        console.log('Static posts:', staticPosts)
-        console.log('Tina posts:', tinaPosts)
 
         // Filter out static posts that have been replaced by TinaCMS posts
         const filteredStaticPosts = staticPosts.filter(post => !tinaPostSlugs.has(post.slug))

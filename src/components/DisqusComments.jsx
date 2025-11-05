@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react'
 import { DiscussionEmbed } from 'disqus-react'
 import { disqusConfig, getDisqusConfig, isDisqusConfigured } from '../config/disqus'
-import DisqusSetupGuide from './DisqusSetupGuide'
 
 /**
  * DisqusComments Component
@@ -67,7 +66,18 @@ const DisqusComments = ({ post, currentUrl }) => {
 
     // Check if Disqus is properly configured
     if (!isDisqusConfigured()) {
-        return <DisqusSetupGuide />
+        return (
+            <div className="mt-12 pt-8 border-t border-gray-200 dark:border-gray-700">
+                <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-6">
+                    <h3 className="text-lg font-semibold text-yellow-800 dark:text-yellow-200 mb-2">
+                        💬 التعليقات غير مفعلة
+                    </h3>
+                    <p className="text-yellow-700 dark:text-yellow-300 text-sm">
+                        نظام التعليقات Disqus غير مُعد حالياً. يرجى إضافة إعدادات Disqus في ملف .env
+                    </p>
+                </div>
+            </div>
+        )
     }
 
     // Generate Disqus configuration for this post

@@ -116,8 +116,6 @@ const components = {
         const linkUrl = props.url || props.href;
         const linkTitle = props.title;
 
-        console.log('🔗 Link component rendering:', { url: linkUrl, title: linkTitle });
-
         return (
             <a
                 href={linkUrl}
@@ -148,8 +146,6 @@ const components = {
         const fixedUrl = imageUrl?.startsWith('/public/uploads/')
             ? imageUrl.replace('/public/uploads/', '/uploads/')
             : imageUrl;
-
-        console.log('🖼️ Image component rendering:', { original: imageUrl, fixed: fixedUrl });
 
         return (
             <div className="my-8">
@@ -194,7 +190,6 @@ export const TinaCMSContent = ({ content }) => {
         if (typeof node === 'object') {
             // Fix image URL
             if (node.type === 'img' && node.url?.startsWith('/public/uploads/')) {
-                console.log('🖼️ Fixing image path:', node.url);
                 return {
                     ...node,
                     url: node.url.replace('/public/uploads/', '/uploads/'),
@@ -217,7 +212,6 @@ export const TinaCMSContent = ({ content }) => {
     };
 
     const processedContent = processContent(content);
-    console.log('📝 TinaCMSContent rendering with processed content');
 
     return (
         <div className="prose prose-lg max-w-none">

@@ -9,7 +9,7 @@ import FirebaseCommentCount from '../components/FirebaseCommentCount'
 import ViewCounter from '../components/ViewCounter'
 import ApplauseButton from '../components/ApplauseButton'
 import SocialShareButton from '../components/SocialShareButton'
-import MetaTags from '../components/MetaTags_fixed'
+import MetaTags from '../components/MetaTags'
 import { TinaCMSContent, StaticContent } from '../components/TinaCMSContent'
 import { formatDateArabicFull } from '../utils/dateFormat'
 import PostCard from '../components/PostCard'
@@ -64,17 +64,6 @@ const SinglePostPage = () => {
   const previousPost = currentPostIndex > 0 ? allPosts[currentPostIndex - 1] : null
   const nextPost = currentPostIndex < allPosts.length - 1 ? allPosts[currentPostIndex + 1] : null
 
-  // Debug logging
-  if (process.env.NODE_ENV === 'development') {
-    console.log('📚 Post Navigation:', {
-      currentPost: post?.title,
-      currentIndex: currentPostIndex,
-      totalPosts: allPosts.length,
-      previousPost: previousPost?.title || 'None',
-      nextPost: nextPost?.title || 'None'
-    })
-  }
-
   // Use Firebase view tracking for this article
   const { viewCount, loading: viewLoading } = useArticleViews(
     post?.slug,
@@ -120,10 +109,6 @@ const SinglePostPage = () => {
 
       // Check if the post has TinaCMS content (body field)
       if (post.body) {
-        console.log('📝 Loading TinaCMS content for post:', post.title)
-        console.log('🔍 Post body structure:', post.body)
-        console.log('🔍 Post body type:', typeof post.body)
-
         // Check if the body is a string (markdown) or rich-text object
         if (typeof post.body === 'string') {
           // Process markdown content to fix image paths and convert to HTML
@@ -161,8 +146,6 @@ const SinglePostPage = () => {
           setMdxContent(content)
         }
       } else {
-        console.log('⚠️ No TinaCMS content found, falling back to excerpt')
-
         // Fallback to excerpt if no body content
         const content = (
           <div className="animate-fade-in prose prose-lg max-w-none dark:prose-invert arabic-text" dir="rtl">

@@ -34,7 +34,6 @@ const ARTICLES_COLLECTION = 'articles';
  */
 export const incrementArticleView = async (articleSlug) => {
     if (!articleSlug || !db) {
-        console.warn('Article slug or Firebase not configured');
         return false;
     }
 
@@ -236,7 +235,6 @@ export const generateConsistentViewCount = (slug, date) => {
  */
 export const updateArticleMetadata = async (articleSlug, metadata) => {
     if (!articleSlug || !db) {
-        console.warn('Article slug or Firebase not configured');
         return false;
     }
 

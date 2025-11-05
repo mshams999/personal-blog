@@ -27,12 +27,12 @@ import {
  * @param {string} className - Additional CSS classes
  * @param {string} size - Size variant ('sm', 'md', 'lg')
  */
-const SocialShareButton = ({ 
-    url, 
-    title, 
-    text, 
+const SocialShareButton = ({
+    url,
+    title,
+    text,
     image,
-    className = '', 
+    className = '',
     size = 'md'
 }) => {
     const [showModal, setShowModal] = useState(false)
@@ -49,15 +49,6 @@ const SocialShareButton = ({
     }
 
     const absoluteImageUrl = getAbsoluteImageUrl(image)
-
-    // Debug logging
-    console.log('🔗 SocialShareButton Props:', {
-        url,
-        title,
-        text,
-        image,
-        absoluteImageUrl
-    })
 
     // Size configurations
     const sizeConfig = {
@@ -90,12 +81,6 @@ const SocialShareButton = ({
 
     const openModal = () => {
         setShowModal(true)
-        
-        // Run social sharing test in development
-        if (process.env.NODE_ENV === 'development') {
-            console.log('🔗 Share button clicked:', { url, title, text, image })
-            // socialSharingUtils.testSocialSharing(url, { title, excerpt: text, featuredImage: image })
-        }
     }
     const closeModal = () => setShowModal(false)
 
@@ -114,11 +99,11 @@ const SocialShareButton = ({
             {showModal && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center">
                     {/* Backdrop */}
-                    <div 
+                    <div
                         className="absolute inset-0 bg-black/50 backdrop-blur-sm"
                         onClick={closeModal}
                     />
-                    
+
                     {/* Modal Content */}
                     <div className="relative bg-white dark:bg-dark-800 rounded-2xl p-6 mx-4 w-full max-w-md shadow-2xl animate-scale-in">
                         {/* Header */}
@@ -214,11 +199,10 @@ const SocialShareButton = ({
                                         <Copy className="h-5 w-5 text-gray-600 dark:text-gray-400" />
                                     )}
                                 </div>
-                                <span className={`text-sm font-medium mt-2 ${
-                                    copied 
-                                        ? 'text-green-500' 
+                                <span className={`text-sm font-medium mt-2 ${copied
+                                        ? 'text-green-500'
                                         : 'text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white'
-                                }`}>
+                                    }`}>
                                     {copied ? 'Copied!' : 'Copy Link'}
                                 </span>
                             </button>

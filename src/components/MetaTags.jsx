@@ -15,11 +15,11 @@ import { useEffect } from 'react'
  * @param {string} author - Author name
  * @param {string} publishedTime - Publication date (ISO string)
  */
-const MetaTags = ({ 
-    title, 
-    description, 
-    image, 
-    url, 
+const MetaTags = ({
+    title,
+    description,
+    image,
+    url,
     type = 'article',
     siteName = 'Mohamed Shams Blog',
     author = '',
@@ -38,27 +38,13 @@ const MetaTags = ({
 
         const absoluteImageUrl = getAbsoluteImageUrl(image)
 
-        // Debug logging in development
-        if (process.env.NODE_ENV === 'development') {
-            console.log('🏷️ MetaTags Component - Setting meta tags:', {
-                title,
-                description,
-                image,
-                absoluteImageUrl,
-                url,
-                type,
-                author,
-                publishedTime
-            })
-        }
-
         // Function to update or create meta tags
         const updateMetaTag = (property, content, isProperty = true) => {
             if (!content) return
-            
+
             const attribute = isProperty ? 'property' : 'name'
             let element = document.querySelector(`meta[${attribute}="${property}"]`)
-            
+
             if (element) {
                 element.setAttribute('content', content)
             } else {
@@ -76,7 +62,7 @@ const MetaTags = ({
 
         // Basic meta tags
         updateMetaTag('description', description, false)
-        
+
         // Open Graph meta tags
         updateMetaTag('og:title', title)
         updateMetaTag('og:description', description)
@@ -84,11 +70,11 @@ const MetaTags = ({
         updateMetaTag('og:url', url)
         updateMetaTag('og:type', type)
         updateMetaTag('og:site_name', siteName)
-        
+
         if (publishedTime) {
             updateMetaTag('article:published_time', publishedTime)
         }
-        
+
         if (author) {
             updateMetaTag('article:author', author)
         }
@@ -141,7 +127,8 @@ const MetaTags = ({
         return () => {
             // Don't remove meta tags on cleanup as they should persist
             // until the next page/component updates them
-        }        }, [title, description, image, url, type, siteName, author, publishedTime])
+        }
+    }, [title, description, image, url, type, siteName, author, publishedTime])
 
     // This component doesn't render anything
     return null

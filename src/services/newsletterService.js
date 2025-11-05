@@ -61,11 +61,10 @@ class NewsletterService {
 
             // Send welcome email automatically
             try {
-                const emailResult = await emailService.sendWelcomeEmail(email, firstName)
-                console.log('Welcome email result:', emailResult)
+                await emailService.sendWelcomeEmail(email, firstName)
             } catch (emailError) {
                 // Don't fail the subscription if email fails
-                console.log('Welcome email failed (non-critical):', emailError)
+                // Email errors are non-critical and logged internally
             }
 
             return {

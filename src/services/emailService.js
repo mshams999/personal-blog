@@ -17,7 +17,6 @@ class EmailService {
      */
     async sendWelcomeEmail(email, firstName = '') {
         if (!this.isConfigured) {
-            console.log('📧 Email service not configured - welcome email not sent')
             return {
                 success: false,
                 error: 'Email service not configured',
@@ -27,8 +26,6 @@ class EmailService {
 
         try {
             const emailData = getWelcomeEmailData(email, firstName)
-
-            console.log('📧 Sending welcome email to:', email)
 
             // Call Firebase Function to send email
             const response = await fetch(`${emailConfig.functionsUrl}/sendWelcomeEmail`, {
@@ -50,7 +47,6 @@ class EmailService {
             const result = await response.json()
 
             if (result.success) {
-                console.log('✅ Welcome email sent successfully:', result)
                 return {
                     success: true,
                     messageId: result.messageId,
