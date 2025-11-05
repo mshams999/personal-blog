@@ -117,7 +117,7 @@ export const ViewStats = ({ articles, className = '' }) => {
                     {formattedTotal}
                 </div>
                 <div className="text-sm text-gray-500 dark:text-gray-400">
-                    Total Views
+                    جميع المشاهدات
                 </div>
             </div>
             <div className="text-center">
@@ -125,7 +125,7 @@ export const ViewStats = ({ articles, className = '' }) => {
                     {formattedAvg}
                 </div>
                 <div className="text-sm text-gray-500 dark:text-gray-400">
-                    Avg per Article
+                    المتوسط لكل مقالة
                 </div>
             </div>
         </div>

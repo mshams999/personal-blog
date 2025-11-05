@@ -1,9 +1,12 @@
 import React, { useMemo } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { useHybridData } from '../contexts/HybridDataContext'
-import { Clock, Calendar, ArrowLeft, Eye, Star } from 'lucide-react'
+import { Clock, Calendar, ArrowLeft, Eye, Star, MessageCircle } from 'lucide-react'
 import { formatDateArabicFull } from '../utils/dateFormat'
 import ViewCounter from '../components/ViewCounter'
+import FirebaseCommentCount from '../components/FirebaseCommentCount'
+import { formatRating } from '../utils/ratings'
+import { useBulkPostRatings, getRatingFromBulk } from '../hooks/useRatings'
 
 /**
  * CategoryPage component for displaying posts filtered by category
@@ -35,6 +38,10 @@ const CategoryPage = () => {
             .sort((a, b) => new Date(b.date) - new Date(a.date))
     }, [category, getPostsByCategory])
 
+    // Fetch article ratings using Firebase Firestore
+    const postSlugs = useMemo(() => categoryPosts.map(post => post.slug), [categoryPosts])
+    const { ratings: ratingsData, loading: ratingsLoading } = useBulkPostRatings(postSlugs)
+
     // Get other categories for "Related Categories" section
     const otherCategories = categories ? categories.filter(cat => cat.slug !== categorySlug) : []
 
@@ -64,12 +71,16 @@ const CategoryPage = () => {
         const author = getAuthorById(post.authorId)
         const postCategory = getCategoryById(post.categoryId)
 
+        // Get dynamic rating for this post from Firestore
+        const ratingInfo = getRatingFromBulk(ratingsData, post.slug)
+        const { averageRating, totalRatings } = ratingInfo
+
         return (
             <Link
                 to={`/post/${post.slug}`}
-                className="block bg-white dark:bg-dark-700 rounded-2xl overflow-hidden shadow-sm border border-gray-100 dark:border-dark-600 hover:shadow-lg transition-all duration-300 group cursor-pointer"
+                className="block bg-white dark:bg-dark-700 rounded-2xl overflow-hidden shadow-lg border border-gray-100 dark:border-dark-600 hover:shadow-xl transition-all duration-300 group cursor-pointer"
             >
-                <div className="relative h-52 sm:h-56 md:h-60 lg:h-48 overflow-hidden">
+                <div className="relative h-48 sm:h-52 md:h-56 overflow-hidden">
                     <img
                         src={post.featuredImage}
                         alt={post.title}
@@ -87,48 +98,55 @@ const CategoryPage = () => {
                     )}
                 </div>
 
-                <div className="p-6">
-                    <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2 line-clamp-2 group-hover:text-primary-500 transition-colors">
+                <div className="p-5">
+                    <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-3 line-clamp-2 group-hover:text-primary-500 transition-colors leading-snug">
                         {post.title}
                     </h3>
 
-                    <p className="text-gray-600 dark:text-gray-300 text-sm mb-4 line-clamp-2">
+                    <p className="text-gray-600 dark:text-gray-300 text-sm mb-4 line-clamp-2 leading-relaxed">
                         {post.excerpt}
                     </p>
 
-                    <div className="flex items-center text-xs text-gray-500 dark:text-gray-400 mb-4 gap-3">
+                    <div className="flex items-center text-xs text-gray-500 dark:text-gray-400 mb-4 gap-3 flex-wrap">
                         <div className="flex items-center gap-1">
-                            <Calendar className="h-3 w-3" />
+                            <Calendar className="h-3.5 w-3.5" />
                             <span>{formatDateArabicFull(post.date)}</span>
                         </div>
                         <div className="flex items-center gap-1">
-                            <Clock className="h-3 w-3" />
-                            <span>{post.readTime} min read</span>
+                            <Clock className="h-3.5 w-3.5" />
+                            <span>{post.readTime} دقيقة</span>
                         </div>
                     </div>
 
-                    <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
-                        <div className="flex items-center gap-3">
-                            <div className="flex items-center gap-1">
-                                <Eye className="h-3 w-3" />
-                                <ViewCounter slug={post.slug} />
-                            </div>
-                            <div className="flex items-center gap-1">
-                                <Star className="h-3 w-3 text-yellow-400" />
-                                <span>4.5 (12)</span>
-                            </div>
-                        </div>
-
+                    <div className="pt-4 border-t border-gray-100 dark:border-dark-600">
+                        {/* Author */}
                         {author && (
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-2 mb-3">
                                 <img
                                     src={author.avatar}
                                     alt={author.name}
-                                    className="h-5 w-5 rounded-full"
+                                    className="h-6 w-6 rounded-full ring-2 ring-gray-200 dark:ring-dark-600"
                                 />
-                                <span>{author.name}</span>
+                                <span className="text-xs font-medium text-gray-700 dark:text-gray-300">{author.name}</span>
                             </div>
                         )}
+
+                        {/* Stats */}
+                        <div className="flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400 flex-wrap">
+                            <div className="flex items-center gap-1">
+                             
+                                <ViewCounter articleSlug={post.slug} />
+                            </div>
+                            <FirebaseCommentCount
+                                post={post}
+                                showIcon={true}
+                                className="text-gray-500 dark:text-gray-400"
+                            />
+                            <div className="flex items-center gap-1">
+                                <Star className="h-3.5 w-3.5 text-yellow-400 fill-yellow-400" />
+                                <span>{formatRating(averageRating)} ({totalRatings})</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </Link>
@@ -136,9 +154,9 @@ const CategoryPage = () => {
     }
 
     return (
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
             {/* Breadcrumb */}
-            <nav className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 mb-8">
+            <nav className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 mb-10">
                 <Link to="/" className="hover:text-primary-500 transition-colors">
                     الرئيسية
                 </Link>
@@ -149,8 +167,8 @@ const CategoryPage = () => {
             </nav>
 
             {/* Category Header */}
-            <div className="text-center mb-12">
-                <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
+            <div className="text-center mb-16">
+                <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6">
                     {category.name}
                 </h1>
                 <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
@@ -160,24 +178,24 @@ const CategoryPage = () => {
 
             {/* Posts Grid */}
             {categoryPosts.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20">
                     {categoryPosts.map((post) => (
                         <PostCard key={post.id} post={post} />
                     ))}
                 </div>
             ) : (
-                <div className="text-center py-16">
-                    <h3 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4">
+                <div className="text-center py-20">
+                    <h3 className="text-2xl md:text-3xl font-semibold text-gray-900 dark:text-white mb-4">
                         لم يتم العثور على مقالات
                     </h3>
-                    <p className="text-gray-600 dark:text-gray-300 mb-8">
+                    <p className="text-lg text-gray-600 dark:text-gray-300 mb-10">
                         لا توجد حالياً مقالات في تصنيف {category.name}.
                     </p>
                     <Link
                         to="/"
-                        className="inline-flex items-center gap-2 px-6 py-3 bg-primary-500 text-white rounded-full hover:bg-primary-600 transition-colors"
+                        className="inline-flex items-center gap-2 px-8 py-4 bg-primary-500 text-white rounded-full hover:bg-primary-600 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
                     >
-                        <ArrowLeft className="h-4 w-4" />
+                        <ArrowLeft className="h-5 w-5" />
                         تصفح جميع المقالات
                     </Link>
                 </div>
@@ -185,21 +203,21 @@ const CategoryPage = () => {
 
             {/* Related Categories */}
             {otherCategories.length > 0 && (
-                <div className="border-t border-gray-200 dark:border-dark-600 pt-12">
-                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+                <div className="border-t border-gray-200 dark:border-dark-600 pt-16 mt-8">
+                    <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-8">
                         استكشف التصنيفات الأخرى
                     </h2>
-                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-5">
                         {otherCategories.map((cat) => (
                             <Link
                                 key={cat.id}
                                 to={`/category/${cat.slug}`}
-                                className="group p-4 bg-white dark:bg-dark-700 rounded-xl border border-gray-100 dark:border-dark-600 hover:shadow-lg transition-all duration-300 text-center"
+                                className="group p-5 bg-white dark:bg-dark-700 rounded-xl border border-gray-100 dark:border-dark-600 hover:shadow-lg hover:border-primary-200 dark:hover:border-primary-800 transition-all duration-300 text-center"
                             >
-                                <h3 className="font-semibold text-gray-900 dark:text-white group-hover:text-primary-500 transition-colors text-sm">
+                                <h3 className="font-semibold text-gray-900 dark:text-white group-hover:text-primary-500 transition-colors text-sm mb-1.5">
                                     {cat.name}
                                 </h3>
-                                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                <p className="text-xs text-gray-500 dark:text-gray-400">
                                     {getPostsByCategory(cat.id).length} مقالة
                                 </p>
                             </Link>
