@@ -17,6 +17,8 @@
     X-Content-Type-Options = "nosniff"
 
 # Redirect all non-file requests to index.html for SPA routing
+# This allows React Router to handle the routing on the client side
+# The rule excludes actual files (with extensions) and only redirects HTML-like paths
 [[redirects]]
   from = "/*"
   to = "/index.html"
