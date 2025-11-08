@@ -49,15 +49,29 @@ export default defineConfig({
                     }
                 },
                 ui: {
-                    router: ({ document }) => `/post/${document._sys.filename}`,
+                    router: ({ document }) => {
+                        // Use the slug field if available, otherwise fallback to filename
+                        const slug = document.slug || document._sys.filename
+                        return `/post/${slug}`
+                    },
                     filename: {
                         readonly: false,
                         slugify: (values) => {
+                            // Use the custom slug field if provided, otherwise generate from title
+                            if (values?.slug && values.slug.trim()) {
+                                return values.slug
+                                    .toLowerCase()
+                                    .replace(/\s+/g, '-')
+                                    .replace(/[^\w\u0600-\u06FF-]+/g, '') // Support Arabic characters
+                            }
+
+                            // Fallback: generate from title
                             const slug = values?.title
                                 ?.toLowerCase()
-                                .replace(/ /g, '-')
-                                .replace(/[^\w-]+/g, '')
-                            return `post-${Date.now()}-${slug}`
+                                .replace(/\s+/g, '-')
+                                .replace(/[^\w\u0600-\u06FF-]+/g, '') // Support Arabic characters
+
+                            return slug || `post-${Date.now()}`
                         },
                     },
                 },
@@ -152,7 +166,7 @@ export default defineConfig({
                         name: "slug",
                         label: "URL Slug",
                         ui: {
-                            description: "The URL-friendly version of the title (auto-generated if left empty)"
+                            description: "The URL-friendly version of the title (auto-generated from title if left empty). Example: 'my-awesome-article'"
                         }
                     },
                     {

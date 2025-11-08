@@ -38,12 +38,18 @@ var config_default = defineConfig({
           };
         },
         ui: {
-          router: ({ document }) => `/post/${document._sys.filename}`,
+          router: ({ document }) => {
+            const slug = document.slug || document._sys.filename;
+            return `/post/${slug}`;
+          },
           filename: {
             readonly: false,
             slugify: (values) => {
-              const slug = values?.title?.toLowerCase().replace(/ /g, "-").replace(/[^\w-]+/g, "");
-              return `post-${Date.now()}-${slug}`;
+              if (values?.slug && values.slug.trim()) {
+                return values.slug.toLowerCase().replace(/\s+/g, "-").replace(/[^\w\u0600-\u06FF-]+/g, "");
+              }
+              const slug = values?.title?.toLowerCase().replace(/\s+/g, "-").replace(/[^\w\u0600-\u06FF-]+/g, "");
+              return slug || `post-${Date.now()}`;
             }
           }
         },
@@ -138,7 +144,7 @@ var config_default = defineConfig({
             name: "slug",
             label: "URL Slug",
             ui: {
-              description: "The URL-friendly version of the title (auto-generated if left empty)"
+              description: "The URL-friendly version of the title (auto-generated from title if left empty). Example: 'my-awesome-article'"
             }
           },
           {

@@ -41,7 +41,8 @@ export const fetchTinaPosts = async () => {
             if (response?.data?.postConnection?.edges) {
                 const posts = response.data.postConnection.edges.map(edge => {
                     const post = edge.node
-                    const slug = post._sys.filename.replace('.mdx', '')
+                    // Use the custom slug field if available, otherwise fallback to filename
+                    const slug = post.slug || post._sys.filename.replace('.mdx', '')
 
                     return {
                         id: post.id,
@@ -87,6 +88,7 @@ export const fetchTinaPosts = async () => {
                             edges {
                                 node {
                                     id
+                                    slug
                                     title
                                     excerpt
                                     date
@@ -121,8 +123,8 @@ export const fetchTinaPosts = async () => {
         if (data?.data?.postConnection?.edges) {
             const posts = data.data.postConnection.edges.map(edge => {
                 const post = edge.node
-                // Generate slug from filename (remove .mdx extension)
-                const slug = post._sys.filename.replace('.mdx', '')
+                // Use the custom slug field if available, otherwise fallback to filename
+                const slug = post.slug || post._sys.filename.replace('.mdx', '')
 
                 return {
                     id: post.id,

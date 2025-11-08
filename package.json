@@ -12,7 +12,8 @@
         "tina:build": "tinacms build",
         "tina:admin": "tinacms dev",
         "seo:setup": "node scripts/setup-seo.js",
-        "seo:generate": "node scripts/generate-sitemap.js"
+        "seo:generate": "node scripts/generate-sitemap.js",
+        "posts:rename": "node scripts/rename-posts-to-slugs.js"
     },
     "dependencies": {
         "@mailchimp/mailchimp_marketing": "^3.0.80",
