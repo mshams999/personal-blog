@@ -39,7 +39,7 @@ import {
  */
 const SinglePostPage = () => {
   const { slug } = useParams()
-  const { getPostBySlug, getAuthorById, getCategoryById, categories, getAllPosts } = useHybridData()
+  const { getPostBySlug, getAuthorById, getCategoryById, categories, getAllPosts, loading: dataLoading } = useHybridData()
   const [mdxContent, setMdxContent] = useState(null)
   const [loading, setLoading] = useState(true)
   const [scrollPosition, setScrollPosition] = useState(0)
@@ -220,8 +220,21 @@ const SinglePostPage = () => {
     }
   }
 
-  if (!post) {
-    return <Navigate to="/" replace />
+  // Show loading state while data is being fetched
+  if (dataLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-primary-600 mx-auto mb-4"></div>
+          <p className="text-gray-600 dark:text-gray-400">جاري تحميل المقال...</p>
+        </div>
+      </div>
+    )
+  }
+
+  // Only redirect if data has finished loading and post is still not found
+  if (!dataLoading && !post) {
+    return <Navigate to="/blog" replace />
   }
 
   const formattedDate = formatDateArabicFull(post.date)
