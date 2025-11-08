@@ -8,10 +8,10 @@ import FirebaseCommentCount from '../components/FirebaseCommentCount'
 import { formatRating } from '../utils/ratings'
 import { useBulkPostRatings, getRatingFromBulk } from '../hooks/useRatings'
 import MetaTags from '../components/MetaTags'
-import { 
-  generateCollectionPageSchema,
-  generateBreadcrumbSchema,
-  insertMultipleSchemas
+import {
+    generateCollectionPageSchema,
+    generateBreadcrumbSchema,
+    insertMultipleSchemas
 } from '../utils/schemaGenerator'
 
 /**
@@ -158,7 +158,7 @@ const CategoryPage = () => {
                         {/* Stats */}
                         <div className="flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400 flex-wrap">
                             <div className="flex items-center gap-1">
-                             
+
                                 <ViewCounter articleSlug={post.slug} />
                             </div>
                             <FirebaseCommentCount
@@ -194,72 +194,72 @@ const CategoryPage = () => {
                 <nav className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 mb-10">
                     <Link to="/" className="hover:text-primary-500 transition-colors">
                         الرئيسية
-                </Link>
-                <span>/</span>
-                <span className="text-gray-900 dark:text-white">التصنيفات</span>
-                <span>/</span>
-                <span className="text-gray-900 dark:text-white">{category.name}</span>
-            </nav>
-
-            {/* Category Header */}
-            <div className="text-center mb-16">
-                <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6">
-                    {category.name}
-                </h1>
-                <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-                    اكتشف {categoryPosts.length} {categoryPosts.length === 1 ? 'مقالة' : categoryPosts.length === 2 ? 'مقالتين' : 'مقالات'} في تصنيف {category.name}
-                </p>
-            </div>
-
-            {/* Posts Grid */}
-            {categoryPosts.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20">
-                    {categoryPosts.map((post) => (
-                        <PostCard key={post.id} post={post} />
-                    ))}
-                </div>
-            ) : (
-                <div className="text-center py-20">
-                    <h3 className="text-2xl md:text-3xl font-semibold text-gray-900 dark:text-white mb-4">
-                        لم يتم العثور على مقالات
-                    </h3>
-                    <p className="text-lg text-gray-600 dark:text-gray-300 mb-10">
-                        لا توجد حالياً مقالات في تصنيف {category.name}.
-                    </p>
-                    <Link
-                        to="/"
-                        className="inline-flex items-center gap-2 px-8 py-4 bg-primary-500 text-white rounded-full hover:bg-primary-600 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
-                    >
-                        <ArrowLeft className="h-5 w-5" />
-                        تصفح جميع المقالات
                     </Link>
-                </div>
-            )}
+                    <span>/</span>
+                    <span className="text-gray-900 dark:text-white">التصنيفات</span>
+                    <span>/</span>
+                    <span className="text-gray-900 dark:text-white">{category.name}</span>
+                </nav>
 
-            {/* Related Categories */}
-            {otherCategories.length > 0 && (
-                <div className="border-t border-gray-200 dark:border-dark-600 pt-16 mt-8">
-                    <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-8">
-                        استكشف التصنيفات الأخرى
-                    </h2>
-                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-5">
-                        {otherCategories.map((cat) => (
-                            <Link
-                                key={cat.id}
-                                to={`/category/${cat.slug}`}
-                                className="group p-5 bg-white dark:bg-dark-700 rounded-xl border border-gray-100 dark:border-dark-600 hover:shadow-lg hover:border-primary-200 dark:hover:border-primary-800 transition-all duration-300 text-center"
-                            >
-                                <h3 className="font-semibold text-gray-900 dark:text-white group-hover:text-primary-500 transition-colors text-sm mb-1.5">
-                                    {cat.name}
-                                </h3>
-                                <p className="text-xs text-gray-500 dark:text-gray-400">
-                                    {getPostsByCategory(cat.id).length} مقالة
-                                </p>
-                            </Link>
+                {/* Category Header */}
+                <div className="text-center mb-16">
+                    <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6">
+                        {category.name}
+                    </h1>
+                    <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+                        اكتشف {categoryPosts.length} {categoryPosts.length === 1 ? 'مقالة' : categoryPosts.length === 2 ? 'مقالتين' : 'مقالات'} في تصنيف {category.name}
+                    </p>
+                </div>
+
+                {/* Posts Grid */}
+                {categoryPosts.length > 0 ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20">
+                        {categoryPosts.map((post) => (
+                            <PostCard key={post.id} post={post} />
                         ))}
                     </div>
-                </div>
-            )}
+                ) : (
+                    <div className="text-center py-20">
+                        <h3 className="text-2xl md:text-3xl font-semibold text-gray-900 dark:text-white mb-4">
+                            لم يتم العثور على مقالات
+                        </h3>
+                        <p className="text-lg text-gray-600 dark:text-gray-300 mb-10">
+                            لا توجد حالياً مقالات في تصنيف {category.name}.
+                        </p>
+                        <Link
+                            to="/"
+                            className="inline-flex items-center gap-2 px-8 py-4 bg-primary-500 text-white rounded-full hover:bg-primary-600 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
+                        >
+                            <ArrowLeft className="h-5 w-5" />
+                            تصفح جميع المقالات
+                        </Link>
+                    </div>
+                )}
+
+                {/* Related Categories */}
+                {otherCategories.length > 0 && (
+                    <div className="border-t border-gray-200 dark:border-dark-600 pt-16 mt-8">
+                        <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-8">
+                            استكشف التصنيفات الأخرى
+                        </h2>
+                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-5">
+                            {otherCategories.map((cat) => (
+                                <Link
+                                    key={cat.id}
+                                    to={`/category/${cat.slug}`}
+                                    className="group p-5 bg-white dark:bg-dark-700 rounded-xl border border-gray-100 dark:border-dark-600 hover:shadow-lg hover:border-primary-200 dark:hover:border-primary-800 transition-all duration-300 text-center"
+                                >
+                                    <h3 className="font-semibold text-gray-900 dark:text-white group-hover:text-primary-500 transition-colors text-sm mb-1.5">
+                                        {cat.name}
+                                    </h3>
+                                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                                        {getPostsByCategory(cat.id).length} مقالة
+                                    </p>
+                                </Link>
+                            ))}
+                        </div>
+                    </div>
+                )}
             </div>
         </>
     )

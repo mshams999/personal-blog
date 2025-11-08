@@ -16,10 +16,10 @@ import PostCard from '../components/PostCard'
 import { useArticleViews } from '../hooks/useFirebaseViews'
 import { usePostRating } from '../hooks/useRatings'
 import { savePostRating } from '../utils/ratings'
-import { 
-  generateBlogPostingSchema, 
-  generateBreadcrumbSchema, 
-  insertMultipleSchemas 
+import {
+  generateBlogPostingSchema,
+  generateBreadcrumbSchema,
+  insertMultipleSchemas
 } from '../utils/schemaGenerator'
 
 /**
