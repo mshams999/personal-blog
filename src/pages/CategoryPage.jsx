@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React, { useMemo, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { useHybridData } from '../contexts/HybridDataContext'
 import { Clock, Calendar, ArrowLeft, Eye, Star, MessageCircle } from 'lucide-react'
@@ -7,6 +7,12 @@ import ViewCounter from '../components/ViewCounter'
 import FirebaseCommentCount from '../components/FirebaseCommentCount'
 import { formatRating } from '../utils/ratings'
 import { useBulkPostRatings, getRatingFromBulk } from '../hooks/useRatings'
+import MetaTags from '../components/MetaTags'
+import { 
+  generateCollectionPageSchema,
+  generateBreadcrumbSchema,
+  insertMultipleSchemas
+} from '../utils/schemaGenerator'
 
 /**
  * CategoryPage component for displaying posts filtered by category
@@ -44,6 +50,24 @@ const CategoryPage = () => {
 
     // Get other categories for "Related Categories" section
     const otherCategories = categories ? categories.filter(cat => cat.slug !== categorySlug) : []
+
+    // Generate schemas for JSON-LD
+    const collectionPageSchema = generateCollectionPageSchema(category, categoryPosts)
+    const breadcrumbSchema = generateBreadcrumbSchema([
+        { name: 'الرئيسية', url: '/' },
+        { name: 'التصنيفات', url: '/categories' },
+        { name: category?.name, url: `/category/${category?.slug}` }
+    ])
+
+    // Insert schemas on component mount/update
+    useEffect(() => {
+        if (collectionPageSchema || breadcrumbSchema) {
+            const schemas = []
+            if (collectionPageSchema) schemas.push({ schema: collectionPageSchema, id: 'collection-page' })
+            if (breadcrumbSchema) schemas.push({ schema: breadcrumbSchema, id: 'breadcrumb' })
+            insertMultipleSchemas(schemas)
+        }
+    }, [category?.id])
 
     if (!category) {
         return (
@@ -154,11 +178,22 @@ const CategoryPage = () => {
     }
 
     return (
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-            {/* Breadcrumb */}
-            <nav className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 mb-10">
-                <Link to="/" className="hover:text-primary-500 transition-colors">
-                    الرئيسية
+        <>
+            {/* Meta Tags and Structured Data */}
+            <MetaTags
+                title={category?.name}
+                description={category?.description || `مقالات عن ${category?.name}`}
+                url={`${window.location.origin}/category/${category?.slug}`}
+                type="website"
+                schema={collectionPageSchema}
+                schemaId="collection-page"
+            />
+
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                {/* Breadcrumb */}
+                <nav className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 mb-10">
+                    <Link to="/" className="hover:text-primary-500 transition-colors">
+                        الرئيسية
                 </Link>
                 <span>/</span>
                 <span className="text-gray-900 dark:text-white">التصنيفات</span>
@@ -225,7 +260,8 @@ const CategoryPage = () => {
                     </div>
                 </div>
             )}
-        </div>
+            </div>
+        </>
     )
 }
 

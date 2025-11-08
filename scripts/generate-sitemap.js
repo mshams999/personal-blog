@@ -44,7 +44,7 @@ const client = buildTinaClient();
 async function generateSitemap() {
     try {
         console.log('📝 Generating comprehensive sitemap...');
-        
+
         // Fetch all posts from TinaCMS
         let posts = [];
         try {

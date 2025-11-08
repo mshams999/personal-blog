@@ -16,6 +16,11 @@ import PostCard from '../components/PostCard'
 import { useArticleViews } from '../hooks/useFirebaseViews'
 import { usePostRating } from '../hooks/useRatings'
 import { savePostRating } from '../utils/ratings'
+import { 
+  generateBlogPostingSchema, 
+  generateBreadcrumbSchema, 
+  insertMultipleSchemas 
+} from '../utils/schemaGenerator'
 
 /**
  * SinglePostPage component for displaying individual blog posts
@@ -221,6 +226,26 @@ const SinglePostPage = () => {
 
   const formattedDate = formatDateArabicFull(post.date)
 
+  // Generate schemas for JSON-LD
+  const blogPostingSchema = generateBlogPostingSchema(post, author, category)
+  const breadcrumbSchema = generateBreadcrumbSchema(
+    [
+      { name: 'الرئيسية', url: '/' },
+      { name: category?.name || 'المقالات', url: category ? `/category/${category.slug}` : '/blog' },
+      { name: post.title, url: `/post/${post.slug}` }
+    ]
+  )
+
+  // Insert schemas on component mount/update
+  useEffect(() => {
+    if (blogPostingSchema || breadcrumbSchema) {
+      const schemas = []
+      if (blogPostingSchema) schemas.push({ schema: blogPostingSchema, id: 'blog-posting' })
+      if (breadcrumbSchema) schemas.push({ schema: breadcrumbSchema, id: 'breadcrumb' })
+      insertMultipleSchemas(schemas)
+    }
+  }, [post.slug, category?.id])
+
   // Get related posts based on category
   const { posts } = useHybridData()
   const relatedPosts = posts
@@ -246,7 +271,7 @@ const SinglePostPage = () => {
 
   return (
     <>
-      {/* Meta Tags for Social Sharing */}
+      {/* Meta Tags for Social Sharing and Structured Data */}
       <MetaTags
         title={post.title}
         description={post.excerpt}
@@ -255,6 +280,8 @@ const SinglePostPage = () => {
         type="article"
         author={author?.name}
         publishedTime={new Date(post.date).toISOString()}
+        schema={blogPostingSchema}
+        schemaId="blog-posting"
       />
 
       <article className="min-h-screen pb-16 animate-fade-in" dir="rtl">

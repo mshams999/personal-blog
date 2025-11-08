@@ -1,10 +1,13 @@
 import { useEffect } from 'react'
+import { insertSchema } from '../utils/schemaGenerator'
 
 /**
- * MetaTags component for dynamic social sharing meta tags
+ * MetaTags component for dynamic social sharing meta tags and structured data
  * 
- * Updates the document head with Open Graph and Twitter Card meta tags
- * for proper social media sharing with images and descriptions.
+ * Updates the document head with:
+ * - Open Graph meta tags
+ * - Twitter Card meta tags
+ * - JSON-LD schema markup
  * 
  * @param {string} title - Page/post title
  * @param {string} description - Page/post description
@@ -14,6 +17,8 @@ import { useEffect } from 'react'
  * @param {string} siteName - Site name
  * @param {string} author - Author name
  * @param {string} publishedTime - Publication date (ISO string)
+ * @param {Object} schema - JSON-LD schema object to insert
+ * @param {string} schemaId - Unique identifier for the schema
  */
 const MetaTags = ({
     title,
@@ -21,9 +26,11 @@ const MetaTags = ({
     image,
     url,
     type = 'article',
-    siteName = 'Mohamed Shams Blog',
+    siteName = 'محمد شمس',
     author = '',
-    publishedTime = ''
+    publishedTime = '',
+    schema = null,
+    schemaId = 'page-schema'
 }) => {
     useEffect(() => {
         // Ensure image URL is absolute for social sharing
@@ -92,35 +99,9 @@ const MetaTags = ({
         updateMetaTag('og:image:height', '630')
         updateMetaTag('og:image:type', 'image/jpeg')
 
-        // Schema.org structured data for articles
-        if (type === 'article') {
-            const existingScript = document.querySelector('script[type="application/ld+json"]')
-            if (existingScript) {
-                existingScript.remove()
-            }
-
-            const structuredData = {
-                "@context": "https://schema.org",
-                "@type": "Article",
-                "headline": title,
-                "description": description,
-                "image": absoluteImageUrl,
-                "url": url,
-                "author": {
-                    "@type": "Person",
-                    "name": author
-                },
-                "publisher": {
-                    "@type": "Organization",
-                    "name": siteName
-                },
-                "datePublished": publishedTime
-            }
-
-            const script = document.createElement('script')
-            script.type = 'application/ld+json'
-            script.textContent = JSON.stringify(structuredData)
-            document.head.appendChild(script)
+        // Insert JSON-LD schema if provided
+        if (schema) {
+            insertSchema(schema, schemaId)
         }
 
         // Cleanup function
@@ -128,7 +109,7 @@ const MetaTags = ({
             // Don't remove meta tags on cleanup as they should persist
             // until the next page/component updates them
         }
-    }, [title, description, image, url, type, siteName, author, publishedTime])
+    }, [title, description, image, url, type, siteName, author, publishedTime, schema, schemaId])
 
     // This component doesn't render anything
     return null

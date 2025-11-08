@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React, { useMemo, useEffect } from 'react'
 import { useHybridData } from '../contexts/HybridDataContext'
 import { Link } from 'react-router-dom'
 import { Clock, MessageCircle, Star, Calendar, Eye, TrendingUp, Sparkles } from 'lucide-react'
@@ -9,10 +9,17 @@ import Carousel from '../components/Carousel'
 import Hero from '../components/Hero'
 import FirebaseCommentCount from '../components/FirebaseCommentCount'
 import ViewCounter from '../components/ViewCounter'
+import MetaTags from '../components/MetaTags'
 import { useBulkArticleViews, formatViewCount } from '../hooks/useFirebaseViews'
 import { formatRating } from '../utils/ratings'
 import { useBulkPostRatings, getRatingFromBulk } from '../hooks/useRatings'
 import { useCommentCounts } from '../hooks/useCommentCounts'
+import { 
+  generateWebsiteSchema,
+  generatePersonSchema,
+  generateOrganizationSchema,
+  insertMultipleSchemas 
+} from '../utils/schemaGenerator'
 
 /**
  * HomePage component displaying all blog posts in a masonry layout
@@ -64,6 +71,21 @@ const HomePage = () => {
 
     // Fetch Firebase comment counts for Most Commented section
     const { sortedByComments, getCommentCount, loading: commentsLoading } = useCommentCounts(recentPosts)
+
+    // Generate schemas for JSON-LD
+    const websiteSchema = generateWebsiteSchema()
+    const personSchema = generatePersonSchema()
+    const organizationSchema = generateOrganizationSchema()
+
+    // Insert schemas on component mount
+    useEffect(() => {
+        const schemas = [
+            { schema: websiteSchema, id: 'website' },
+            { schema: personSchema, id: 'person' },
+            { schema: organizationSchema, id: 'organization' }
+        ]
+        insertMultipleSchemas(schemas)
+    }, [])
 
     // Define the layout pattern for masonry effect with themes
     const getCardConfig = (index) => {
@@ -260,7 +282,16 @@ const HomePage = () => {
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-dark-900 dark:via-dark-800 dark:to-dark-900">
+        <>
+            {/* Meta Tags and Structured Data */}
+            <MetaTags
+                title={siteMetadata?.title || 'مدونة محمد شمس'}
+                description={siteMetadata?.description || 'مدونة شخصية تضم مقالات وتجارب في الطب والتكنولوجيا'}
+                url={window.location.origin}
+                type="website"
+            />
+
+            <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-dark-900 dark:via-dark-800 dark:to-dark-900">
             {/* Animated background elements */}
             <div className="fixed inset-0 overflow-hidden pointer-events-none">
                 <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob"></div>
@@ -546,7 +577,8 @@ const HomePage = () => {
 
             {/* Newsletter Section */}
             <Newsletter />
-        </div>
+            </div>
+        </>
     )
 }
 
