@@ -43,56 +43,71 @@ const client = buildTinaClient();
 
 async function generateSitemap() {
     try {
-        // Fetch all posts
-        const postsResponse = await client.queries.postConnection();
-        const posts = postsResponse.data.postConnection.edges || [];
+        console.log('📝 Generating comprehensive sitemap...');
+        
+        // Fetch all posts from TinaCMS
+        let posts = [];
+        try {
+            const postsResponse = await client.queries.postConnection();
+            posts = postsResponse.data.postConnection.edges || [];
+            console.log(`✅ Found ${posts.length} posts from TinaCMS`);
+        } catch (err) {
+            console.warn('⚠️  Could not fetch TinaCMS posts, using static posts');
+        }
 
-        // Static routes with different priorities and change frequencies
+        const now = new Date().toISOString();
+
+        // Static core routes
         const staticRoutes = [
-            {
-                url: '/',
-                priority: '1.0',
-                changefreq: 'weekly',
-                lastmod: new Date().toISOString()
-            },
-            {
-                url: '/blog',
-                priority: '0.9',
-                changefreq: 'daily',
-                lastmod: new Date().toISOString()
-            },
-            {
-                url: '/about',
-                priority: '0.8',
-                changefreq: 'monthly',
-                lastmod: new Date().toISOString()
-            }
+            { url: '/', priority: '1.0', changefreq: 'weekly', lastmod: now },
+            { url: '/blog', priority: '0.95', changefreq: 'daily', lastmod: now },
+            { url: '/categories', priority: '0.9', changefreq: 'monthly', lastmod: now },
+            { url: '/cv', priority: '0.8', changefreq: 'monthly', lastmod: now },
+            { url: '/reading', priority: '0.7', changefreq: 'monthly', lastmod: now },
         ];
 
-        // Generate post routes with proper metadata
-        const postRoutes = posts.map(post => {
-            // Get the last modified date from the post data if available
-            const lastModified = post.node.date || post.node._sys.createdAt || new Date().toISOString();
+        // Category routes - Updated with new slugs
+        const categoryRoutes = [
+            { url: '/category/medical', priority: '0.85', changefreq: 'weekly', lastmod: now },
+            { url: '/category/social-articles', priority: '0.85', changefreq: 'weekly', lastmod: now },
+        ];
 
+        // Post routes
+        const postRoutes = posts.map(post => {
+            const lastModified = post.node.date || post.node._sys.updatedAt || now;
             return {
-                url: `/blog/${post.node._sys.filename}`,
+                url: `/post/${post.node.slug || post.node._sys.filename}`,
                 priority: '0.7',
-                changefreq: 'weekly',
+                changefreq: 'never',
                 lastmod: new Date(lastModified).toISOString()
             };
         });
 
-        // Combine all routes
-        const allRoutes = [...staticRoutes, ...postRoutes];
+        // Certificate routes
+        const certRoutes = [
+            { url: '/certificates/atls', priority: '0.6', changefreq: 'monthly', lastmod: now },
+            { url: '/certificates/acls', priority: '0.6', changefreq: 'monthly', lastmod: now },
+            { url: '/certificates/bls', priority: '0.6', changefreq: 'monthly', lastmod: now },
+            { url: '/certificates/maaden', priority: '0.6', changefreq: 'monthly', lastmod: now },
+            { url: '/certificates/usmle-step1', priority: '0.6', changefreq: 'monthly', lastmod: now },
+        ];
 
-        // Generate sitemap XML with proper formatting and metadata
+        // Combine all routes
+        const allRoutes = [...staticRoutes, ...categoryRoutes, ...postRoutes, ...certRoutes];
+
+        // Deduplicate routes by URL
+        const uniqueRoutes = Array.from(
+            new Map(allRoutes.map(r => [r.url, r])).values()
+        );
+
+        // Generate XML sitemap
         const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:news="http://www.google.com/schemas/sitemap-news/0.9"
         xmlns:xhtml="http://www.w3.org/1999/xhtml"
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
         xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
-${allRoutes.map(route => `  <url>
+${uniqueRoutes.map(route => `  <url>
     <loc>https://mohamedshams.com${route.url}</loc>
     <lastmod>${route.lastmod}</lastmod>
     <changefreq>${route.changefreq}</changefreq>
@@ -100,11 +115,12 @@ ${allRoutes.map(route => `  <url>
   </url>`).join('\n')}
 </urlset>`;
 
-        // Write sitemap to the dist directory
-        writeFileSync('./dist/sitemap.xml', sitemap);
-        console.log('Sitemap generated successfully!');
+        // Write sitemap to public directory
+        writeFileSync('./public/sitemap.xml', sitemap);
+        console.log(`✅ Sitemap generated successfully with ${uniqueRoutes.length} URLs`);
+        console.log(`📍 File: ./public/sitemap.xml`);
     } catch (error) {
-        console.error('Error generating sitemap:', error);
+        console.error('❌ Error generating sitemap:', error);
         process.exit(1);
     }
 }

@@ -2,25 +2,28 @@
 export const seoConfig = {
     // Site information
     siteUrl: 'https://mohamedshams.com',
-    siteName: 'Mohamed Shams Blog',
-    siteDescription: 'Personal blog by Mohamed Shams - insights, tutorials, and thoughts on technology, development, and more.',
+    siteName: 'مدونة محمد شمس',
+    siteDescription: 'مدونة شخصية تضم مقالات وتجارب ورؤى متقدمة في الطب والتكنولوجيا والمقالات الاجتماعية',
 
-    // Social media and author info
+    // Author info (single author - personal blog)
     author: {
-        name: 'Mohamed Shams',
+        name: 'محمد شمس',
+        bio: 'طبيب طوارئ متخصص يجمع بين المعرفة الطبية والتكنولوجيا',
         social: {
-            twitter: '@mohamedshams999', // Update with actual handle
-            linkedin: 'mohamed-shams', // Update with actual profile
-            github: 'mshams999'
+            twitter: 'https://x.com/MohamedShams936',
+            linkedin: 'https://www.linkedin.com/in/mohamedshamsms/',
+            github: 'https://github.com/mshams999',
+            facebook: 'https://www.facebook.com/mosh936',
+            email: 'shamsmohamed155@gmail.com'
         }
     },
 
     // Default meta tags
     defaultMeta: {
         type: 'website',
-        locale: 'en_US',
-        keywords: 'blog, technology, development, programming, tutorials, insights',
-        robots: 'index, follow',
+        locale: 'ar_SA',
+        keywords: 'طب, تكنولوجيا, برمجة, مقالات, طبيب, صحة',
+        robots: 'index, follow, max-video-preview:-1, max-image-preview:large, max-snippet:-1',
         googlebot: 'index, follow, max-video-preview:-1, max-image-preview:large, max-snippet:-1'
     },
 
@@ -29,14 +32,17 @@ export const seoConfig = {
         changefreq: {
             homepage: 'weekly',
             blog: 'daily',
-            posts: 'weekly',
+            posts: 'never',
+            categories: 'monthly',
             static: 'monthly'
         },
         priority: {
             homepage: '1.0',
-            blog: '0.9',
+            blog: '0.95',
+            categories: '0.9',
             posts: '0.7',
-            about: '0.8',
+            cv: '0.8',
+            certificates: '0.6',
             static: '0.6'
         }
     },
@@ -44,7 +50,18 @@ export const seoConfig = {
     // Robots.txt directives
     robotsConfig: {
         userAgent: '*',
-        allow: ['/', '/blog/', '/about/', '/public/', '/content/', '/pictures/'],
+        allow: [
+            '/',
+            '/post/',
+            '/category/',
+            '/blog',
+            '/certificates/',
+            '/cv',
+            '/reading',
+            '/categories',
+            '/content/',
+            '/public/'
+        ],
         disallow: [
             '/admin/',
             '/admin',
@@ -58,11 +75,36 @@ export const seoConfig = {
             '/setup-*.js',
             '/dev.log',
             '/*test*.html',
-            '/email-test-final.html',
-            '/newsletter-test-live.html',
-            '/welcome-email-test.html'
+            '/node_modules/',
+            '/.git/',
+            '/.env*'
         ],
-        sitemap: 'https://mohamedshams.com/sitemap.xml'
+        crawlDelay: 0.5,
+        requestRate: '30/1m',
+        sitemap: [
+            'https://mohamedshams.com/sitemap.xml',
+            'https://mohamedshams.com/sitemap-index.xml'
+        ]
+    },
+
+    // Structured data defaults
+    organizationSchema: {
+        name: 'محمد شمس',
+        description: 'طبيب طوارئ ومطور برمجيات',
+        url: 'https://mohamedshams.com',
+        sameAs: [
+            'https://x.com/MohamedShams936',
+            'https://www.linkedin.com/in/mohamedshamsms/',
+            'https://github.com/mshams999',
+            'https://www.facebook.com/mosh936'
+        ]
+    },
+
+    // Open Graph defaults
+    openGraph: {
+        type: 'website',
+        locale: 'ar_SA',
+        siteName: 'مدونة محمد شمس'
     }
 }
 

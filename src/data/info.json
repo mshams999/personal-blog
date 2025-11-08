@@ -23,6 +23,10 @@
       "href": "/"
     },
     {
+      "name": "المقالات",
+      "href": "/blog"
+    },
+    {
       "name": "التصنيفات",
       "href": "/categories"
     },
@@ -50,12 +54,14 @@
     {
       "id": "cat-1",
       "name": "طبي",
-      "slug": "Medical"
+      "slug": "medical",
+      "description": "مقالات طبية وصحية متقدمة"
     },
     {
       "id": "cat-2",
       "name": "مقالات اجتماعية",
-      "slug": "Social Articles"
+      "slug": "social-articles",
+      "description": "مقالات اجتماعية وحياتية"
     }
   ]
 }
