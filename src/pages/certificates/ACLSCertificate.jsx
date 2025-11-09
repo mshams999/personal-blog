@@ -113,6 +113,7 @@ const ACLSCertificate = () => {
                                     <img
                                         src="/pictures/ACLS.jpg"
                                         alt="ACLS Certificate"
+                                        loading="lazy"
                                         className="w-full h-auto rounded-lg shadow-lg"
                                     />
                                 </div>

@@ -37,10 +37,7 @@ export const usePostRating = (postSlug) => {
                     setUserRating(0)
                 }
             } catch (error) {
-                console.error('Error fetching rating:', error)
-                setAverageRating(0)
-                setTotalRatings(0)
-                setUserRating(0)
+                setError(error)
             } finally {
                 setLoading(false)
             }
@@ -88,7 +85,6 @@ export const useBulkPostRatings = (postSlugs) => {
                     setRatings(emptyRatings)
                 }
             } catch (error) {
-                console.error('Error fetching bulk ratings:', error)
                 // Return empty ratings on error
                 const emptyRatings = {}
                 postSlugs.forEach(slug => {

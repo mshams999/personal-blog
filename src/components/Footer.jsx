@@ -41,12 +41,12 @@ const Footer = () => {
 
     const recentPosts = useMemo(() => {
         try {
-            return getRecentPosts().sort((a, b) => new Date(b.date) - new Date(a.date))
+            const recent = getRecentPosts ? getRecentPosts(6) : posts.slice(0, 6)
+            return recent || []
         } catch (err) {
-            console.error('Error getting recent posts in Footer:', err)
-            return posts || []
+            return []
         }
-    }, [getRecentPosts, posts])
+    }, [posts, getRecentPosts])
 
     const { viewCounts, getViewCount, loading: viewsLoading } = useBulkArticleViews(recentPosts)
 
@@ -64,7 +64,7 @@ const Footer = () => {
     try {
         commentData = useDisqusCommentCounts(recentPosts)
     } catch (error) {
-        console.error('Error in useDisqusCommentCounts:', error)
+        // Silent fail
     }
     const { sortedByComments, getCommentCount, loading: commentsLoading } = commentData
 

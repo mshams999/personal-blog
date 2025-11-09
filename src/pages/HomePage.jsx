@@ -40,8 +40,8 @@ const HomePage = () => {
             const posts = getRecentPosts().sort((a, b) => new Date(b.date) - new Date(a.date)) // Sort by newest first
             return posts
         } catch (err) {
-            console.error('Error getting recent posts:', err)
-            return []
+            setError(err.message)
+            setIsLoading(false)
         }
     }, [getRecentPosts])
 
@@ -129,6 +129,7 @@ const HomePage = () => {
                     <img
                         src={post.featuredImage}
                         alt={post.title}
+                        loading="lazy"
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                         onError={(e) => {
                             e.target.src = 'https://placehold.co/800x600/F3F4F6/9CA3AF?text=No+Image'
@@ -185,6 +186,7 @@ const HomePage = () => {
                                 <img
                                     src={author.avatar}
                                     alt={author.name}
+                                    loading="lazy"
                                     className="w-9 h-9 rounded-full ring-2 ring-primary-100 dark:ring-primary-900/30 object-cover"
                                 />
                                 <div className="flex-1 min-w-0">
@@ -249,12 +251,11 @@ const HomePage = () => {
 
     // Show error state if TinaCMS failed to load (will fallback to static posts)
     if (error) {
-        console.warn('TinaCMS failed to load, falling back to static posts:', error)
+        // Silent - fallback to static posts
     }
 
     // Add safety check for empty posts
     if (!recentPosts || recentPosts.length === 0) {
-        console.warn('No posts available to display')
         return (
             <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-dark-900 dark:via-dark-800 dark:to-dark-900 flex items-center justify-center">
                 <div className="text-center max-w-md mx-auto p-8">
@@ -515,6 +516,7 @@ const HomePage = () => {
                                                             <img
                                                                 src={post.featuredImage}
                                                                 alt={post.title}
+                                                                loading="lazy"
                                                                 className="w-16 h-16 rounded-2xl object-cover ring-2 ring-white dark:ring-dark-600 shadow-lg"
                                                             />
                                                             <div className={`absolute -top-2 -left-2 w-7 h-7 bg-gradient-to-br ${rankBadgeColors[index]} text-white text-xs rounded-full flex items-center justify-center font-bold shadow-xl group-hover:rotate-12 transition-transform duration-300`}>

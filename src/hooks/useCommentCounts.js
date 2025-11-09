@@ -1,19 +1,11 @@
 /**
  * Firebase Comment Counter Hook
- * 
- * Uses Firestore to store and retrieve comment counts with real-time updates.
- * No polling - uses Firebase's real-time listeners for instant updates.
  */
 
 import { useState, useEffect } from 'react'
 import { db } from '../config/firebase'
 import { doc, onSnapshot } from 'firebase/firestore'
 
-/**
- * Hook to get comment count for a single post from Firebase
- * @param {string} postSlug - The post slug
- * @returns {Object} - { count, loading, error }
- */
 export const useCommentCount = (postSlug) => {
     const [count, setCount] = useState(0)
     const [loading, setLoading] = useState(true)
@@ -28,7 +20,6 @@ export const useCommentCount = (postSlug) => {
         try {
             const commentDocRef = doc(db, 'commentCounts', postSlug)
 
-            // Set up real-time listener
             const unsubscribe = onSnapshot(
                 commentDocRef,
                 (docSnap) => {
@@ -41,8 +32,7 @@ export const useCommentCount = (postSlug) => {
                     setLoading(false)
                 },
                 (err) => {
-                    console.error('Error fetching comment count:', err)
-                    setError(err.message)
+                    setError(err)
                     setCount(0)
                     setLoading(false)
                 }
@@ -50,7 +40,6 @@ export const useCommentCount = (postSlug) => {
 
             return () => unsubscribe()
         } catch (err) {
-            console.error('Error setting up comment count listener:', err)
             setError(err.message)
             setLoading(false)
         }
@@ -59,11 +48,6 @@ export const useCommentCount = (postSlug) => {
     return { count, loading, error }
 }
 
-/**
- * Hook to get comment counts for multiple posts with real-time updates
- * @param {Array} posts - Array of post objects with slug property
- * @returns {Object} - { commentCounts, loading, error, sortedByComments, getCommentCount }
- */
 export const useCommentCounts = (posts = []) => {
     const [commentCounts, setCommentCounts] = useState({})
     const [loading, setLoading] = useState(true)
@@ -79,7 +63,6 @@ export const useCommentCounts = (posts = []) => {
         const unsubscribers = []
 
         try {
-            // Set up real-time listener for each post
             posts.forEach((post) => {
                 if (!post.slug) return
 
@@ -94,7 +77,6 @@ export const useCommentCounts = (posts = []) => {
                         }))
                     },
                     (err) => {
-                        console.error(`Error fetching count for ${post.slug}:`, err)
                         setCommentCounts((prev) => ({
                             ...prev,
                             [post.slug]: 0
@@ -107,18 +89,15 @@ export const useCommentCounts = (posts = []) => {
 
             setLoading(false)
         } catch (err) {
-            console.error('Error setting up bulk comment count listeners:', err)
             setError(err.message)
             setLoading(false)
         }
 
-        // Cleanup all listeners
         return () => {
             unsubscribers.forEach((unsubscribe) => unsubscribe())
         }
     }, [posts.map(p => p.slug).join(',')])
 
-    // Sort posts by comment count
     useEffect(() => {
         if (Object.keys(commentCounts).length > 0 && posts.length > 0) {
             const sorted = [...posts].sort((a, b) => {
@@ -130,7 +109,6 @@ export const useCommentCounts = (posts = []) => {
         }
     }, [posts, commentCounts])
 
-    // Get comment count for a specific post
     const getCommentCount = (slug) => {
         return commentCounts[slug] || 0
     }

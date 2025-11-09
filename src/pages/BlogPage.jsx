@@ -73,6 +73,7 @@ const BlogPage = () => {
           <img
             src={post.featuredImage}
             alt={post.title}
+            loading="lazy"
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
             onError={(e) => {
               e.target.src = 'https://placehold.co/800x600/F3F4F6/9CA3AF?text=No+Image'
@@ -114,6 +115,7 @@ const BlogPage = () => {
                 <img
                   src={author.avatar}
                   alt={author.name}
+                  loading="lazy"
                   className="h-6 w-6 rounded-full ring-2 ring-gray-200 dark:ring-dark-600"
                 />
                 <span className="text-xs font-medium text-gray-700 dark:text-gray-300">{author.name}</span>
@@ -172,8 +174,8 @@ const BlogPage = () => {
           <button
             onClick={() => handleCategoryFilter(null)}
             className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 ${!selectedCategory
-                ? 'bg-primary-500 text-white shadow-lg'
-                : 'bg-gray-200 dark:bg-dark-700 text-gray-900 dark:text-white hover:bg-gray-300 dark:hover:bg-dark-600'
+              ? 'bg-primary-500 text-white shadow-lg'
+              : 'bg-gray-200 dark:bg-dark-700 text-gray-900 dark:text-white hover:bg-gray-300 dark:hover:bg-dark-600'
               }`}
           >
             جميع الفئات ({allPosts.length})
@@ -185,8 +187,8 @@ const BlogPage = () => {
                 key={cat.id}
                 onClick={() => handleCategoryFilter(cat.id)}
                 className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 ${selectedCategory === cat.id
-                    ? 'bg-primary-500 text-white shadow-lg'
-                    : 'bg-gray-200 dark:bg-dark-700 text-gray-900 dark:text-white hover:bg-gray-300 dark:hover:bg-dark-600'
+                  ? 'bg-primary-500 text-white shadow-lg'
+                  : 'bg-gray-200 dark:bg-dark-700 text-gray-900 dark:text-white hover:bg-gray-300 dark:hover:bg-dark-600'
                   }`}
               >
                 {cat.name} ({catPostCount})
@@ -219,8 +221,8 @@ const BlogPage = () => {
                 onClick={() => handlePageChange(currentPage - 1)}
                 disabled={currentPage === 1}
                 className={`p-2 rounded-lg font-medium transition-all ${currentPage === 1
-                    ? 'bg-gray-100 dark:bg-dark-700 text-gray-400 dark:text-gray-600 cursor-not-allowed'
-                    : 'bg-primary-500 text-white hover:bg-primary-600'
+                  ? 'bg-gray-100 dark:bg-dark-700 text-gray-400 dark:text-gray-600 cursor-not-allowed'
+                  : 'bg-primary-500 text-white hover:bg-primary-600'
                   }`}
                 aria-label="الصفحة السابقة"
               >
@@ -252,8 +254,8 @@ const BlogPage = () => {
                       key={page}
                       onClick={() => handlePageChange(page)}
                       className={`px-3 py-1 rounded-lg font-medium transition-all ${currentPage === page
-                          ? 'bg-primary-500 text-white'
-                          : 'bg-gray-200 dark:bg-dark-700 text-gray-900 dark:text-white hover:bg-gray-300 dark:hover:bg-dark-600'
+                        ? 'bg-primary-500 text-white'
+                        : 'bg-gray-200 dark:bg-dark-700 text-gray-900 dark:text-white hover:bg-gray-300 dark:hover:bg-dark-600'
                         }`}
                       aria-current={currentPage === page ? 'page' : undefined}
                     >
@@ -268,8 +270,8 @@ const BlogPage = () => {
                 onClick={() => handlePageChange(currentPage + 1)}
                 disabled={currentPage === totalPages}
                 className={`p-2 rounded-lg font-medium transition-all ${currentPage === totalPages
-                    ? 'bg-gray-100 dark:bg-dark-700 text-gray-400 dark:text-gray-600 cursor-not-allowed'
-                    : 'bg-primary-500 text-white hover:bg-primary-600'
+                  ? 'bg-gray-100 dark:bg-dark-700 text-gray-400 dark:text-gray-600 cursor-not-allowed'
+                  : 'bg-primary-500 text-white hover:bg-primary-600'
                   }`}
                 aria-label="الصفحة التالية"
               >

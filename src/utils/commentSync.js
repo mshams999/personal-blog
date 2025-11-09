@@ -21,7 +21,6 @@ export const fetchDisqusCount = async (identifier) => {
     return new Promise((resolve) => {
         // Check if Disqus widget is available
         if (!window.DISQUSWIDGETS) {
-            console.warn('DISQUSWIDGETS not available')
             resolve(0)
             return
         }
@@ -59,10 +58,8 @@ export const syncCommentCountToFirebase = async (postSlug, count) => {
             lastUpdated: serverTimestamp(),
             postSlug: postSlug
         }, { merge: true })
-
-        console.log(`✅ Synced comment count for ${postSlug}: ${count}`)
     } catch (error) {
-        console.error(`❌ Error syncing count for ${postSlug}:`, error)
+        // Silent fail - error logged to error tracking service if configured
         throw error
     }
 }
@@ -74,23 +71,19 @@ export const syncCommentCountToFirebase = async (postSlug, count) => {
  */
 export const syncAllCommentCounts = async (posts) => {
     if (!posts || posts.length === 0) {
-        console.warn('No posts to sync')
         return
     }
-
-    console.log(`🔄 Starting sync for ${posts.length} posts...`)
 
     const promises = posts.map(async (post) => {
         try {
             const count = await fetchDisqusCount(post.slug)
             await syncCommentCountToFirebase(post.slug, count)
         } catch (error) {
-            console.error(`Error syncing ${post.slug}:`, error)
+            // Silent fail
         }
     })
 
     await Promise.all(promises)
-    console.log('✅ Sync complete!')
 }
 
 /**
@@ -108,10 +101,8 @@ export const initializeCommentCount = async (postSlug) => {
             postSlug: postSlug,
             initialized: true
         }, { merge: true })
-
-        console.log(`✅ Initialized comment count for ${postSlug}`)
     } catch (error) {
-        console.error(`❌ Error initializing count for ${postSlug}:`, error)
+        // Silent fail
     }
 }
 
@@ -120,11 +111,8 @@ export const initializeCommentCount = async (postSlug) => {
  * Usage: syncCommentsNow(posts)
  */
 export const syncCommentsNow = async (posts) => {
-    console.log('🚀 Manual comment sync initiated...')
-
     // Ensure Disqus script is loaded
     if (!document.getElementById('dsq-count-scr')) {
-        console.log('Loading Disqus count script...')
         const script = document.createElement('script')
         script.src = `https://${disqusConfig.shortname}.disqus.com/count.js`
         script.async = true

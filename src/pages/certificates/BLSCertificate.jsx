@@ -114,6 +114,7 @@ const BLSCertificate = () => {
                                     <img
                                         src="/pictures/BLS.jpg"
                                         alt="BLS Certificate"
+                                        loading="lazy"
                                         className="w-full h-auto rounded-lg shadow-lg"
                                     />
                                 </div>

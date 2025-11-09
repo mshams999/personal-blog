@@ -73,7 +73,7 @@ const SocialShareButton = ({
                 setCopied(true)
                 setTimeout(() => setCopied(false), 2000)
             } catch (err2) {
-                console.error('Copy failed:', err2)
+                // Fallback failed, ignore
             }
             document.body.removeChild(textArea)
         }

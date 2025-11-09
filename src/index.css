@@ -86,9 +86,15 @@
 
 /* Remove the pointer-events: none that blocks clicks */
 
-/* Smooth transitions for dark mode */
-* {
+/* Smooth transitions for dark mode - but NOT for images */
+*:not(img):not([loading="lazy"]) {
     @apply transition-colors duration-300;
+}
+
+/* Images should load instantly without any transition */
+img, img[loading="lazy"] {
+    transition: none !important;
+    opacity: 1 !important;
 }
 
 /* Blob animations for background */

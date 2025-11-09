@@ -136,6 +136,7 @@ const MaadenCertificate = () => {
                                         <img
                                             src="/pictures/honor.jpg"
                                             alt="Ma'aden Certificate of Excellence"
+                                            loading="lazy"
                                             className="w-full h-auto rounded-xl shadow-xl border-4 border-gradient-to-r from-yellow-300 to-orange-400"
                                             style={{ minHeight: '400px', objectFit: 'contain' }}
                                         />

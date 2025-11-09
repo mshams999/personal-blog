@@ -21,6 +21,17 @@
     }
 }
 
+/* Instant image loading without fade */
+@keyframes imageLoad {
+    from {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
 @keyframes slideInRight {
     from {
         transform: translateX(20px);
@@ -276,6 +287,16 @@
 
 .img-hover-zoom:hover img {
     transform: scale(1.05);
+}
+
+/* Instant image loading - no fade effect */
+img[loading="lazy"] {
+    opacity: 1 !important;
+    transition: none !important;
+}
+
+img {
+    opacity: 1;
 }
 
 /* Text selection color */

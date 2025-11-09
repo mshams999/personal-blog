@@ -151,6 +151,7 @@ const USMLEStep1Certificate = () => {
                                         <img
                                             src="/pictures/step1.jpg"
                                             alt="USMLE Step 1 Certificate"
+                                            loading="lazy"
                                             className="w-full h-auto rounded-xl shadow-xl border-4 border-gradient-to-r from-blue-300 to-purple-400 transform hover:scale-105 transition-transform duration-500"
                                             style={{ minHeight: '400px', objectFit: 'contain' }}
                                         />

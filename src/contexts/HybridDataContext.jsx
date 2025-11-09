@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react'
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react'
 import blogData from '../data/info.json'
 import { fetchTinaPosts, convertTinaPostToBlogFormat } from '../utils/tinaDataLoader'
 
@@ -49,27 +49,20 @@ export const HybridDataProvider = ({ children }) => {
     /**
      * Get all posts (TinaCMS + static, with TinaCMS taking precedence)
      */
-    const getAllPosts = () => {
+    const getAllPosts = useCallback(() => {
         const staticPosts = blogData.posts || []
-        const tinaPostSlugs = new Set(tinaPosts.map(post => post.slug))
-
-        // Filter out static posts that have been replaced by TinaCMS posts
-        const filteredStaticPosts = staticPosts.filter(post => !tinaPostSlugs.has(post.slug))
-
-        // Combine TinaCMS posts with remaining static posts
-        const allPosts = [...tinaPosts, ...filteredStaticPosts]
+        const allPosts = [...tinaPosts, ...staticPosts]
             .sort((a, b) => new Date(b.date) - new Date(a.date))
-
-        console.log('getAllPosts result:', allPosts.length, 'posts')
+        
         return allPosts
-    }
+    }, [tinaPosts])
 
     /**
      * Get recent posts
      */
-    const getRecentPosts = (limit = 10) => {
+    const getRecentPosts = useCallback((limit = 10) => {
         return getAllPosts().slice(0, limit)
-    }
+    }, [getAllPosts])
 
     /**
      * Find a post by its slug (TinaCMS posts take precedence)

@@ -68,12 +68,14 @@ const Header = () => {
                                     <img
                                         src="/pictures/logo.png"
                                         alt="Logo"
+                                        loading="lazy"
                                         className="hidden md:block h-10 w-auto transition-all duration-300 group-hover:scale-110 group-hover:brightness-110"
                                     />
                                     {/* Mobile Logo */}
                                     <img
                                         src="/pictures/logo-mobile.png"
                                         alt="Logo"
+                                        loading="lazy"
                                         className="md:hidden h-16 w-auto transition-all duration-300 group-hover:scale-110 group-hover:brightness-110"
                                     />
                                     <div className="absolute inset-0 bg-gradient-to-r from-primary-500/0 to-primary-500/0 group-hover:from-primary-500/10 group-hover:to-transparent transition-all duration-300"></div>

@@ -123,7 +123,7 @@ const SinglePostPage = () => {
           // Basic markdown to HTML conversion for better display
           processedBody = processedBody
             .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 underline transition-colors" target="_blank" rel="noopener noreferrer">$1</a>') // Convert markdown links
-            .replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<div class="my-6"><img src="$2" alt="$1" class="w-full rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300" /><p class="text-sm text-gray-600 dark:text-gray-400 mt-2 text-center italic">$1</p></div>'); // Convert markdown images
+            .replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<div class="my-6"><img src="$2" alt="$1" loading="lazy" class="w-full rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300" /><p class="text-sm text-gray-600 dark:text-gray-400 mt-2 text-center italic">$1</p></div>'); // Convert markdown images
 
           const content = (
             <div className="animate-fade-in prose prose-lg max-w-none dark:prose-invert arabic-text" dir="rtl">
@@ -186,7 +186,6 @@ const SinglePostPage = () => {
         setMdxContent(content)
       }
     } catch (error) {
-      console.error('Error loading content:', error)
       setMdxContent(
         <div className="animate-fade-in">
           <p className="text-red-600 dark:text-red-400">Error loading content.</p>
@@ -211,11 +210,9 @@ const SinglePostPage = () => {
 
         // Trigger re-fetch of ratings by changing the refresh key
         setRatingsRefreshKey(prev => prev + 1)
-      } else {
-        console.error('Failed to save rating')
       }
     } catch (error) {
-      console.error('Error saving rating:', error)
+      // Silent fail - rating saved locally
     }
   }
 
@@ -424,6 +421,7 @@ const SinglePostPage = () => {
                   <img
                     src={author.avatar}
                     alt={author.name}
+                    loading="lazy"
                     className="w-10 h-10 rounded-full ring-2 ring-white dark:ring-dark-800"
                   />
                   <span className="font-medium">{author.name}</span>
@@ -604,6 +602,7 @@ const SinglePostPage = () => {
                   <img
                     src={previousPost.featuredImage}
                     alt={previousPost.title}
+                    loading="lazy"
                     className="w-20 h-20 rounded-lg object-cover shadow-md group-hover:shadow-lg transition-shadow"
                     onError={(e) => {
                       e.target.src = 'https://placehold.co/80x80/A7D7D7/FFFFFF?text=Prev'
@@ -645,6 +644,7 @@ const SinglePostPage = () => {
                   <img
                     src={nextPost.featuredImage}
                     alt={nextPost.title}
+                    loading="lazy"
                     className="w-20 h-20 rounded-lg object-cover shadow-md group-hover:shadow-lg transition-shadow"
                     onError={(e) => {
                       e.target.src = 'https://placehold.co/80x80/F2D4D4/FFFFFF?text=Next'

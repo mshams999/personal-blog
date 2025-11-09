@@ -67,7 +67,6 @@ const Newsletter = () => {
       }
 
     } catch (error) {
-      console.error('Newsletter subscription error:', error)
       setError('تعذر الاشتراك. يرجى التحقق من اتصالك والمحاولة مرة أخرى.')
       setIsLoading(false)
 

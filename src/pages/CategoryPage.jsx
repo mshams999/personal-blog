@@ -108,6 +108,7 @@ const CategoryPage = () => {
                     <img
                         src={post.featuredImage}
                         alt={post.title}
+                        loading="lazy"
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                         onError={(e) => {
                             e.target.src = 'https://placehold.co/800x600/F3F4F6/9CA3AF?text=No+Image'
@@ -149,6 +150,7 @@ const CategoryPage = () => {
                                 <img
                                     src={author.avatar}
                                     alt={author.name}
+                                    loading="lazy"
                                     className="h-6 w-6 rounded-full ring-2 ring-gray-200 dark:ring-dark-600"
                                 />
                                 <span className="text-xs font-medium text-gray-700 dark:text-gray-300">{author.name}</span>

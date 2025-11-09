@@ -109,6 +109,7 @@ const ATLSCertificate = () => {
                                     <img
                                         src="/pictures/ATLS.jpg"
                                         alt="ATLS Certificate"
+                                        loading="lazy"
                                         className="w-full h-auto rounded-lg shadow-lg"
                                     />
                                 </div>
