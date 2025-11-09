@@ -115,6 +115,49 @@ const SinglePostPage = () => {
     }
   }, [post])
 
+  // Generate schemas for JSON-LD (do this before conditional returns)
+  const formattedDate = post ? formatDateArabicFull(post.date) : ''
+  const blogPostingSchema = post ? generateBlogPostingSchema(post, author, category) : null
+  const breadcrumbSchema = post ? generateBreadcrumbSchema(
+    [
+      { name: 'الرئيسية', url: '/' },
+      { name: category?.name || 'المقالات', url: category ? `/category/${category.slug}` : '/blog' },
+      { name: post?.title || '', url: `/post/${post?.slug || slug}` }
+    ]
+  ) : null
+
+  // Insert schemas on component mount/update
+  useEffect(() => {
+    if (blogPostingSchema || breadcrumbSchema) {
+      const schemas = []
+      if (blogPostingSchema) schemas.push({ schema: blogPostingSchema, id: 'blog-posting' })
+      if (breadcrumbSchema) schemas.push({ schema: breadcrumbSchema, id: 'breadcrumb' })
+      insertMultipleSchemas(schemas)
+    }
+  }, [post?.slug, category?.id])
+
+  // Get related posts based on category (safe before loading check)
+  const relatedPosts = post ? posts
+    .filter(p => p.id !== post.id && p.categoryId === post.categoryId)
+    .slice(0, 2) : []
+
+  // Get suggested posts for "You may also like" section (mix of related and recent posts)
+  const suggestedPosts = post ? posts
+    .filter(p => p.id !== post.id)
+    .sort((a, b) => {
+      // Prioritize posts from same category, then by date
+      if (a.categoryId === post?.categoryId && b.categoryId !== post?.categoryId) return -1
+      if (b.categoryId === post?.categoryId && a.categoryId !== post?.categoryId) return 1
+      return new Date(b.date) - new Date(a.date)
+    })
+    .slice(0, 4) : []
+
+  // Parallax effect style for header image
+  const parallaxStyle = {
+    transform: `translateY(${scrollPosition * 0.4}px)`,
+    transition: 'transform 0.1s ease-out'
+  }
+
   const loadMDXContent = async (path) => {
     try {
       setLoading(true)
@@ -239,50 +282,6 @@ const SinglePostPage = () => {
   // Only redirect if data has finished loading and post is still not found
   if (!dataLoading && !post) {
     return <Navigate to="/blog" replace />
-  }
-
-  const formattedDate = formatDateArabicFull(post.date)
-
-  // Generate schemas for JSON-LD
-  const blogPostingSchema = generateBlogPostingSchema(post, author, category)
-  const breadcrumbSchema = generateBreadcrumbSchema(
-    [
-      { name: 'الرئيسية', url: '/' },
-      { name: category?.name || 'المقالات', url: category ? `/category/${category.slug}` : '/blog' },
-      { name: post.title, url: `/post/${post.slug}` }
-    ]
-  )
-
-  // Insert schemas on component mount/update
-  useEffect(() => {
-    if (blogPostingSchema || breadcrumbSchema) {
-      const schemas = []
-      if (blogPostingSchema) schemas.push({ schema: blogPostingSchema, id: 'blog-posting' })
-      if (breadcrumbSchema) schemas.push({ schema: breadcrumbSchema, id: 'breadcrumb' })
-      insertMultipleSchemas(schemas)
-    }
-  }, [post.slug, category?.id])
-
-  // Get related posts based on category
-  const relatedPosts = posts
-    .filter(p => p.id !== post.id && p.categoryId === post.categoryId)
-    .slice(0, 2)
-
-  // Get suggested posts for "You may also like" section (mix of related and recent posts)
-  const suggestedPosts = posts
-    .filter(p => p.id !== post.id)
-    .sort((a, b) => {
-      // Prioritize posts from same category, then by date
-      if (a.categoryId === post?.categoryId && b.categoryId !== post?.categoryId) return -1
-      if (b.categoryId === post?.categoryId && a.categoryId !== post?.categoryId) return 1
-      return new Date(b.date) - new Date(a.date)
-    })
-    .slice(0, 4)
-
-  // Parallax effect style for header image
-  const parallaxStyle = {
-    transform: `translateY(${scrollPosition * 0.4}px)`,
-    transition: 'transform 0.1s ease-out'
   }
 
   return (

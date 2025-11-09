@@ -1,6 +1,11 @@
-# Handle direct links to internal pages
-/* /index.html 200
+# Handle direct links to internal pages - SPA routing
+/post/* /index.html 200
+/category/* /index.html 200
+/blog /index.html 200
+/cv /index.html 200
+/reading /index.html 200
+/admin /index.html 200
+/certificates/* /index.html 200
 
-# Specific routes that were failing
-/the-best-english-bookstore/* /index.html 200
-/category/mnwaat/* /index.html 200
+# Fallback for all other routes
+/* /index.html 200
