@@ -7,7 +7,6 @@ import AuthorBio from '../components/AuthorBio'
 import DisqusComments from '../components/DisqusComments'
 import FirebaseCommentCount from '../components/FirebaseCommentCount'
 import ViewCounter from '../components/ViewCounter'
-import ApplauseButton from '../components/ApplauseButton'
 import SocialShareButton from '../components/SocialShareButton'
 import MetaTags from '../components/MetaTags'
 import { TinaCMSContent, StaticContent } from '../components/TinaCMSContent'
@@ -407,14 +406,6 @@ const SinglePostPage = () => {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           {/* Social Sharing Sidebar - Desktop */}
           <div className="hidden md:flex flex-col fixed end-8 top-1/3 items-center space-y-4 z-30">
-            {/* Applause Button for sidebar */}
-            <div className="bg-gray-100/90 backdrop-blur-sm rounded-full p-2 dark:bg-dark-700" title="Applaud this post">
-              <ApplauseButton
-                url={`${window.location.origin}/post/${post.slug}`}
-                size="sm"
-                className="applause-sidebar"
-              />
-            </div>
             <SocialShareButton
               url={`${window.location.origin}/post/${post.slug}`}
               title={post.title}
@@ -590,16 +581,6 @@ const SinglePostPage = () => {
 
           {/* Mobile Action Bar */}
           <div className="md:hidden flex justify-between items-center mt-12 pt-6 border-t border-gray-200 dark:border-dark-700">
-            <div className="flex space-x-4 items-center">
-              {/* Mobile Applause Button */}
-              <div title="Applaud this post">
-                <ApplauseButton
-                  url={`${window.location.origin}/post/${post.slug}`}
-                  size="sm"
-                  className="applause-mobile"
-                />
-              </div>
-            </div>
             <SocialShareButton
               url={`${window.location.origin}/post/${post.slug}`}
               title={post.title}

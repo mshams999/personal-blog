@@ -22,7 +22,6 @@
         "@tinacms/cli": "^1.9.9",
         "@tinacms/mdx": "^1.7.0",
         "@types/mdx": "^2.0.10",
-        "applause-button": "^4.0.7",
         "axios": "^1.10.0",
         "concurrently": "^9.2.0",
         "date-fns": "^2.30.0",
