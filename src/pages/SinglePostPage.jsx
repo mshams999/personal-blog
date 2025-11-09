@@ -38,7 +38,15 @@ import {
  */
 const SinglePostPage = () => {
   const { slug } = useParams()
-  const { getPostBySlug, getAuthorById, getCategoryById, categories, getAllPosts, loading: dataLoading } = useHybridData()
+  const {
+    getPostBySlug,
+    getAuthorById,
+    getCategoryById,
+    categories,
+    getAllPosts,
+    loading: dataLoading,
+    posts
+  } = useHybridData()
   const [mdxContent, setMdxContent] = useState(null)
   const [loading, setLoading] = useState(true)
   const [scrollPosition, setScrollPosition] = useState(0)
@@ -256,7 +264,6 @@ const SinglePostPage = () => {
   }, [post.slug, category?.id])
 
   // Get related posts based on category
-  const { posts } = useHybridData()
   const relatedPosts = posts
     .filter(p => p.id !== post.id && p.categoryId === post.categoryId)
     .slice(0, 2)
