@@ -119,11 +119,11 @@ const Newsletter = () => {
         <div className="mb-6">
           <h2 className="text-3xl md:text-4xl font-bold mb-2">
             <span className="bg-gradient-to-r from-violet-600 via-purple-600 to-indigo-600 dark:from-violet-400 dark:via-purple-400 dark:to-indigo-400 bg-clip-text text-transparent">
-             جاهز تنضم لعالم الأفكار؟
+              جاهز تنضم لعالم الأفكار؟
             </span>
           </h2>
           <p className="text-lg text-gray-700 dark:text-gray-300">
-           اشترك لتكون أول من يطّلع على المقالات الجديدة.
+            اشترك لتكون أول من يطّلع على المقالات الجديدة.
           </p>
         </div>
 
@@ -190,7 +190,7 @@ const Newsletter = () => {
 
         {/* Subtle call to action */}
         <p className="mt-6 text-xs text-gray-500 dark:text-gray-400">
-        لا سبام. لا إزعاج. فقط محتوى يستحق القراءة.
+          لا سبام. لا إزعاج. فقط محتوى يستحق القراءة.
         </p>
 
         {/* Email service status (dev mode only) */}

@@ -200,8 +200,8 @@ const SocialShareButton = ({
                                     )}
                                 </div>
                                 <span className={`text-sm font-medium mt-2 ${copied
-                                        ? 'text-green-500'
-                                        : 'text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white'
+                                    ? 'text-green-500'
+                                    : 'text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white'
                                     }`}>
                                     {copied ? 'Copied!' : 'Copy Link'}
                                 </span>

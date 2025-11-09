@@ -92,7 +92,8 @@
 }
 
 /* Images should load instantly without any transition */
-img, img[loading="lazy"] {
+img,
+img[loading="lazy"] {
     transition: none !important;
     opacity: 1 !important;
 }

@@ -145,7 +145,7 @@ const Footer = () => {
                             مدونة د. شمس
                         </h3>
                         <p className="text-sm text-gray-600 dark:text-gray-400">
-أؤمن أن الفضول هو بداية كل معرفة.
+                            أؤمن أن الفضول هو بداية كل معرفة.
                         </p>
                         <div className="flex flex-wrap gap-2">
                             {socialLinks.map((social) => (

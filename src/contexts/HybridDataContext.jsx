@@ -53,7 +53,7 @@ export const HybridDataProvider = ({ children }) => {
         const staticPosts = blogData.posts || []
         const allPosts = [...tinaPosts, ...staticPosts]
             .sort((a, b) => new Date(b.date) - new Date(a.date))
-        
+
         return allPosts
     }, [tinaPosts])
 
