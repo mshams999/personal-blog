@@ -19,6 +19,7 @@ import { useArticleViews, useFormatViewCount } from '../hooks/useFirebaseViews';
  * @param {string} props.variant - Style variant: 'default', 'badge', 'minimal'
  * @param {string} props.className - Additional CSS classes
  * @param {string} props.articleDate - Article publication date for consistent fallback
+ * @param {boolean} props.showArabic - Whether to show Arabic text (default: false)
  */
 const ViewCounter = ({
     articleSlug,
@@ -27,7 +28,8 @@ const ViewCounter = ({
     size = 'sm',
     variant = 'default',
     className = '',
-    articleDate = null
+    articleDate = null,
+    showArabic = true
 }) => {
     const { viewCount, loading, error } = useArticleViews(articleSlug, shouldIncrement, articleDate);
 
@@ -64,16 +66,16 @@ const ViewCounter = ({
     if (loading && shouldIncrement) {
         return (
             <div className={`${getVariantClasses()} ${sizeClasses[size]} ${className}`} dir="rtl" style={{ direction: 'rtl' }}>
-                <span className="animate-pulse">...</span>
                 <Eye className={`${iconSizes[size]} animate-pulse`} />
+                <span className="animate-pulse">...</span>
             </div>
         );
     }
 
     return (
         <div className={`${getVariantClasses()} ${sizeClasses[size]} ${className}`} dir="rtl" style={{ direction: 'rtl' }}>
-            <span>{formattedCount} views</span>
             <Eye className={iconSizes[size]} />
+            <span>{formattedCount} مشاهدة</span>
             {error && (
                 <span className="text-red-500 ms-1" title={`Error: ${error}`}>
                     !

@@ -299,11 +299,11 @@ export const useBulkArticleViews = (articles) => {
  */
 export const useFormatViewCount = (count) => {
     return useCallback(() => {
-        if (!count || count === 0) return '0 views';
-        if (count === 1) return '1 view';
-        if (count < 1000) return `${count} views`;
-        if (count < 1000000) return `${(count / 1000).toFixed(1)}k views`;
-        return `${(count / 1000000).toFixed(1)}m views`;
+        if (!count || count === 0) return '0';
+        if (count === 1) return '1';
+        if (count < 1000) return `${count}`;
+        if (count < 1000000) return `${(count / 1000).toFixed(1)}k`;
+        return `${(count / 1000000).toFixed(1)}m`;
     }, [count])();
 };
 
