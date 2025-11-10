@@ -421,46 +421,21 @@ const SinglePostPage = () => {
           {/* Post Header */}
           <header className="mb-12 animate-slide-up" dir="rtl">
             {/* Post Meta - Additional details */}
-            <div className="flex flex-wrap items-center gap-6 text-sm text-gray-600 dark:text-gray-400 mb-8 justify-end">
-              {author && (
-                <div className="flex items-center space-x-3 space-x-reverse">
-                  <img
-                    src={author.avatar}
-                    alt={author.name}
-                    loading="lazy"
-                    className="w-10 h-10 rounded-full ring-2 ring-white dark:ring-dark-800"
-                  />
-                  <span className="font-medium">{author.name}</span>
-                </div>
-              )}
-
-              <div className="flex items-center space-x-1 space-x-reverse">
+            <div className="flex flex-wrap items-center gap-6 text-sm text-gray-600 dark:text-gray-400 mb-8" style={{ direction: 'rtl', justifyContent: 'flex-start' }}>
+              <div className="flex items-center gap-2" style={{ direction: 'rtl' }}>
                 <Clock className="h-4 w-4" />
-                <span>{post.readTime} دقيقة قراءة</span>
+                <span>{post.readTime} دقائق للقراءة</span>
               </div>
 
               <ViewCounter
                 articleSlug={post.slug}
-                shouldIncrement={false} // Don't double-increment, already handled by useArticleViews hook
+                shouldIncrement={false}
                 size="md"
                 variant="default"
                 articleDate={post.date}
+                showArabic={true}
               />
             </div>
-
-
-            {post.tags && post.tags.length > 0 && (
-              <div className="flex flex-wrap gap-2 mt-6 justify-end" dir="rtl">
-                {post.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="inline-block px-3 py-1 text-sm font-medium bg-gray-100 dark:bg-dark-700 text-gray-700 dark:text-gray-300 rounded-full hover:bg-gray-200 dark:hover:bg-dark-600 transition-colors cursor-pointer"
-                  >
-                    #{tag}
-                  </span>
-                ))}
-              </div>
-            )}
           </header>
 
           {/* Post Content */}
@@ -667,6 +642,22 @@ const SinglePostPage = () => {
 
 
         </div>
+
+        {/* Tags at the bottom */}
+        {post.tags && post.tags.length > 0 && (
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mb-16">
+            <div className="flex flex-wrap gap-2" dir="rtl" style={{ direction: 'rtl', justifyContent: 'flex-start' }}>
+              {post.tags.map((tag) => (
+                <span
+                  key={tag}
+                  className="inline-block px-3 py-1 text-sm font-medium bg-gray-100 dark:bg-dark-700 text-gray-700 dark:text-gray-300 rounded-full hover:bg-gray-200 dark:hover:bg-dark-600 transition-colors cursor-pointer"
+                >
+                  #{tag}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Scroll to Top Button */}
         {showScrollTop && (

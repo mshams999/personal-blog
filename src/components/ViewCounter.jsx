@@ -53,9 +53,9 @@ const ViewCounter = ({
     const getVariantClasses = () => {
         switch (variant) {
             case 'badge':
-                return 'inline-flex items-center px-2 py-1 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400';
+                return 'inline-flex items-center gap-1 px-2 py-1 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400';
             case 'minimal':
-                return 'inline-flex items-center text-gray-500 dark:text-gray-400';
+                return 'inline-flex items-center gap-1 text-gray-500 dark:text-gray-400';
             default:
                 return 'inline-flex items-center gap-1 text-gray-500 dark:text-gray-400';
         }
@@ -63,17 +63,17 @@ const ViewCounter = ({
 
     if (loading && shouldIncrement) {
         return (
-            <div className={`${getVariantClasses()} ${sizeClasses[size]} ${className}`}>
-                <Eye className={`${iconSizes[size]} animate-pulse`} />
+            <div className={`${getVariantClasses()} ${sizeClasses[size]} ${className}`} dir="rtl" style={{ direction: 'rtl' }}>
                 <span className="animate-pulse">...</span>
+                <Eye className={`${iconSizes[size]} animate-pulse`} />
             </div>
         );
     }
 
     return (
-        <div className={`${getVariantClasses()} ${sizeClasses[size]} ${className}`}>
+        <div className={`${getVariantClasses()} ${sizeClasses[size]} ${className}`} dir="rtl" style={{ direction: 'rtl' }}>
+            <span>{formattedCount} views</span>
             <Eye className={iconSizes[size]} />
-            <span>{formattedCount}</span>
             {error && (
                 <span className="text-red-500 ms-1" title={`Error: ${error}`}>
                     !
