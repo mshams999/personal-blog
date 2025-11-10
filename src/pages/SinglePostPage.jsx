@@ -10,7 +10,7 @@ import ViewCounter from '../components/ViewCounter'
 import SocialShareButton from '../components/SocialShareButton'
 import MetaTags from '../components/MetaTags'
 import { TinaCMSContent, StaticContent } from '../components/TinaCMSContent'
-import { formatDateArabicFull } from '../utils/dateFormat'
+import { formatDateArabicFull, getRelativeTimeArabic } from '../utils/dateFormat'
 import PostCard from '../components/PostCard'
 import { useArticleViews } from '../hooks/useFirebaseViews'
 import { usePostRating } from '../hooks/useRatings'
@@ -366,12 +366,7 @@ const SinglePostPage = () => {
               <span className="text-gray-400">—</span>
 
               {/* Date */}
-              <span className="text-gray-300">منذ ٥ سنوات</span>
-
-              <span className="text-gray-400">—</span>
-
-              {/* Updated date */}
-              <span className="text-gray-300">آخر تحديث: منذ ساعتين</span>
+              <span className="text-gray-300">{post?.date ? getRelativeTimeArabic(post.date) : 'منذ ٥ سنوات'}</span>
 
               <span className="text-gray-400">—</span>
 
