@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react'
+import React, { useRef } from 'react'
+import Slider from 'react-slick'
 import { ChevronLeft, ChevronRight, Calendar, Clock, ArrowRight } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { formatDateArabicShort } from '../utils/dateFormat'
@@ -8,41 +9,61 @@ import { useHybridData } from '../contexts/HybridDataContext'
  * Carousel Component for Featured Posts
  * 
  * Features:
- * - Auto-sliding carousel
+ * - Auto-sliding carousel with react-slick
+ * - Swipe support for mobile and iPad
  * - Manual navigation with arrows
  * - Responsive design
  * - Smooth transitions
  * - Featured post highlights
  */
 const Carousel = ({ posts = [], autoSlide = true, slideInterval = 5000 }) => {
-    const [currentSlide, setCurrentSlide] = useState(0)
-    const [isAutoPlaying, setIsAutoPlaying] = useState(autoSlide)
+    const sliderRef = useRef(null)
     const { getCategoryById } = useHybridData()
 
-    // Auto-slide functionality
-    useEffect(() => {
-        if (!isAutoPlaying || posts.length <= 1) return
-
-        const interval = setInterval(() => {
-            setCurrentSlide((prev) => (prev + 1) % posts.length)
-        }, slideInterval)
-
-        return () => clearInterval(interval)
-    }, [isAutoPlaying, posts.length, slideInterval])
-
-    const nextSlide = () => {
-        setCurrentSlide((prev) => (prev + 1) % posts.length)
-        setIsAutoPlaying(false) // Pause auto-play when user interacts
-    }
-
-    const prevSlide = () => {
-        setCurrentSlide((prev) => (prev - 1 + posts.length) % posts.length)
-        setIsAutoPlaying(false) // Pause auto-play when user interacts
-    }
-
-    const goToSlide = (index) => {
-        setCurrentSlide(index)
-        setIsAutoPlaying(false) // Pause auto-play when user interacts
+    // React Slick settings
+    const settings = {
+        dots: true,
+        infinite: true,
+        speed: 500,
+        slidesToShow: 1,
+        slidesToScroll: 1,
+        autoplay: false,
+        swipe: true,
+        swipeToSlide: false,
+        touchThreshold: 10,
+        cssEase: 'ease-in-out',
+        arrows: false,
+        rtl: true,
+        draggable: true,
+        touchMove: true,
+        waitForAnimate: true,
+        dotsClass: 'slick-dots custom-dots',
+        appendDots: (dots) => (
+            <div className="flex justify-center items-center gap-2 mt-6 mb-2">
+                <ul className="flex items-center gap-2">{dots}</ul>
+            </div>
+        ),
+        customPaging: () => (
+            <div className="w-2 h-2 rounded-full bg-gray-400 dark:bg-gray-500 transition-all duration-300" />
+        ),
+        responsive: [
+            {
+                breakpoint: 1024,
+                settings: {
+                    swipe: true,
+                    touchMove: true,
+                    touchThreshold: 10,
+                }
+            },
+            {
+                breakpoint: 768,
+                settings: {
+                    swipe: true,
+                    touchMove: true,
+                    touchThreshold: 10,
+                }
+            }
+        ]
     }
 
     if (!posts || posts.length === 0) {
@@ -50,22 +71,77 @@ const Carousel = ({ posts = [], autoSlide = true, slideInterval = 5000 }) => {
     }
 
     return (
-        <div className="relative w-full">
-            {/* Carousel Container with proper background only on desktop */}
+        <div className="relative w-full carousel-container"
+            style={{
+                // Custom styles for slick dots
+                '--slick-active-color': '#2563eb',
+            }}
+        >
+            {/* Custom CSS for dots styling */}
+            <style>{`
+                .carousel-container .custom-dots {
+                    position: static !important;
+                    display: flex !important;
+                    justify-content: center !important;
+                    align-items: center !important;
+                    gap: 8px !important;
+                    margin: 1.5rem 0 0.5rem 0 !important;
+                    padding: 0 !important;
+                    list-style: none !important;
+                }
+                
+                .carousel-container .custom-dots li {
+                    margin: 0 !important;
+                    padding: 0 !important;
+                    width: auto !important;
+                    height: auto !important;
+                    cursor: pointer !important;
+                }
+                
+                .carousel-container .custom-dots li div {
+                    width: 8px !important;
+                    height: 8px !important;
+                    border-radius: 50% !important;
+                    background-color: #9CA3AF !important;
+                    transition: all 0.3s ease !important;
+                }
+                
+                .carousel-container .custom-dots li.slick-active div {
+                    background-color: #3B82F6 !important;
+                    width: 24px !important;
+                    border-radius: 12px !important;
+                    transform: scale(1.1) !important;
+                }
+                
+                .dark .carousel-container .custom-dots li div {
+                    background-color: #6B7280 !important;
+                }
+                
+                .dark .carousel-container .custom-dots li.slick-active div {
+                    background-color: #60A5FA !important;
+                }
+                
+                .carousel-container .custom-dots li:hover div {
+                    background-color: #6B7280 !important;
+                    transform: scale(1.1) !important;
+                }
+                
+                .dark .carousel-container .custom-dots li:hover div {
+                    background-color: #9CA3AF !important;
+                }
+            `}</style>
+
+            {/* Carousel Container */}
             <div className="relative overflow-hidden">
-                <div className="relative">
-                    {posts.map((post, index) => (
-                        <div
-                            key={post.id}
-                            className={`transition-opacity duration-700 ease-in-out ${index === currentSlide ? 'opacity-100 relative' : 'opacity-0 absolute inset-0 pointer-events-none'
-                                }`}
-                        >
+                <Slider ref={sliderRef} {...settings}>
+                    {posts.map((post) => (
+                        <div key={post.id}>
                             <Link
                                 to={`/post/${post.slug}`}
                                 className="block cursor-pointer"
                             >
                                 {/* Mobile Layout: Stacked */}
-                                <div className="lg:hidden bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-dark-800 dark:to-dark-700 rounded-3xl overflow-hidden shadow-xl">
+                                <div className="lg:hidden bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-dark-800 dark:to-dark-700 rounded-3xl overflow-hidden shadow-xl mx-2">
                                     {/* Image Section */}
                                     <div className="relative overflow-hidden">
                                         <img
@@ -116,7 +192,7 @@ const Carousel = ({ posts = [], autoSlide = true, slideInterval = 5000 }) => {
                                 </div>
 
                                 {/* Desktop Layout: Side by Side */}
-                                <div className="hidden lg:block bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-dark-800 dark:to-dark-700 rounded-3xl overflow-hidden shadow-xl">
+                                <div className="hidden lg:block bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-dark-800 dark:to-dark-700 rounded-3xl overflow-hidden shadow-xl mx-2">
                                     <div className="grid grid-cols-2 h-[32rem]">
                                         {/* Image Section */}
                                         <div className="relative overflow-hidden">
@@ -170,17 +246,17 @@ const Carousel = ({ posts = [], autoSlide = true, slideInterval = 5000 }) => {
                             </Link>
                         </div>
                     ))}
-                </div>
+                </Slider>
             </div>
 
-            {/* Navigation Arrows - Hidden on mobile to avoid clutter */}
+            {/* Custom Navigation Arrows - Hidden on mobile */}
             {posts.length > 1 && (
                 <>
                     <button
                         onClick={(e) => {
                             e.preventDefault()
                             e.stopPropagation()
-                            prevSlide()
+                            sliderRef.current?.slickPrev()
                         }}
                         className="hidden lg:flex absolute end-4 top-1/2 -translate-y-1/2 p-2 bg-white/90 dark:bg-dark-800/90 backdrop-blur-sm rounded-full shadow-lg hover:bg-white dark:hover:bg-dark-700 transition-colors duration-300 group z-10"
                         aria-label="Previous slide"
@@ -191,7 +267,7 @@ const Carousel = ({ posts = [], autoSlide = true, slideInterval = 5000 }) => {
                         onClick={(e) => {
                             e.preventDefault()
                             e.stopPropagation()
-                            nextSlide()
+                            sliderRef.current?.slickNext()
                         }}
                         className="hidden lg:flex absolute start-4 top-1/2 -translate-y-1/2 p-2 bg-white/90 dark:bg-dark-800/90 backdrop-blur-sm rounded-full shadow-lg hover:bg-white dark:hover:bg-dark-700 transition-colors duration-300 group z-10"
                         aria-label="Next slide"
@@ -199,35 +275,6 @@ const Carousel = ({ posts = [], autoSlide = true, slideInterval = 5000 }) => {
                         <ChevronRight className="w-6 h-6 text-gray-700 dark:text-gray-300 group-hover:text-blue-600 dark:group-hover:text-blue-400" />
                     </button>
                 </>
-            )}
-
-            {/* Dot Indicators - Below the card */}
-            {posts.length > 1 && (
-                <div className="flex justify-center items-center gap-2 mt-6 mb-2">
-                    {posts.map((_, index) => (
-                        <button
-                            key={index}
-                            onClick={(e) => {
-                                e.preventDefault()
-                                e.stopPropagation()
-                                goToSlide(index)
-                            }}
-                            className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${index === currentSlide
-                                ? 'bg-blue-600 dark:bg-blue-400 w-8'
-                                : 'bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500'
-                                }`}
-                            aria-label={`Go to slide ${index + 1}`}
-                        />
-                    ))}
-
-                    {/* Auto-play Indicator */}
-                    {isAutoPlaying && (
-                        <div className="ms-3 flex items-center gap-1.5 px-2.5 py-1 bg-gray-100 dark:bg-dark-700 rounded-full">
-                            <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
-                            <span className="text-xs text-gray-600 dark:text-gray-400">Auto</span>
-                        </div>
-                    )}
-                </div>
             )}
         </div>
     )
