@@ -2,6 +2,8 @@ import React, { useEffect } from 'react'
 import { Routes, Route, useLocation } from 'react-router-dom'
 import { ThemeProvider } from './contexts/ThemeContext'
 import { HybridDataProvider } from './contexts/HybridDataContext'
+import { AuthProvider } from './context/AuthContext'
+import ProtectedRoute from './components/ProtectedRoute'
 import Layout from './components/Layout'
 import AnalyticsProvider from './components/AnalyticsProvider'
 import HomePage from './pages/HomePage'
@@ -11,6 +13,7 @@ import CategoryPage from './pages/CategoryPage'
 import AllCategoriesPage from './pages/AllCategoriesPage'
 import CVPage from './pages/CVPage'
 import AdminPage from './pages/AdminPage'
+import NetWorthPage from './pages/NetWorthPage'
 import ReadingLibrary from './pages/ReadingLibrary'
 import ATLSCertificate from './pages/certificates/ATLSCertificate'
 import ACLSCertificate from './pages/certificates/ACLSCertificate'
@@ -50,6 +53,7 @@ function App() {
 
     return (
         <ThemeProvider>
+            <AuthProvider>
             <HybridDataProvider>
                 <AnalyticsProvider>
                     <div className="min-h-screen bg-paper text-ink transition-colors duration-300">
@@ -64,7 +68,8 @@ function App() {
                                 <Route path="/categories" element={<AllCategoriesPage />} />
                                 <Route path="/cv" element={<CVPage />} />
                                 <Route path="/reading" element={<ReadingLibrary />} />
-                                <Route path="/admin" element={<AdminPage />} />
+                                <Route path="/admin" element={<ProtectedRoute><AdminPage /></ProtectedRoute>} />
+                                <Route path="/net-worth" element={<ProtectedRoute><NetWorthPage /></ProtectedRoute>} />
                                 {/* Certificate Routes */}
                                 <Route path="/certificates/atls" element={<ATLSCertificate />} />
                                 <Route path="/certificates/acls" element={<ACLSCertificate />} />
@@ -76,6 +81,7 @@ function App() {
                     </div>
                 </AnalyticsProvider>
             </HybridDataProvider>
+            </AuthProvider>
         </ThemeProvider>
     )
 }

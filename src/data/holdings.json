@@ -1,0 +1,19 @@
+{
+  "cash": [
+    { "label": "CIB checking", "currency": "EGP", "amount": 3000 },
+    { "label": "SAR savings", "currency": "SAR", "amount": 700 }
+  ],
+  "crypto": [
+    { "symbol": "USDT", "quantity": 3300 },
+    { "symbol": "ETH", "quantity": 0 }
+  ],
+  "stocks": [
+    { "symbol": "ISLV", "quantity": 74 }
+  ],
+  "gold": [
+    { "label": "21k jewelry", "grams": 275, "karat": 21 }
+  ],
+  "manual": [
+    { "label": "Apartment", "valueUsd": 0 }
+  ]
+}

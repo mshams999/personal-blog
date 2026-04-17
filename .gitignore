@@ -39,6 +39,7 @@ api-keys.json
 credentials.json
 ga-credentials.json
 service-account.json
+serviceAccountKey.json
 
 # TinaCMS sensitive files
 tina-cloud-auth.json
