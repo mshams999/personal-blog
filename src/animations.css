@@ -1,4 +1,83 @@
-/* Animation keyframes */
+/* ============================================================
+   Editorial motion primitives — calm, purposeful, reduced-motion safe.
+   Used by the editorial redesign; leaves legacy animations below intact.
+   ============================================================ */
+
+@keyframes editorial-reveal-up {
+    from {
+        opacity: 0;
+        transform: translateY(14px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes editorial-rule-grow {
+    from {
+        transform: scaleX(0);
+    }
+    to {
+        transform: scaleX(1);
+    }
+}
+
+@keyframes editorial-drop-cap-fade {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .reveal-up {
+        animation: editorial-reveal-up 600ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+    }
+
+    .rule-grow {
+        transform-origin: left center;
+        animation: editorial-rule-grow 700ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+    }
+
+    [dir="rtl"] .rule-grow {
+        transform-origin: right center;
+    }
+
+    .drop-cap-fade {
+        animation: editorial-drop-cap-fade 900ms ease-out 180ms both;
+    }
+
+    .reveal-up.delay-1 { animation-delay: 80ms; }
+    .reveal-up.delay-2 { animation-delay: 160ms; }
+    .reveal-up.delay-3 { animation-delay: 240ms; }
+    .reveal-up.delay-4 { animation-delay: 320ms; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .reveal-up,
+    .rule-grow,
+    .drop-cap-fade {
+        animation: none !important;
+        opacity: 1 !important;
+        transform: none !important;
+    }
+}
+
+/* View Transitions API — subtle crossfade between routes */
+@media (prefers-reduced-motion: no-preference) {
+    ::view-transition-old(root),
+    ::view-transition-new(root) {
+        animation-duration: 260ms;
+        animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+}
+
+/* ============================================================
+   Legacy animation keyframes (kept for backwards compatibility).
+   ============================================================ */
 @keyframes fadeIn {
     from {
         opacity: 0;

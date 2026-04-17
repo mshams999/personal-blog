@@ -8,18 +8,25 @@ export default {
     theme: {
         extend: {
             colors: {
+                // Editorial accent ramp — keeps `primary-*` token names working
                 primary: {
-                    50: '#FFF9F9',
-                    100: '#FEF2F2',
-                    200: '#FECACA',
-                    300: '#FDA4AF',
-                    400: '#FB7185',
-                    500: '#F43F5E',
-                    600: '#E11D48',
-                    700: '#BE123C',
-                    800: '#9F1239',
-                    900: '#881337',
+                    50: '#FBF3F0',
+                    100: '#F5E1DB',
+                    200: '#E8BDB2',
+                    300: '#D6907F',
+                    400: '#BD6450',
+                    500: '#A23B2E',
+                    600: '#8A2E24',
+                    700: '#6E241C',
+                    800: '#521B15',
+                    900: '#3A130F',
                 },
+                // Editorial semantic tokens (drive from CSS variables so dark mode swaps automatically)
+                paper: 'rgb(var(--color-paper) / <alpha-value>)',
+                ink: 'rgb(var(--color-ink) / <alpha-value>)',
+                'ink-muted': 'rgb(var(--color-ink-muted) / <alpha-value>)',
+                rule: 'rgb(var(--color-rule) / <alpha-value>)',
+                accent: 'rgb(var(--color-accent) / <alpha-value>)',
                 gray: {
                     50: '#FAFAFA',
                     100: '#F5F5F5',
@@ -48,6 +55,21 @@ export default {
             fontFamily: {
                 'sans': ['Cairo', 'Tajawal', 'Inter', 'system-ui', '-apple-system', 'sans-serif'],
                 'heading': ['Cairo', 'Tajawal', 'Nunito', 'system-ui', '-apple-system', 'sans-serif'],
+                'display': ['Fraunces', 'Amiri', 'Georgia', 'serif'],
+                'serif': ['"Source Serif 4"', 'Amiri', 'Georgia', 'serif'],
+            },
+            fontSize: {
+                // Fluid editorial display scale
+                'display-2xl': ['clamp(3rem, 6vw + 1rem, 5.5rem)', { lineHeight: '1.02', letterSpacing: '-0.02em' }],
+                'display-xl': ['clamp(2.25rem, 4vw + 1rem, 4rem)', { lineHeight: '1.05', letterSpacing: '-0.02em' }],
+                'display-lg': ['clamp(1.75rem, 2.5vw + 1rem, 2.75rem)', { lineHeight: '1.1', letterSpacing: '-0.015em' }],
+                'display-md': ['clamp(1.5rem, 1.5vw + 1rem, 2.25rem)', { lineHeight: '1.15', letterSpacing: '-0.01em' }],
+            },
+            letterSpacing: {
+                'kicker': '0.14em',
+            },
+            maxWidth: {
+                'prose-editorial': '68ch',
             },
             typography: {
                 DEFAULT: {

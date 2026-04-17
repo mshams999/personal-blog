@@ -24,9 +24,9 @@ const ACLSCertificate = () => {
                 </div>
 
                 {/* Certificate Header */}
-                <div className="bg-white dark:bg-dark-800 rounded-2xl shadow-xl overflow-hidden">
+                <div className="bg-white dark:bg-dark-800 rounded-2xl  overflow-hidden">
                     {/* Header Section */}
-                    <div className="bg-gradient-to-r from-red-600 to-red-700 text-white p-8">
+                    <div className=" text-white p-8">
                         <div className="flex items-center gap-4 mb-4">
                             <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
                                 <Heart className="w-6 h-6 text-white" />
@@ -47,32 +47,32 @@ const ACLSCertificate = () => {
                                     <div className="flex items-center gap-3">
                                         <Building className="w-5 h-5 text-red-600 dark:text-red-400" />
                                         <div>
-                                            <h3 className="font-semibold text-gray-900 dark:text-white">Issuing Organization</h3>
-                                            <p className="text-gray-600 dark:text-gray-300">American Heart Association (AHA)</p>
+                                            <h3 className="font-semibold text-ink">Issuing Organization</h3>
+                                            <p className="text-ink-muted">American Heart Association (AHA)</p>
                                         </div>
                                     </div>
 
                                     <div className="flex items-center gap-3">
                                         <Calendar className="w-5 h-5 text-green-600" />
                                         <div>
-                                            <h3 className="font-semibold text-gray-900 dark:text-white">Issue Date</h3>
-                                            <p className="text-gray-600 dark:text-gray-300">2024</p>
+                                            <h3 className="font-semibold text-ink">Issue Date</h3>
+                                            <p className="text-ink-muted">2024</p>
                                         </div>
                                     </div>
 
                                     <div className="flex items-center gap-3">
                                         <Calendar className="w-5 h-5 text-red-600" />
                                         <div>
-                                            <h3 className="font-semibold text-gray-900 dark:text-white">Expiration Date</h3>
-                                            <p className="text-gray-600 dark:text-gray-300">2026</p>
+                                            <h3 className="font-semibold text-ink">Expiration Date</h3>
+                                            <p className="text-ink-muted">2026</p>
                                         </div>
                                     </div>
                                 </div>
 
                                 {/* Certificate Description */}
                                 <div className="bg-red-50 dark:bg-red-900/20 p-6 rounded-xl">
-                                    <h3 className="font-semibold text-gray-900 dark:text-white mb-3">About ACLS</h3>
-                                    <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">
+                                    <h3 className="font-semibold text-ink mb-3">About ACLS</h3>
+                                    <p className="text-ink-muted text-sm leading-relaxed">
                                         Advanced Cardiac Life Support (ACLS) is an advanced course that builds on Basic Life Support (BLS) skills.
                                         It teaches healthcare providers advanced interventions for the treatment of cardiopulmonary arrest,
                                         acute arrhythmia, stroke, and other cardiovascular emergencies.
@@ -81,8 +81,8 @@ const ACLSCertificate = () => {
 
                                 {/* Skills Covered */}
                                 <div>
-                                    <h3 className="font-semibold text-gray-900 dark:text-white mb-3">Skills & Competencies</h3>
-                                    <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-300">
+                                    <h3 className="font-semibold text-ink mb-3">Skills & Competencies</h3>
+                                    <ul className="space-y-2 text-sm text-ink-muted">
                                         <li className="flex items-center gap-2">
                                             <div className="w-2 h-2 bg-red-500 rounded-full"></div>
                                             <span>Advanced airway management</span>
@@ -114,7 +114,7 @@ const ACLSCertificate = () => {
                                         src="/pictures/ACLS.jpg"
                                         alt="ACLS Certificate"
                                         loading="lazy"
-                                        className="w-full h-auto rounded-lg shadow-lg"
+                                        className="w-full h-auto rounded-lg "
                                     />
                                 </div>
                             </div>

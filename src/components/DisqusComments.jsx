@@ -64,43 +64,30 @@ const DisqusComments = ({ post, currentUrl }) => {
         }
     }, [post.slug])
 
-    // Check if Disqus is properly configured
     if (!isDisqusConfigured()) {
         return (
-            <div className="mt-12 pt-8 border-t border-gray-200 dark:border-gray-700">
-                <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-6">
-                    <h3 className="text-lg font-semibold text-yellow-800 dark:text-yellow-200 mb-2">
-                        💬 التعليقات غير مفعلة
-                    </h3>
-                    <p className="text-yellow-700 dark:text-yellow-300 text-sm">
-                        نظام التعليقات Disqus غير مُعد حالياً. يرجى إضافة إعدادات Disqus في ملف .env
-                    </p>
-                </div>
-            </div>
+            <section className="mt-16 pt-8 border-t border-rule">
+                <p className="kicker mb-2">تعليقات</p>
+                <p className="font-serif text-ink-muted">
+                    نظام التعليقات غير مُعد حالياً.
+                </p>
+            </section>
         )
     }
 
-    // Generate Disqus configuration for this post
     const disqusProps = {
         shortname: disqusConfig.shortname,
         config: getDisqusConfig(post, currentUrl)
     }
 
     return (
-        <div className="mt-12 pt-8 border-t border-gray-200 dark:border-gray-700">
+        <section className="mt-16 pt-8 border-t border-rule" aria-label="التعليقات">
             <div className="mb-6">
-                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-                    التعليقات
-                </h3>
-                <p className="text-gray-600 dark:text-gray-400">
-                    انضم إلى المحادثة وشارك أفكارك!
-                </p>
+                <p className="kicker mb-2">حوار</p>
+                <h3 className="font-display text-display-lg text-ink leading-tight">التعليقات</h3>
             </div>
-
-            <div className="bg-white dark:bg-dark-800 rounded-lg p-6 shadow-sm border border-gray-100 dark:border-gray-700">
-                <DiscussionEmbed {...disqusProps} />
-            </div>
-        </div>
+            <DiscussionEmbed {...disqusProps} />
+        </section>
     )
 }
 

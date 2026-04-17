@@ -24,9 +24,9 @@ const BLSCertificate = () => {
                 </div>
 
                 {/* Certificate Header */}
-                <div className="bg-white dark:bg-dark-800 rounded-2xl shadow-xl overflow-hidden">
+                <div className="bg-white dark:bg-dark-800 rounded-2xl  overflow-hidden">
                     {/* Header Section */}
-                    <div className="bg-gradient-to-r from-green-600 to-green-700 text-white p-8">
+                    <div className=" text-white p-8">
                         <div className="flex items-center gap-4 mb-4">
                             <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
                                 <HeartHandshake className="w-6 h-6 text-white" />
@@ -47,32 +47,32 @@ const BLSCertificate = () => {
                                     <div className="flex items-center gap-3">
                                         <Building className="w-5 h-5 text-green-600 dark:text-green-400 flex-shrink-0" />
                                         <div>
-                                            <h3 className="font-semibold text-gray-900 dark:text-white">Issuing Organization</h3>
-                                            <p className="text-gray-600 dark:text-gray-300">American Heart Association (AHA)</p>
+                                            <h3 className="font-semibold text-ink">Issuing Organization</h3>
+                                            <p className="text-ink-muted">American Heart Association (AHA)</p>
                                         </div>
                                     </div>
 
                                     <div className="flex items-center gap-3">
                                         <Calendar className="w-5 h-5 text-green-600 flex-shrink-0" />
                                         <div>
-                                            <h3 className="font-semibold text-gray-900 dark:text-white">Issue Date</h3>
-                                            <p className="text-gray-600 dark:text-gray-300">2024</p>
+                                            <h3 className="font-semibold text-ink">Issue Date</h3>
+                                            <p className="text-ink-muted">2024</p>
                                         </div>
                                     </div>
 
                                     <div className="flex items-center gap-3">
                                         <Calendar className="w-5 h-5 text-red-600 flex-shrink-0" />
                                         <div>
-                                            <h3 className="font-semibold text-gray-900 dark:text-white">Expiration Date</h3>
-                                            <p className="text-gray-600 dark:text-gray-300">2025</p>
+                                            <h3 className="font-semibold text-ink">Expiration Date</h3>
+                                            <p className="text-ink-muted">2025</p>
                                         </div>
                                     </div>
                                 </div>
 
                                 {/* Certificate Description */}
                                 <div className="bg-green-50 dark:bg-green-900/20 p-6 rounded-xl">
-                                    <h3 className="font-semibold text-gray-900 dark:text-white mb-3">About BLS</h3>
-                                    <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">
+                                    <h3 className="font-semibold text-ink mb-3">About BLS</h3>
+                                    <p className="text-ink-muted text-sm leading-relaxed">
                                         Basic Life Support (BLS) is the foundation for saving lives after cardiac arrest.
                                         This certification course teaches both single-rescuer and team basic life support skills
                                         for application in both prehospital and in-facility environments, with a focus on
@@ -82,8 +82,8 @@ const BLSCertificate = () => {
 
                                 {/* Skills Covered */}
                                 <div>
-                                    <h3 className="font-semibold text-gray-900 dark:text-white mb-3">Skills & Competencies</h3>
-                                    <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-300">
+                                    <h3 className="font-semibold text-ink mb-3">Skills & Competencies</h3>
+                                    <ul className="space-y-2 text-sm text-ink-muted">
                                         <li className="flex items-center gap-2">
                                             <div className="w-2 h-2 bg-green-500 rounded-full flex-shrink-0"></div>
                                             <span>High-quality CPR for adults, children, and infants</span>
@@ -115,7 +115,7 @@ const BLSCertificate = () => {
                                         src="/pictures/BLS.jpg"
                                         alt="BLS Certificate"
                                         loading="lazy"
-                                        className="w-full h-auto rounded-lg shadow-lg"
+                                        className="w-full h-auto rounded-lg "
                                     />
                                 </div>
                             </div>
@@ -129,7 +129,7 @@ const BLSCertificate = () => {
                             >
                                 Back to CV
                             </Link>
-                            <button className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors">
+                            <button className="inline-flex items-center gap-2 px-6 py-3 bg-accent hover:bg-blue-700 text-white font-medium rounded-lg transition-colors">
                                 <Download className="w-4 h-4" />
                                 <span>Download Certificate</span>
                             </button>

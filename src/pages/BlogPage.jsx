@@ -1,300 +1,197 @@
-import React, { useState, useMemo } from 'react'
-import { useHybridData } from '../contexts/HybridDataContext'
+import React, { useMemo } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
-import { Clock, ChevronLeft, ChevronRight, Calendar, Star } from 'lucide-react'
-import { formatDateArabicFull } from '../utils/dateFormat'
-import ViewCounter from '../components/ViewCounter'
-import FirebaseCommentCount from '../components/FirebaseCommentCount'
-import { formatRating } from '../utils/ratings'
-import { useBulkPostRatings, getRatingFromBulk } from '../hooks/useRatings'
+import { useHybridData } from '../contexts/HybridDataContext'
+import PostCard from '../components/PostCard'
+import Rule from '../components/editorial/Rule'
+import Kicker from '../components/editorial/Kicker'
+import MetaTags from '../components/MetaTags'
+import { useBulkArticleViews } from '../hooks/useFirebaseViews'
 
 const POSTS_PER_PAGE = 12
 
 const BlogPage = () => {
-  const { getAllPosts, categories, getCategoryById, getAuthorById } = useHybridData()
-  const [searchParams, setSearchParams] = useSearchParams()
+    const { getAllPosts, categories } = useHybridData()
+    const [searchParams, setSearchParams] = useSearchParams()
 
-  const currentPage = parseInt(searchParams.get('page')) || 1
-  const selectedCategory = searchParams.get('category')
+    const currentPage = parseInt(searchParams.get('page')) || 1
+    const selectedCategory = searchParams.get('category')
 
-  // Get all posts, optionally filtered by category
-  const allPosts = useMemo(() => {
-    const posts = getAllPosts()
-    if (selectedCategory) {
-      return posts.filter(p => p.categoryId === selectedCategory)
+    const allPosts = useMemo(() => {
+        const posts = getAllPosts()
+        return selectedCategory ? posts.filter((p) => p.categoryId === selectedCategory) : posts
+    }, [selectedCategory, getAllPosts])
+
+    const paginated = useMemo(() => {
+        const start = (currentPage - 1) * POSTS_PER_PAGE
+        return allPosts.slice(start, start + POSTS_PER_PAGE)
+    }, [currentPage, allPosts])
+
+    const totalPages = Math.max(1, Math.ceil(allPosts.length / POSTS_PER_PAGE))
+    const { getViewCount } = useBulkArticleViews(paginated)
+
+    const setCategory = (id) => {
+        if (id) setSearchParams({ category: id, page: '1' })
+        else setSearchParams({})
     }
-    return posts
-  }, [selectedCategory, getAllPosts])
-
-  // Paginate posts
-  const paginatedPosts = useMemo(() => {
-    const start = (currentPage - 1) * POSTS_PER_PAGE
-    return allPosts.slice(start, start + POSTS_PER_PAGE)
-  }, [currentPage, allPosts])
-
-  const totalPages = Math.ceil(allPosts.length / POSTS_PER_PAGE)
-
-  // Fetch article ratings using Firebase Firestore
-  const postSlugs = useMemo(() => paginatedPosts.map(post => post.slug), [paginatedPosts])
-  const { ratings: ratingsData, loading: ratingsLoading } = useBulkPostRatings(postSlugs)
-
-  const handleCategoryFilter = (categoryId) => {
-    if (categoryId) {
-      setSearchParams({ category: categoryId, page: '1' })
-    } else {
-      setSearchParams({})
+    const setPage = (p) => {
+        const params = new URLSearchParams()
+        if (selectedCategory) params.set('category', selectedCategory)
+        params.set('page', String(p))
+        setSearchParams(params)
+        window.scrollTo(0, 0)
     }
-  }
 
-  const handlePageChange = (page) => {
-    const params = new URLSearchParams()
-    if (selectedCategory) {
-      params.set('category', selectedCategory)
-    }
-    params.set('page', page)
-    setSearchParams(params)
-    window.scrollTo(0, 0)
-  }
-
-  const PostCard = ({ post }) => {
-    const author = getAuthorById(post.authorId)
-    const postCategory = getCategoryById(post.categoryId)
-
-    // Get dynamic rating for this post from Firestore
-    const ratingInfo = getRatingFromBulk(ratingsData, post.slug)
-    const { averageRating, totalRatings } = ratingInfo
+    const activeCategory = categories?.find((c) => c.id === selectedCategory)
+    const [feature, ...rest] = paginated
+    const standard = rest.slice(0, 4)
+    const notes = rest.slice(4)
 
     return (
-      <Link
-        to={`/post/${post.slug}`}
-        className="block bg-white dark:bg-dark-700 rounded-2xl overflow-hidden shadow-lg border border-gray-100 dark:border-dark-600 hover:shadow-xl transition-all duration-300 group cursor-pointer"
-      >
-        <div className="relative h-48 sm:h-52 md:h-56 overflow-hidden">
-          <img
-            src={post.featuredImage}
-            alt={post.title}
-            loading="lazy"
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-            onError={(e) => {
-              e.target.src = 'https://placehold.co/800x600/F3F4F6/9CA3AF?text=No+Image'
-            }}
-          />
-          {postCategory && (
-            <div className="absolute top-4 end-4">
-              <span className="inline-block px-3 py-1 text-xs font-medium bg-white/90 backdrop-blur-sm text-gray-900 rounded-full shadow-sm">
-                {postCategory.name}
-              </span>
-            </div>
-          )}
-        </div>
-
-        <div className="p-5">
-          <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-3 line-clamp-2 group-hover:text-primary-500 transition-colors leading-snug">
-            {post.title}
-          </h3>
-
-          <p className="text-gray-600 dark:text-gray-300 text-sm mb-4 line-clamp-2 leading-relaxed">
-            {post.excerpt}
-          </p>
-
-          <div className="flex items-center text-xs text-gray-500 dark:text-gray-400 mb-4 gap-3 flex-wrap">
-            <div className="flex items-center gap-1">
-              <Calendar className="h-3.5 w-3.5" />
-              <span>{formatDateArabicFull(post.date)}</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <Clock className="h-3.5 w-3.5" />
-              <span>{post.readTime} دقيقة</span>
-            </div>
-          </div>
-
-          <div className="pt-4 border-t border-gray-100 dark:border-dark-600">
-            {/* Author */}
-            {author && (
-              <div className="flex items-center gap-2 mb-3">
-                <img
-                  src={author.avatar}
-                  alt={author.name}
-                  loading="lazy"
-                  className="h-6 w-6 rounded-full ring-2 ring-gray-200 dark:ring-dark-600"
-                />
-                <span className="text-xs font-medium text-gray-700 dark:text-gray-300">{author.name}</span>
-              </div>
-            )}
-
-            {/* Stats */}
-            <div className="flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400 flex-wrap">
-              <div className="flex items-center gap-1">
-                <ViewCounter articleSlug={post.slug} />
-              </div>
-              <FirebaseCommentCount
-                post={post}
-                showIcon={true}
-                className="text-gray-500 dark:text-gray-400"
-              />
-              <div className="flex items-center gap-1">
-                <Star className="h-3.5 w-3.5 text-yellow-400 fill-yellow-400" />
-                <span>{formatRating(averageRating)} ({totalRatings})</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </Link>
-    )
-  }
-
-
-  return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      {/* Breadcrumb */}
-      <nav className="flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400 mb-8">
-        <Link to="/" className="hover:text-primary-500 transition-colors">
-          الرئيسية
-        </Link>
-        <span>/</span>
-        <span className="text-gray-900 dark:text-white">المقالات</span>
-      </nav>
-
-      {/* Header */}
-      <div className="text-center mb-12">
-        <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
-          جميع المقالات
-        </h1>
-        <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-          اكتشف مجموعة كاملة من المقالات والتجارب الشخصية والرؤى المتقدمة المنظمة حسب الفئات
-        </p>
-      </div>
-
-      {/* Category Filter */}
-      <div className="mb-12">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-          تصفية حسب الفئة:
-        </h2>
-        <div className="flex flex-wrap gap-3">
-          <button
-            onClick={() => handleCategoryFilter(null)}
-            className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 ${!selectedCategory
-              ? 'bg-primary-500 text-white shadow-lg'
-              : 'bg-gray-200 dark:bg-dark-700 text-gray-900 dark:text-white hover:bg-gray-300 dark:hover:bg-dark-600'
-              }`}
-          >
-            جميع الفئات ({allPosts.length})
-          </button>
-          {categories?.map(cat => {
-            const catPostCount = getAllPosts().filter(p => p.categoryId === cat.id).length
-            return (
-              <button
-                key={cat.id}
-                onClick={() => handleCategoryFilter(cat.id)}
-                className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 ${selectedCategory === cat.id
-                  ? 'bg-primary-500 text-white shadow-lg'
-                  : 'bg-gray-200 dark:bg-dark-700 text-gray-900 dark:text-white hover:bg-gray-300 dark:hover:bg-dark-600'
-                  }`}
-              >
-                {cat.name} ({catPostCount})
-              </button>
-            )
-          })}
-        </div>
-      </div>
-
-      {/* Posts Count */}
-      <p className="text-gray-600 dark:text-gray-400 mb-6 text-sm">
-        عرض {paginatedPosts.length} من {allPosts.length} مقالة
-        {selectedCategory && ` في فئة: ${categories?.find(c => c.id === selectedCategory)?.name}`}
-      </p>
-
-      {/* Posts Grid */}
-      {paginatedPosts.length > 0 ? (
         <>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-            {paginatedPosts.map(post => (
-              <PostCard key={post.id} post={post} />
-            ))}
-          </div>
+            <MetaTags
+                title="المقالات"
+                description="جميع مقالات المدونة — قصص من المناوبات وخواطر في الطب والقراءة."
+            />
 
-          {/* Pagination */}
-          {totalPages > 1 && (
-            <div className="flex justify-center items-center gap-2 mb-12">
-              {/* Previous Button */}
-              <button
-                onClick={() => handlePageChange(currentPage - 1)}
-                disabled={currentPage === 1}
-                className={`p-2 rounded-lg font-medium transition-all ${currentPage === 1
-                  ? 'bg-gray-100 dark:bg-dark-700 text-gray-400 dark:text-gray-600 cursor-not-allowed'
-                  : 'bg-primary-500 text-white hover:bg-primary-600'
-                  }`}
-                aria-label="الصفحة السابقة"
-              >
-                <ChevronLeft size={20} />
-              </button>
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
+                {/* Header */}
+                <header className="mb-10">
+                    <Kicker className="mb-3">المدونة</Kicker>
+                    <h1 className="font-display text-display-xl md:text-display-2xl leading-[1.05] text-ink">
+                        {activeCategory ? activeCategory.name : 'المقالات'}
+                    </h1>
+                    <p className="small-caps text-ink-muted mt-4">
+                        {allPosts.length} مقالة
+                        {activeCategory ? <> · ضمن تصنيف {activeCategory.name}</> : null}
+                    </p>
+                </header>
 
-              {/* Page Numbers */}
-              <div className="flex gap-1">
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => {
-                  // Show first page, last page, current page, and pages around current
-                  const isVisible =
-                    page === 1 ||
-                    page === totalPages ||
-                    Math.abs(page - currentPage) <= 1
+                <Rule />
 
-                  if (!isVisible) {
-                    if (page === 2 || page === totalPages - 1) {
-                      return (
-                        <span key={page} className="px-2 py-1 text-gray-500 dark:text-gray-400">
-                          ...
-                        </span>
-                      )
-                    }
-                    return null
-                  }
-
-                  return (
+                {/* Category filter rail */}
+                <nav
+                    className="flex flex-wrap gap-x-5 gap-y-3 my-8"
+                    aria-label="تصفية حسب التصنيف"
+                >
                     <button
-                      key={page}
-                      onClick={() => handlePageChange(page)}
-                      className={`px-3 py-1 rounded-lg font-medium transition-all ${currentPage === page
-                        ? 'bg-primary-500 text-white'
-                        : 'bg-gray-200 dark:bg-dark-700 text-gray-900 dark:text-white hover:bg-gray-300 dark:hover:bg-dark-600'
+                        onClick={() => setCategory(null)}
+                        className={`small-caps pb-1 border-b transition-colors ${
+                            !selectedCategory
+                                ? 'border-accent text-ink'
+                                : 'border-transparent text-ink-muted hover:text-ink'
                         }`}
-                      aria-current={currentPage === page ? 'page' : undefined}
                     >
-                      {page}
+                        الكل
                     </button>
-                  )
-                })}
-              </div>
+                    {categories?.map((cat) => (
+                        <button
+                            key={cat.id}
+                            onClick={() => setCategory(cat.id)}
+                            className={`small-caps pb-1 border-b transition-colors ${
+                                selectedCategory === cat.id
+                                    ? 'border-accent text-ink'
+                                    : 'border-transparent text-ink-muted hover:text-ink'
+                            }`}
+                        >
+                            {cat.name}
+                        </button>
+                    ))}
+                </nav>
 
-              {/* Next Button */}
-              <button
-                onClick={() => handlePageChange(currentPage + 1)}
-                disabled={currentPage === totalPages}
-                className={`p-2 rounded-lg font-medium transition-all ${currentPage === totalPages
-                  ? 'bg-gray-100 dark:bg-dark-700 text-gray-400 dark:text-gray-600 cursor-not-allowed'
-                  : 'bg-primary-500 text-white hover:bg-primary-600'
-                  }`}
-                aria-label="الصفحة التالية"
-              >
-                <ChevronRight size={20} />
-              </button>
+                <Rule />
+
+                {paginated.length === 0 ? (
+                    <div className="py-20 text-center">
+                        <h2 className="font-display text-2xl text-ink mb-2">لا توجد مقالات بعد</h2>
+                        <div className="mx-auto w-16 border-t border-rule my-4" />
+                        <p className="font-serif text-ink-muted mb-6">
+                            جرّب تصنيفاً آخر أو عُد إلى الصفحة الرئيسية.
+                        </p>
+                        <Link
+                            to="/"
+                            className="small-caps border-b border-rule hover:border-accent hover:text-accent transition-colors pb-0.5"
+                        >
+                            العودة للرئيسية →
+                        </Link>
+                    </div>
+                ) : (
+                    <>
+                        {/* Feature */}
+                        {feature && (
+                            <section className="my-12 reveal-up">
+                                <PostCard
+                                    post={feature}
+                                    variant="feature"
+                                    viewCount={getViewCount(feature.slug)}
+                                />
+                            </section>
+                        )}
+
+                        {/* Standard rows */}
+                        {standard.length > 0 && (
+                            <section className="my-12 space-y-12">
+                                {standard.map((p, i) => (
+                                    <div
+                                        key={p.id || p.slug}
+                                        className={i > 0 ? 'pt-12 border-t border-rule' : ''}
+                                    >
+                                        <PostCard
+                                            post={p}
+                                            variant="standard"
+                                            viewCount={getViewCount(p.slug)}
+                                        />
+                                    </div>
+                                ))}
+                            </section>
+                        )}
+
+                        {/* Notes grid */}
+                        {notes.length > 0 && (
+                            <section className="my-12">
+                                <Rule ornament="•" />
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-12 mt-10">
+                                    {notes.map((p) => (
+                                        <PostCard
+                                            key={p.id || p.slug}
+                                            post={p}
+                                            variant="note"
+                                            viewCount={getViewCount(p.slug)}
+                                        />
+                                    ))}
+                                </div>
+                            </section>
+                        )}
+
+                        {/* Pagination */}
+                        {totalPages > 1 && (
+                            <nav
+                                className="mt-16 pt-6 border-t border-rule flex items-center justify-between"
+                                aria-label="تصفح الصفحات"
+                            >
+                                <button
+                                    onClick={() => setPage(currentPage - 1)}
+                                    disabled={currentPage === 1}
+                                    className="small-caps border-b border-rule hover:border-accent hover:text-accent transition-colors pb-0.5 disabled:opacity-40 disabled:pointer-events-none"
+                                >
+                                    ← السابقة
+                                </button>
+                                <p className="small-caps text-ink-muted">
+                                    صفحة {currentPage} من {totalPages}
+                                </p>
+                                <button
+                                    onClick={() => setPage(currentPage + 1)}
+                                    disabled={currentPage === totalPages}
+                                    className="small-caps border-b border-rule hover:border-accent hover:text-accent transition-colors pb-0.5 disabled:opacity-40 disabled:pointer-events-none"
+                                >
+                                    التالية →
+                                </button>
+                            </nav>
+                        )}
+                    </>
+                )}
             </div>
-          )}
         </>
-      ) : (
-        <div className="text-center py-12">
-          <p className="text-gray-600 dark:text-gray-400 text-lg mb-4">
-            لا توجد مقالات في هذه الفئة حالياً
-          </p>
-          <Link
-            to="/blog"
-            className="inline-block text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-semibold"
-          >
-            العودة إلى جميع المقالات
-          </Link>
-        </div>
-      )}
-    </div>
-  )
+    )
 }
 
 export default BlogPage

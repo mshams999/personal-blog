@@ -30,6 +30,20 @@ const ScrollToTop = () => {
     return null;
 }
 
+// Progressive-enhancement hook for the View Transitions API.
+// On supported browsers, route changes will crossfade; otherwise it's a no-op.
+const RouteTransitions = () => {
+    const { pathname } = useLocation();
+    useEffect(() => {
+        if (typeof document !== 'undefined' && 'startViewTransition' in document) {
+            try {
+                document.startViewTransition(() => { });
+            } catch { /* ignore — older impls may throw when called empty */ }
+        }
+    }, [pathname]);
+    return null;
+}
+
 function App() {
     // Initialize Google Analytics tracking
     useAnalytics()
@@ -38,8 +52,9 @@ function App() {
         <ThemeProvider>
             <HybridDataProvider>
                 <AnalyticsProvider>
-                    <div className="min-h-screen bg-primary-50 dark:bg-dark-800 transition-colors duration-300">
+                    <div className="min-h-screen bg-paper text-ink transition-colors duration-300">
                         <ScrollToTop />
+                        <RouteTransitions />
                         <Layout>
                             <Routes>
                                 <Route path="/" element={<HomePage />} />

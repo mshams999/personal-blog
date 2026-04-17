@@ -16,7 +16,7 @@ const ATLSCertificate = () => {
                 <div className="mb-8">
                     <button
                         onClick={() => navigate(-1)}
-                        className="inline-flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
+                        className="inline-flex items-center gap-2 text-accent hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
                     >
                         <ArrowLeft className="w-4 h-4" />
                         <span>Back to CV</span>
@@ -24,9 +24,9 @@ const ATLSCertificate = () => {
                 </div>
 
                 {/* Certificate Header */}
-                <div className="bg-white dark:bg-dark-800 rounded-2xl shadow-xl overflow-hidden">
+                <div className="bg-white dark:bg-dark-800 rounded-2xl  overflow-hidden">
                     {/* Header Section */}
-                    <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-8">
+                    <div className=" text-white p-8">
                         <div className="flex items-center gap-4 mb-4">
                             <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
                                 <Award className="w-6 h-6 text-white" />
@@ -45,34 +45,34 @@ const ATLSCertificate = () => {
                             <div className="space-y-6">
                                 <div className="space-y-4">
                                     <div className="flex items-center gap-3">
-                                        <Building className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                                        <Building className="w-5 h-5 text-accent" />
                                         <div>
-                                            <h3 className="font-semibold text-gray-900 dark:text-white">Issuing Organization</h3>
-                                            <p className="text-gray-600 dark:text-gray-300">American College of Surgeons (ACS)</p>
+                                            <h3 className="font-semibold text-ink">Issuing Organization</h3>
+                                            <p className="text-ink-muted">American College of Surgeons (ACS)</p>
                                         </div>
                                     </div>
 
                                     <div className="flex items-center gap-3">
                                         <Calendar className="w-5 h-5 text-green-600" />
                                         <div>
-                                            <h3 className="font-semibold text-gray-900 dark:text-white">Issue Date</h3>
-                                            <p className="text-gray-600 dark:text-gray-300">2024</p>
+                                            <h3 className="font-semibold text-ink">Issue Date</h3>
+                                            <p className="text-ink-muted">2024</p>
                                         </div>
                                     </div>
 
                                     <div className="flex items-center gap-3">
                                         <Calendar className="w-5 h-5 text-red-600" />
                                         <div>
-                                            <h3 className="font-semibold text-gray-900 dark:text-white">Expiration Date</h3>
-                                            <p className="text-gray-600 dark:text-gray-300">2028</p>
+                                            <h3 className="font-semibold text-ink">Expiration Date</h3>
+                                            <p className="text-ink-muted">2028</p>
                                         </div>
                                     </div>
                                 </div>
 
                                 {/* Certificate Description */}
                                 <div className="bg-blue-50 dark:bg-blue-900/20 p-6 rounded-xl">
-                                    <h3 className="font-semibold text-gray-900 dark:text-white mb-3">About ATLS</h3>
-                                    <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">
+                                    <h3 className="font-semibold text-ink mb-3">About ATLS</h3>
+                                    <p className="text-ink-muted text-sm leading-relaxed">
                                         Advanced Trauma Life Support (ATLS) is a training program for medical providers in the management of acute trauma cases.
                                         It teaches a systematic, concise approach to the care of a trauma patient, focusing on rapid assessment and treatment
                                         of life-threatening injuries within the first hour after injury.
@@ -81,22 +81,22 @@ const ATLSCertificate = () => {
 
                                 {/* Skills Covered */}
                                 <div>
-                                    <h3 className="font-semibold text-gray-900 dark:text-white mb-3">Skills & Competencies</h3>
-                                    <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-300">
+                                    <h3 className="font-semibold text-ink mb-3">Skills & Competencies</h3>
+                                    <ul className="space-y-2 text-sm text-ink-muted">
                                         <li className="flex items-center gap-2">
-                                            <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                                            <div className="w-2 h-2 bg-accent rounded-full"></div>
                                             <span>Primary and secondary trauma assessment</span>
                                         </li>
                                         <li className="flex items-center gap-2">
-                                            <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                                            <div className="w-2 h-2 bg-accent rounded-full"></div>
                                             <span>Airway management and breathing support</span>
                                         </li>
                                         <li className="flex items-center gap-2">
-                                            <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                                            <div className="w-2 h-2 bg-accent rounded-full"></div>
                                             <span>Shock recognition and management</span>
                                         </li>
                                         <li className="flex items-center gap-2">
-                                            <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                                            <div className="w-2 h-2 bg-accent rounded-full"></div>
                                             <span>Trauma team leadership and coordination</span>
                                         </li>
                                     </ul>
@@ -110,7 +110,7 @@ const ATLSCertificate = () => {
                                         src="/pictures/ATLS.jpg"
                                         alt="ATLS Certificate"
                                         loading="lazy"
-                                        className="w-full h-auto rounded-lg shadow-lg"
+                                        className="w-full h-auto rounded-lg "
                                     />
                                 </div>
                             </div>
@@ -120,7 +120,7 @@ const ATLSCertificate = () => {
                         <div className="mt-8 flex flex-wrap gap-4">
                             <Link
                                 to="/cv"
-                                className="inline-flex items-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors"
+                                className="inline-flex items-center px-6 py-3 bg-accent hover:bg-blue-700 text-white font-medium rounded-lg transition-colors"
                             >
                                 Back to CV
                             </Link>

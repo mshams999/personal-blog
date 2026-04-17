@@ -370,8 +370,8 @@ const ReadingLibrary = () => {
                     </div>
                     <div className="flex items-center space-x-2">
                         <span className="text-sm text-gray-500">تم التحرير في 25 نوفمبر 2024</span>
-                        <button className="px-3 py-1 bg-blue-600 text-white rounded text-sm">مشاركة</button>
-                        <button className="text-gray-400">
+                        <button className="px-3 py-1 bg-accent text-white rounded text-sm">مشاركة</button>
+                        <button className="text-ink-muted">
                             <MoreHorizontal className="w-5 h-5" />
                         </button>
                     </div>
@@ -460,7 +460,7 @@ const ReadingLibrary = () => {
                                     <span>+ 1 more...</span>
                                 </div>
                             </div>
-                            <button className="px-4 py-2 bg-blue-600 text-white rounded">+ New</button>
+                            <button className="px-4 py-2 bg-accent text-white rounded">+ New</button>
                         </div>
                     </div>
 
@@ -509,15 +509,15 @@ const ReadingLibrary = () => {
             <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-3">
                 <div className="flex items-center justify-between max-w-7xl mx-auto">
                     <div className="flex items-center space-x-4">
-                        <button className="text-gray-400">💬</button>
+                        <button className="text-ink-muted">💬</button>
                         <span className="text-sm text-gray-600">Quote</span>
                     </div>
                     <div className="flex items-center space-x-2">
                         <div className="flex items-center text-sm text-gray-600">
-                            <div className="w-6 h-6 rounded-full bg-blue-600 text-white text-xs flex items-center justify-center mr-2">MS</div>
+                            <div className="w-6 h-6 rounded-full bg-accent text-white text-xs flex items-center justify-center mr-2">MS</div>
                             Mohamed Shams
                         </div>
-                        <button className="px-4 py-2 bg-blue-600 text-white rounded text-sm">+ New</button>
+                        <button className="px-4 py-2 bg-accent text-white rounded text-sm">+ New</button>
                     </div>
                 </div>
             </div>

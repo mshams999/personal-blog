@@ -6,12 +6,37 @@
 @tailwind utilities;
 
 @layer base {
+    /* Editorial semantic tokens — light mode */
+    :root {
+        --color-paper: 249 245 239;        /* #F9F5EF warm off-white */
+        --color-ink: 26 25 23;             /* #1A1917 near-black */
+        --color-ink-muted: 85 80 74;       /* #55504A */
+        --color-rule: 230 223 212;         /* #E6DFD4 hairline paper */
+        --color-accent: 162 59 46;         /* #A23B2E deep editorial red */
+    }
+
+    /* Dark mode overrides */
+    .dark {
+        --color-paper: 20 18 15;           /* #14120F */
+        --color-ink: 239 234 224;          /* #EFEAE0 */
+        --color-ink-muted: 164 158 147;    /* #A49E93 */
+        --color-rule: 42 38 33;            /* #2A2621 */
+        --color-accent: 212 106 92;        /* #D46A5C */
+    }
+
     html {
         font-family: Inter, system-ui, -apple-system, sans-serif;
     }
 
     body {
         @apply transition-colors duration-300;
+    }
+
+    /* Global focus-visible ring in editorial accent */
+    *:focus-visible {
+        outline: 2px solid rgb(var(--color-accent));
+        outline-offset: 3px;
+        border-radius: 2px;
     }
 
     /* RTL Support - Override Tailwind directional utilities */
@@ -96,37 +121,6 @@ img,
 img[loading="lazy"] {
     transition: none !important;
     opacity: 1 !important;
-}
-
-/* Blob animations for background */
-@keyframes blob {
-    0% {
-        transform: translate(0px, 0px) scale(1);
-    }
-
-    33% {
-        transform: translate(30px, -50px) scale(1.1);
-    }
-
-    66% {
-        transform: translate(-20px, 20px) scale(0.9);
-    }
-
-    100% {
-        transform: translate(0px, 0px) scale(1);
-    }
-}
-
-.animate-blob {
-    animation: blob 7s infinite;
-}
-
-.animation-delay-2000 {
-    animation-delay: 2s;
-}
-
-.animation-delay-4000 {
-    animation-delay: 4s;
 }
 
 /* Floating animation */
@@ -263,17 +257,6 @@ img[loading="lazy"] {
     animation: shimmer 1.5s infinite;
 }
 
-/* Tilt effect for cards */
-.card-tilt {
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    transform-style: preserve-3d;
-}
-
-.card-tilt:hover {
-    transform: rotateX(5deg) rotateY(5deg) translateZ(10px);
-    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
-}
-
 /* Magnetic hover effect */
 .magnetic {
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -346,41 +329,6 @@ img[loading="lazy"] {
     left: 12px;
     right: 12px;
     bottom: 12px;
-}
-
-/* Neon glow effect */
-.neon-glow {
-    text-shadow: 0 0 5px currentColor, 0 0 10px currentColor, 0 0 15px currentColor;
-}
-
-/* Typewriter effect */
-@keyframes typewriter {
-    from {
-        width: 0;
-    }
-
-    to {
-        width: 100%;
-    }
-}
-
-.typewriter {
-    overflow: hidden;
-    border-right: 2px solid;
-    white-space: nowrap;
-    animation: typewriter 3s steps(40, end), blink 0.75s step-end infinite;
-}
-
-@keyframes blink {
-
-    from,
-    to {
-        border-color: transparent;
-    }
-
-    50% {
-        border-color: currentColor;
-    }
 }
 
 /* Parallax scroll effect */
@@ -584,4 +532,187 @@ img[loading="lazy"] {
     line-height: 1.4;
     font-weight: 700;
     letter-spacing: 0.02em;
+}
+
+/* ============================================================
+   Editorial Prose — opt-in via `.prose-editorial` on article body
+   Designed to co-exist with @tailwindcss/typography `.prose`.
+   ============================================================ */
+.prose-editorial {
+    font-family: 'Source Serif 4', 'Amiri', Georgia, serif;
+    color: rgb(var(--color-ink));
+    font-size: 1.125rem;
+    line-height: 1.75;
+    max-width: 68ch;
+}
+
+.prose-editorial p {
+    margin-bottom: 1.35rem;
+}
+
+.prose-editorial h2,
+.prose-editorial h3,
+.prose-editorial h4 {
+    font-family: 'Fraunces', 'Amiri', Georgia, serif;
+    color: rgb(var(--color-ink));
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin-top: 2.25rem;
+    margin-bottom: 0.85rem;
+    line-height: 1.2;
+}
+
+.prose-editorial h2 {
+    font-size: clamp(1.5rem, 1.5vw + 1rem, 2rem);
+}
+
+.prose-editorial h3 {
+    font-size: clamp(1.25rem, 0.75vw + 1rem, 1.5rem);
+}
+
+.prose-editorial a {
+    color: rgb(var(--color-accent));
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-thickness: 1px;
+}
+
+.prose-editorial a:hover {
+    text-decoration-thickness: 2px;
+}
+
+/* Blockquote: hanging quotation mark, no heavy border */
+.prose-editorial blockquote {
+    position: relative;
+    font-style: italic;
+    font-family: 'Fraunces', 'Amiri', Georgia, serif;
+    font-size: 1.25rem;
+    line-height: 1.55;
+    color: rgb(var(--color-ink));
+    padding: 0.5rem 0 0.5rem 2.25rem;
+    margin: 2rem 0;
+    border: none;
+    background: transparent;
+}
+
+.prose-editorial blockquote::before {
+    content: '\201C';
+    position: absolute;
+    top: -0.6rem;
+    left: 0;
+    font-size: 4rem;
+    line-height: 1;
+    color: rgb(var(--color-accent));
+    font-family: 'Fraunces', 'Amiri', Georgia, serif;
+}
+
+[dir="rtl"] .prose-editorial blockquote {
+    padding: 0.5rem 2.25rem 0.5rem 0;
+}
+
+[dir="rtl"] .prose-editorial blockquote::before {
+    content: '\00BB';
+    left: auto;
+    right: 0;
+}
+
+/* Inline + block code, paper-tinted */
+.prose-editorial code {
+    background: rgb(var(--color-rule) / 0.5);
+    padding: 0.1rem 0.35rem;
+    border-radius: 3px;
+    font-size: 0.92em;
+    font-family: 'SF Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.prose-editorial pre {
+    background: rgb(var(--color-ink));
+    color: rgb(var(--color-paper));
+    padding: 1.1rem 1.25rem;
+    border-radius: 6px;
+    overflow-x: auto;
+    margin: 1.75rem 0;
+}
+
+.prose-editorial pre code {
+    background: transparent;
+    color: inherit;
+    padding: 0;
+}
+
+/* Figure captions: small-caps, muted */
+.prose-editorial figcaption {
+    font-family: Inter, system-ui, sans-serif;
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgb(var(--color-ink-muted));
+    margin-top: 0.6rem;
+    text-align: center;
+}
+
+/* Horizontal rule — hairline */
+.prose-editorial hr {
+    border: 0;
+    border-top: 1px solid rgb(var(--color-rule));
+    margin: 2.5rem auto;
+    max-width: 6rem;
+}
+
+/* Drop cap — applied to first paragraph of LTR articles only */
+.prose-editorial[data-has-dropcap="true"] > p:first-of-type::first-letter,
+.drop-cap::first-letter {
+    font-family: 'Fraunces', Georgia, serif;
+    font-weight: 700;
+    float: left;
+    font-size: 4.5rem;
+    line-height: 0.85;
+    padding: 0.35rem 0.6rem 0 0;
+    color: rgb(var(--color-accent));
+}
+
+[dir="rtl"] .prose-editorial[data-has-dropcap="true"] > p:first-of-type::first-letter,
+[dir="rtl"] .drop-cap::first-letter {
+    float: none;
+    font-size: inherit;
+    color: inherit;
+    padding: 0;
+}
+
+/* Pull quote (used via <PullQuote /> component or class) */
+.pull-quote {
+    font-family: 'Fraunces', 'Amiri', Georgia, serif;
+    font-style: italic;
+    font-size: clamp(1.35rem, 1.5vw + 1rem, 1.85rem);
+    line-height: 1.35;
+    color: rgb(var(--color-ink));
+    border-left: 3px solid rgb(var(--color-accent));
+    padding: 0.25rem 0 0.25rem 1.25rem;
+    margin: 2rem 0;
+    max-width: 38rem;
+}
+
+[dir="rtl"] .pull-quote {
+    border-left: none;
+    border-right: 3px solid rgb(var(--color-accent));
+    padding: 0.25rem 1.25rem 0.25rem 0;
+}
+
+/* Kicker utility — small uppercase label */
+.kicker {
+    font-family: Inter, system-ui, sans-serif;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgb(var(--color-accent));
+}
+
+/* Small-caps numerals for meta */
+.small-caps {
+    font-family: Inter, system-ui, sans-serif;
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgb(var(--color-ink-muted));
 }
