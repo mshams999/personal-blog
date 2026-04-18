@@ -20,7 +20,7 @@ const MastheadLead = ({ post }) => {
 
     return (
         <section className="reveal-up">
-            <Link to={`/post/${post.slug}`} className="group block">
+            <Link to={`/post/${post.slug}`} className="group block smooth-card smooth-card-interactive p-4 md:p-6">
                 <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-12 items-stretch">
                     {/* Text column */}
                     <div className="lg:col-span-3 flex flex-col justify-center order-2 lg:order-1">
@@ -58,7 +58,7 @@ const MastheadLead = ({ post }) => {
                     {/* Image column */}
                     <div className="lg:col-span-2 order-1 lg:order-2">
                         {post.featuredImage ? (
-                            <div className="relative aspect-[4/5] overflow-hidden bg-rule/40 h-full">
+                            <div className="relative aspect-[4/5] overflow-hidden bg-rule/40 h-full rounded-xl border border-rule">
                                 <img
                                     src={post.featuredImage}
                                     alt={post.title}
@@ -67,7 +67,7 @@ const MastheadLead = ({ post }) => {
                                 />
                             </div>
                         ) : (
-                            <div className="aspect-[4/5] bg-rule/30 border border-rule" />
+                            <div className="aspect-[4/5] bg-rule/30 border border-rule rounded-xl" />
                         )}
                     </div>
                 </div>

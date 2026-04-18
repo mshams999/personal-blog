@@ -229,7 +229,7 @@ const SinglePostPage = () => {
                 {/* Cover image */}
                 {post.featuredImage && (
                     <figure className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mb-12">
-                        <div className="relative aspect-[16/9] overflow-hidden bg-rule/40">
+                        <div className="relative aspect-[16/9] overflow-hidden bg-rule/40 rounded-2xl border border-rule">
                             <img
                                 src={post.featuredImage}
                                 alt={post.title}

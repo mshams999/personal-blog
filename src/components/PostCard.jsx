@@ -31,11 +31,11 @@ const PostCard = ({ post, variant = 'standard', showImage = true, viewCount = 0,
         return (
             <Link
                 to={`/post/${post.slug}`}
-                className={`group block ${className}`}
+                className={`group block smooth-card smooth-card-interactive p-4 md:p-5 ${className}`}
                 aria-label={post.title}
             >
                 {showImage && post.featuredImage && (
-                    <div className="relative aspect-[16/9] overflow-hidden bg-rule/40 mb-6">
+                    <div className="relative aspect-[16/9] overflow-hidden bg-rule/40 mb-6 rounded-xl border border-rule">
                         <img
                             src={post.featuredImage}
                             alt={post.title}
@@ -64,7 +64,7 @@ const PostCard = ({ post, variant = 'standard', showImage = true, viewCount = 0,
         return (
             <Link
                 to={`/post/${post.slug}`}
-                className={`group block ${className}`}
+                className={`group block smooth-card smooth-card-interactive p-4 md:p-5 ${className}`}
                 aria-label={post.title}
             >
                 <div className="flex items-center gap-3 mb-2">
@@ -88,11 +88,11 @@ const PostCard = ({ post, variant = 'standard', showImage = true, viewCount = 0,
     return (
         <Link
             to={`/post/${post.slug}`}
-            className={`group grid md:grid-cols-[1fr_1.4fr] gap-6 md:gap-8 items-start ${className}`}
+            className={`group grid md:grid-cols-[1fr_1.4fr] gap-6 md:gap-8 items-start smooth-card smooth-card-interactive p-4 md:p-5 ${className}`}
             aria-label={post.title}
         >
             {showImage && post.featuredImage && (
-                <div className="relative aspect-[4/3] overflow-hidden bg-rule/40">
+                <div className="relative aspect-[4/3] overflow-hidden bg-rule/40 rounded-xl border border-rule">
                     <img
                         src={post.featuredImage}
                         alt={post.title}

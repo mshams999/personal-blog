@@ -133,7 +133,7 @@ const HomePage = () => {
                 {/* 4 — About strip + Newsletter */}
                 <section className="py-16 md:py-24 grid grid-cols-1 lg:grid-cols-5 gap-12 lg:gap-16 items-center reveal-up">
                     <div className="lg:col-span-2">
-                        <div className="aspect-[4/5] overflow-hidden bg-rule/40 max-w-sm">
+                        <div className="aspect-[4/5] overflow-hidden bg-rule/40 max-w-sm rounded-2xl border border-rule">
                             <img
                                 src="/pictures/about-me.jpg"
                                 alt="د. محمد شمس"

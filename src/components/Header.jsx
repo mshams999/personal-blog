@@ -158,6 +158,12 @@ const Header = () => {
                                                 <p className="text-xs text-ink-muted">Signed in as</p>
                                                 <p className="text-sm text-ink truncate">{user.email}</p>
                                             </div>
+                                            <Link
+                                                to="/net-worth"
+                                                className="w-full mt-1 inline-flex items-center gap-2 px-2.5 py-2 rounded-xl text-sm text-ink hover:bg-ink/5 transition"
+                                            >
+                                                <span>Net Worth Dashboard</span>
+                                            </Link>
                                             <button
                                                 onClick={handleSignOut}
                                                 className="w-full mt-1 inline-flex items-center gap-2 px-2.5 py-2 rounded-xl text-sm text-ink hover:bg-ink/5 transition"
@@ -248,6 +254,12 @@ const Header = () => {
                                 <UserRound className="w-6 h-6" />
                                 <span className="font-display text-2xl truncate max-w-full">{user.displayName || user.email}</span>
                             </div>
+                            <Link
+                                to="/net-worth"
+                                className="font-display text-lg text-ink-muted hover:text-ink inline-flex items-center gap-2 transition-colors"
+                            >
+                                <span>Net Worth Dashboard</span>
+                            </Link>
                             <button
                                 onClick={handleSignOut}
                                 className="font-display text-lg text-ink-muted hover:text-ink inline-flex items-center gap-2 transition-colors"
