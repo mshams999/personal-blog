@@ -242,6 +242,38 @@ const BudgetTooltip = ({ active, payload, label }) => {
 
 
 
+// ─── Price Ticker Card ───────────────────────────────────────────────────────
+function PriceTickerCard({ prices, goldPerOunceUsd }) {
+  const { fmtD } = useCurrency();
+  
+  const priceData = [
+    { symbol: 'BTC', name: 'Bitcoin', price: prices?.BTC, icon: '₿' },
+    { symbol: 'SLV', name: 'Silver', price: prices?.SLV, icon: '🥈' },
+    { symbol: 'XAU', name: 'Gold (oz)', price: goldPerOunceUsd, icon: '🥇' },
+  ];
+
+  return (
+    <SectionCard title="Live Prices" className="mb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3">
+        {priceData.map((item) => (
+          <div key={item.symbol} className="bg-gradient-to-br from-white to-gray-50 rounded-lg sm:rounded-xl p-3 sm:p-4 border border-gray-200 hover:border-gray-300 transition-colors">
+            <div className="flex items-start gap-2 mb-3">
+              <span className="text-2xl sm:text-3xl flex-shrink-0">{item.icon}</span>
+              <div className="flex-1 min-w-0">
+                <p className="text-[9px] sm:text-xs text-gray-500 font-medium truncate uppercase tracking-wide">{item.symbol}</p>
+                <p className="text-xs sm:text-sm text-gray-700 font-semibold leading-tight line-clamp-2">{item.name}</p>
+              </div>
+            </div>
+            <p className="text-base sm:text-xl font-bold text-gray-900 break-word">
+              {item.price != null ? fmtD(item.price) : '—'}
+            </p>
+          </div>
+        ))}
+      </div>
+    </SectionCard>
+  );
+}
+
 // ─── useSection hook ──────────────────────────────────────────────────────────
 function useSection(data) {
   const [editing, setEditing] = useState(false);
@@ -852,6 +884,7 @@ export default function FinancialDashboard() {
   const [holdings, setHoldings] = useState(null);
   const [prices, setPrices] = useState({});
   const [goldPerGramUsd, setGoldPerGramUsd] = useState(null);
+  const [goldPerOunceUsd, setGoldPerOunceUsd] = useState(null);
   const [fxRates, setFxRates] = useState({});
   const [dashData, setDashData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -861,12 +894,12 @@ export default function FinancialDashboard() {
   const [displayCurrency, setDisplayCurrency] = useState('USD');
 
   const loadPrices = useCallback(async (h) => {
-    const cryptoSymbols = (h.crypto || []).map((c) => c.symbol).filter(Boolean);
-    const stockSymbols = (h.stocks || []).map((s) => s.symbol).filter(Boolean);
-    const includeGold = (h.gold || []).length > 0;
-    const result = await fetchPrices({ cryptoSymbols, stockSymbols, includeGold, fxCurrencies: ['SAR'] });
+    const cryptoSymbols = [...new Set([(h.crypto || []).map((c) => c.symbol).filter(Boolean), ['BTC']].flat())];
+    const stockSymbols = [...new Set([(h.stocks || []).map((s) => s.symbol).filter(Boolean), ['SLV']].flat())];
+    const result = await fetchPrices({ cryptoSymbols, stockSymbols, includeGold: true, fxCurrencies: ['SAR'] });
     setPrices(result.prices ?? {});
     setGoldPerGramUsd(result.goldPerGramUsd ?? null);
+    setGoldPerOunceUsd(result.goldPerOunceUsd ?? null);
     setFxRates(result.fxRates ?? {});
     if (result.errors?.length) setPriceError(result.errors.join(', '));
     else setPriceError(null);
@@ -973,7 +1006,7 @@ export default function FinancialDashboard() {
       return (filtered.length >= 2 ? filtered : sorted).map((s) => ({ name: s.month, value: num(s.value) }));
     }
     return generateWealthHistory(totalUsd, timeRange);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [wealthSnapshots, totalUsd, timeRange]);
 
   if (loading) {
@@ -1061,6 +1094,9 @@ export default function FinancialDashboard() {
             <KpiCard title="Net Worth" value={netWorth} change={netWorthChangePct} icon={Wallet} iconBg="bg-blue-500" />
             <KpiCard title="Monthly Income" value={monthlyIncomeUsd} change={0} icon={DollarSign} iconBg="bg-green-500" />
           </div>
+
+          {/* Live Price Ticker */}
+          <PriceTickerCard prices={prices} goldPerOunceUsd={goldPerOunceUsd} />
 
           {/* Wealth History */}
           <WealthHistoryCard wealthHistory={wealthHistory} snapshots={wealthSnapshots}

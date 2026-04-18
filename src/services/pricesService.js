@@ -100,5 +100,5 @@ export const fetchPrices = async ({
 
     const usdToEgp = fxRates.EGP ?? null;
 
-    return { prices, goldPerGramUsd, fxRates, usdToEgp, errors };
+    return { prices, goldPerGramUsd, goldPerOunceUsd, fxRates, usdToEgp, errors };
 };
