@@ -12,6 +12,7 @@ import SinglePostPage from './pages/SinglePostPage'
 import CategoryPage from './pages/CategoryPage'
 import AllCategoriesPage from './pages/AllCategoriesPage'
 import CVPage from './pages/CVPage'
+import AboutPage from './pages/AboutPage'
 import AdminPage from './pages/AdminPage'
 import NetWorthPage from './pages/NetWorthPage'
 import ReadingLibrary from './pages/ReadingLibrary'
@@ -55,34 +56,35 @@ function App() {
     return (
         <ThemeProvider>
             <AuthProvider>
-            <HybridDataProvider>
-                <AnalyticsProvider>
-                    <div className="min-h-screen bg-paper text-ink transition-colors duration-300">
-                        <ScrollToTop />
-                        <RouteTransitions />
-                        <Layout>
-                            <Routes>
-                                <Route path="/" element={<HomePage />} />
-                                <Route path="/blog" element={<BlogPage />} />
-                                <Route path="/post/:slug" element={<SinglePostPage />} />
-                                <Route path="/category/:categorySlug" element={<CategoryPage />} />
-                                <Route path="/categories" element={<AllCategoriesPage />} />
-                                <Route path="/cv" element={<CVPage />} />
-                                <Route path="/reading" element={<ReadingLibrary />} />
-                                <Route path="/login" element={<LoginPage />} />
-                                <Route path="/admin" element={<ProtectedRoute><AdminPage /></ProtectedRoute>} />
-                                <Route path="/net-worth" element={<ProtectedRoute><NetWorthPage /></ProtectedRoute>} />
-                                {/* Certificate Routes */}
-                                <Route path="/certificates/atls" element={<ATLSCertificate />} />
-                                <Route path="/certificates/acls" element={<ACLSCertificate />} />
-                                <Route path="/certificates/bls" element={<BLSCertificate />} />
-                                <Route path="/certificates/maaden" element={<MaadenCertificate />} />
-                                <Route path="/certificates/usmle-step1" element={<USMLEStep1Certificate />} />
-                            </Routes>
-                        </Layout>
-                    </div>
-                </AnalyticsProvider>
-            </HybridDataProvider>
+                <HybridDataProvider>
+                    <AnalyticsProvider>
+                        <div className="min-h-screen bg-paper text-ink transition-colors duration-300">
+                            <ScrollToTop />
+                            <RouteTransitions />
+                            <Layout>
+                                <Routes>
+                                    <Route path="/" element={<HomePage />} />
+                                    <Route path="/blog" element={<BlogPage />} />
+                                    <Route path="/post/:slug" element={<SinglePostPage />} />
+                                    <Route path="/category/:categorySlug" element={<CategoryPage />} />
+                                    <Route path="/categories" element={<AllCategoriesPage />} />
+                                    <Route path="/about" element={<AboutPage />} />
+                                    <Route path="/cv" element={<CVPage />} />
+                                    <Route path="/reading" element={<ReadingLibrary />} />
+                                    <Route path="/login" element={<LoginPage />} />
+                                    <Route path="/admin" element={<ProtectedRoute><AdminPage /></ProtectedRoute>} />
+                                    <Route path="/net-worth" element={<ProtectedRoute><NetWorthPage /></ProtectedRoute>} />
+                                    {/* Certificate Routes */}
+                                    <Route path="/certificates/atls" element={<ATLSCertificate />} />
+                                    <Route path="/certificates/acls" element={<ACLSCertificate />} />
+                                    <Route path="/certificates/bls" element={<BLSCertificate />} />
+                                    <Route path="/certificates/maaden" element={<MaadenCertificate />} />
+                                    <Route path="/certificates/usmle-step1" element={<USMLEStep1Certificate />} />
+                                </Routes>
+                            </Layout>
+                        </div>
+                    </AnalyticsProvider>
+                </HybridDataProvider>
             </AuthProvider>
         </ThemeProvider>
     )

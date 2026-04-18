@@ -135,7 +135,7 @@ const HomePage = () => {
                     <div className="lg:col-span-2">
                         <div className="aspect-[4/5] overflow-hidden bg-rule/40 max-w-sm">
                             <img
-                                src="/pictures/mohamed-profile.jpg"
+                                src="/pictures/about-me.jpg"
                                 alt="د. محمد شمس"
                                 loading="lazy"
                                 className="w-full h-full object-cover"

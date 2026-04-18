@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useMemo, useRef } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { Menu, X, Sun, Moon, Search, LogIn, LogOut, UserRound, ChevronDown } from 'lucide-react'
 import { useTheme } from '../contexts/ThemeContext'
@@ -17,6 +17,7 @@ const navFallback = [
     { path: '/', label: 'الرئيسية' },
     { path: '/blog', label: 'المقالات' },
     { path: '/categories', label: 'الأقسام' },
+    { path: '/about', label: 'من أنا' },
     { path: '/reading', label: 'المكتبة' },
     { path: '/cv', label: 'السيرة' },
 ]
@@ -56,7 +57,19 @@ const Header = () => {
         return () => document.removeEventListener('mousedown', handleClickOutside)
     }, [])
 
-    const navItems = navigation && navigation.length > 0 ? navigation : navFallback
+    const navItems = useMemo(() => {
+        const normalized = (navigation || [])
+            .map((item) => {
+                const path = item?.path || item?.href || item?.url
+                const label = item?.label || item?.title || item?.name
+
+                if (!path || !label) return null
+                return { path, label }
+            })
+            .filter(Boolean)
+
+        return normalized.length > 0 ? normalized : navFallback
+    }, [navigation])
 
     const isActive = (path) => {
         if (path === '/') return location.pathname === '/'
@@ -98,7 +111,7 @@ const Header = () => {
                         <nav className="hidden md:flex items-center gap-8" aria-label="التنقل الرئيسي">
                             {navItems.map((item) => (
                                 <Link
-                                    key={item.path}
+                                    key={`${item.path}-${item.label}`}
                                     to={item.path}
                                     className={`small-caps !text-[0.78rem] hover:text-ink transition-colors ${isActive(item.path) ? 'text-ink' : 'text-ink-muted'
                                         }`}
@@ -106,7 +119,7 @@ const Header = () => {
                                     onMouseEnter={(e) => (e.currentTarget.style.textDecoration = 'underline')}
                                     onMouseLeave={(e) => (e.currentTarget.style.textDecoration = 'none')}
                                 >
-                                    {item.label || item.title}
+                                    {item.label}
                                 </Link>
                             ))}
                         </nav>
@@ -208,11 +221,11 @@ const Header = () => {
                 >
                     {navItems.map((item, i) => (
                         <Link
-                            key={item.path}
+                            key={`${item.path}-${item.label}`}
                             to={item.path}
                             className={`font-display text-display-lg text-ink reveal-up delay-${Math.min(i + 1, 4)}`}
                         >
-                            {item.label || item.title}
+                            {item.label}
                             {isActive(item.path) && (
                                 <span className="ms-3 inline-block w-2 h-2 rounded-full bg-accent align-middle" />
                             )}

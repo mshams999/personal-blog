@@ -11,7 +11,7 @@ const AuthorBio = ({ author }) => {
     const defaultAuthor = {
         name: 'د. محمد شمس',
         bio: 'طبيب طوارئ وكاتب مهتم بالطب والقراءة والفكر. هذه المساحة لتدوين ما لا يتسع له وقت المناوبة.',
-        avatar: '/pictures/mohamed-profile.jpg',
+        avatar: '/pictures/about-me.jpg',
         social: {
             github: 'https://github.com/mshams999',
             linkedin: 'https://www.linkedin.com/in/mohamedshamsms/',

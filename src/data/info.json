@@ -31,6 +31,10 @@
       "href": "/categories"
     },
     {
+      "name": "من أنا",
+      "href": "/about"
+    },
+    {
       "name": "السيرة الذاتية",
       "href": "/cv"
     }
@@ -39,7 +43,7 @@
     {
       "id": "author-1",
       "name": "محمد شمس عبد العزيز",
-      "avatar": "https://placehold.co/100x100/3B82F6/FFFFFF?text=MS",
+      "avatar": "/pictures/about-me.jpg",
       "bio": "طبيب طوارئ ومحترف طبي متخصص في إدارة الرعاية الحادة، الأبحاث السريرية، ورعاية المرضى. شغوف بدمج المعرفة الطبية مع التكنولوجيا لتحسين نتائج الرعاية الصحية.",
       "social": {
         "github": "https://github.com/mshams999",

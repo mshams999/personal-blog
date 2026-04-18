@@ -1,10 +1,10 @@
-// Save this image as mohamed-profile.jpg in the public/pictures folder
-// The image you provided should be saved as: public/pictures/mohamed-profile.jpg
+// Save this image as about-me.jpg in the public/pictures folder
+// The image you provided should be saved as: public/pictures/about-me.jpg
 
 // Instructions:
 // 1. Right-click on your profile image
-// 2. Save it as "mohamed-profile.jpg"
+// 2. Save it as "about-me.jpg"
 // 3. Place it in the "public/pictures" folder
-// 4. The CV page will automatically display it
+// 4. About page, Home strip, and author bio will automatically display it
 
 console.log("Profile photo setup ready!");
