@@ -3,6 +3,9 @@ import {
   AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell,
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
 } from 'recharts';
+import DatePicker from 'react-datepicker';
+import { format as formatDate, parseISO, isValid } from 'date-fns';
+import 'react-datepicker/dist/react-datepicker.css';
 import {
   TrendingUp, TrendingDown, RefreshCw, LogOut, DollarSign,
   BarChart2, Target, Wallet, Pencil, Check, X, Plus, Trash2,
@@ -34,6 +37,11 @@ const fmt = (n, currency = 'USD') =>
   new Intl.NumberFormat('en-US', { style: 'currency', currency, maximumFractionDigits: 0 }).format(n ?? 0);
 const fmtK = (n) => (n >= 1000 ? `$${(n / 1000).toFixed(0)}k` : `$${Math.round(n)}`);
 const num = (v) => Number(v) || 0;
+const parseDateInput = (value) => {
+  if (!value) return null;
+  const parsed = parseISO(value);
+  return isValid(parsed) ? parsed : null;
+};
 
 // Convert native-currency amount to USD using fxRates
 const toUsd = (amount, currency, fxRates) => {
@@ -232,6 +240,21 @@ const BudgetTooltip = ({ active, payload, label }) => {
   );
 };
 
+const CashflowTooltip = ({ active, payload, label }) => {
+  const { fmtD } = useCurrency();
+  if (!active || !payload?.length) return null;
+  return (
+    <div className="bg-white border border-gray-200 rounded-xl shadow-md px-3 py-2 text-sm">
+      <p className="font-semibold text-gray-700 mb-1">{label}</p>
+      {payload.map((p) => (
+        <p key={p.dataKey} style={{ color: p.fill }}>
+          {p.dataKey === 'inflow' ? 'Inflow' : 'Outflow'}: {fmtD(p.value)}
+        </p>
+      ))}
+    </div>
+  );
+};
+
 // ─── useSection hook ──────────────────────────────────────────────────────────
 function useSection(data) {
   const [editing, setEditing] = useState(false);
@@ -306,6 +329,267 @@ function IncomeSourcesSection({ sources, onSave }) {
             );
           })}
         </div>
+      )}
+    </SectionCard>
+  );
+}
+
+function LiabilitiesSection({ rows, onSave }) {
+  const { fmtD, fxRates } = useCurrency();
+  const { editing, draft, setDraft, saving, setSaving, startEdit, cancel, setEditing } = useSection(rows);
+  const save = async () => { setSaving(true); await onSave(draft); setSaving(false); setEditing(false); };
+  const update = (i, f, v) => setDraft((d) => d.map((r, j) => (j === i ? { ...r, [f]: v } : r)));
+  const add = () => setDraft((d) => [...d, { name: '', type: 'Loan', balance: 0, apr: 0, minPayment: 0, currency: 'USD' }]);
+  const remove = (i) => setDraft((d) => d.filter((_, j) => j !== i));
+
+  const totalUsd = rows.reduce((sum, r) => sum + toUsd(r.balance, r.currency || 'USD', fxRates), 0);
+  const minPaymentUsd = rows.reduce((sum, r) => sum + toUsd(r.minPayment, r.currency || 'USD', fxRates), 0);
+
+  if (editing) return (
+    <SectionCard title="Liabilities & Debt" trailing={<EditBar editing saving={saving} onSave={save} onCancel={cancel} />}>
+      <div className="space-y-2">
+        <div className="grid grid-cols-6 gap-2 text-xs text-gray-500 font-medium px-1">
+          <span>Name</span><span>Type</span><span>APR %</span><span>Currency</span><span>Balance</span><span>Min Pay</span>
+        </div>
+        {draft.map((l, i) => (
+          <div key={i} className="grid grid-cols-6 gap-2 items-center">
+            <Inp value={l.name} onChange={(v) => update(i, 'name', v)} placeholder="Visa Platinum" />
+            <Inp value={l.type} onChange={(v) => update(i, 'type', v)} placeholder="Loan" />
+            <Inp type="number" value={l.apr} onChange={(v) => update(i, 'apr', v)} min="0" />
+            <CurrencySelect value={l.currency || 'USD'} onChange={(v) => update(i, 'currency', v)} />
+            <Inp type="number" value={l.balance} onChange={(v) => update(i, 'balance', v)} min="0" />
+            <div className="flex items-center gap-2">
+              <Inp type="number" value={l.minPayment} onChange={(v) => update(i, 'minPayment', v)} min="0" />
+              <button onClick={() => remove(i)} className="p-1 text-red-400 hover:text-red-600"><Trash2 size={14} /></button>
+            </div>
+          </div>
+        ))}
+        <button onClick={add} className="flex items-center gap-1 text-xs text-blue-600 font-medium hover:text-blue-800 mt-1">
+          <Plus size={13} /> Add liability
+        </button>
+      </div>
+    </SectionCard>
+  );
+
+  return (
+    <SectionCard title="Liabilities & Debt" trailing={<EditBar onEdit={startEdit} />}>
+      {rows.length === 0 ? (
+        <p className="text-sm text-gray-400 py-4 text-center">No liabilities yet. Click edit to add.</p>
+      ) : (
+        <>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {rows.map((l, i) => (
+              <div key={`${l.name}-${i}`} className="bg-red-50 rounded-xl p-3">
+                <div className="flex items-center justify-between">
+                  <p className="text-sm font-semibold text-gray-900">{l.name || 'Liability'}</p>
+                  <span className="text-[10px] font-medium text-red-600">{l.type || 'Debt'}</span>
+                </div>
+                <p className="text-lg font-bold text-red-600 mt-1">{fmt(l.balance, l.currency || 'USD')}</p>
+                <div className="flex justify-between mt-1 text-[11px] text-gray-500">
+                  <span>APR: {num(l.apr).toFixed(1)}%</span>
+                  <span>Min: {fmt(l.minPayment, l.currency || 'USD')}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="mt-3 pt-3 border-t border-gray-100 flex items-center justify-between text-xs">
+            <span className="text-gray-500">Total debt / min monthly payment</span>
+            <span className="font-bold text-gray-900">{fmtD(totalUsd)} / {fmtD(minPaymentUsd)}</span>
+          </div>
+        </>
+      )}
+    </SectionCard>
+  );
+}
+
+function CashflowSection({ entries, onSave }) {
+  const { fmtD, fxRates } = useCurrency();
+  const { editing, draft, setDraft, saving, setSaving, startEdit, cancel, setEditing } = useSection(entries);
+  const save = async () => { setSaving(true); await onSave(draft); setSaving(false); setEditing(false); };
+  const update = (i, f, v) => setDraft((d) => d.map((r, j) => (j === i ? { ...r, [f]: v } : r)));
+  const add = () => setDraft((d) => [...d, {
+    date: new Date().toISOString().slice(0, 10), type: 'outflow', spendType: 'variable', category: '', amount: 0, currency: 'USD', note: '',
+  }]);
+  const remove = (i) => setDraft((d) => d.filter((_, j) => j !== i));
+
+  const monthKey = (d) => {
+    const dt = new Date(d);
+    if (Number.isNaN(dt.getTime())) return null;
+    return `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, '0')}`;
+  };
+
+  const grouped = entries.reduce((acc, e) => {
+    const key = monthKey(e.date);
+    if (!key) return acc;
+    const usd = toUsd(e.amount, e.currency || 'USD', fxRates);
+    if (!acc[key]) acc[key] = { inflow: 0, outflow: 0 };
+    if (e.type === 'inflow') acc[key].inflow += usd;
+    if (e.type === 'outflow') acc[key].outflow += usd;
+    return acc;
+  }, {});
+
+  const monthlySeries = Object.entries(grouped)
+    .sort(([a], [b]) => (a < b ? -1 : 1))
+    .slice(-6)
+    .map(([key, v]) => {
+      const [y, m] = key.split('-');
+      const label = new Date(Number(y), Number(m) - 1, 1).toLocaleString('default', { month: 'short' });
+      return { name: label, inflow: Math.round(v.inflow), outflow: Math.round(v.outflow), net: Math.round(v.inflow - v.outflow) };
+    });
+
+  const currentKey = monthKey(new Date().toISOString());
+  const thisMonth = grouped[currentKey] || { inflow: 0, outflow: 0 };
+  const thisNet = thisMonth.inflow - thisMonth.outflow;
+
+  if (editing) return (
+    <SectionCard title="Cashflow Ledger" trailing={<EditBar editing saving={saving} onSave={save} onCancel={cancel} />}>
+      <div className="space-y-2">
+        <div className="grid grid-cols-8 gap-2 text-xs text-gray-500 font-medium px-1">
+          <span>Date</span><span>Type</span><span>Spend</span><span>Category</span><span>Currency</span><span>Amount</span><span className="col-span-2">Note</span>
+        </div>
+        {draft.map((e, i) => (
+          <div key={i} className="grid grid-cols-8 gap-2 items-center">
+            <DatePicker
+              selected={parseDateInput(e.date)}
+              onChange={(date) => update(i, 'date', date ? formatDate(date, 'yyyy-MM-dd') : '')}
+              dateFormat="yyyy-MM-dd"
+              placeholderText="Select date"
+              className="w-full border border-gray-200 rounded-lg px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-blue-400 bg-white"
+            />
+            <select value={e.type || 'outflow'} onChange={(ev) => update(i, 'type', ev.target.value)}
+              className="border border-gray-200 rounded-lg px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-blue-400 bg-white">
+              {['inflow', 'outflow', 'transfer'].map((t) => <option key={t}>{t}</option>)}
+            </select>
+            <select value={e.spendType || 'variable'} onChange={(ev) => update(i, 'spendType', ev.target.value)}
+              className="border border-gray-200 rounded-lg px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-blue-400 bg-white">
+              {['fixed', 'variable'].map((t) => <option key={t}>{t}</option>)}
+            </select>
+            <Inp value={e.category} onChange={(v) => update(i, 'category', v)} placeholder="Salary / Groceries" />
+            <CurrencySelect value={e.currency || 'USD'} onChange={(v) => update(i, 'currency', v)} />
+            <Inp type="number" value={e.amount} onChange={(v) => update(i, 'amount', v)} min="0" />
+            <div className="col-span-2 flex items-center gap-2">
+              <Inp value={e.note} onChange={(v) => update(i, 'note', v)} className="w-full" placeholder="Optional note" />
+              <button onClick={() => remove(i)} className="p-1 text-red-400 hover:text-red-600"><Trash2 size={14} /></button>
+            </div>
+          </div>
+        ))}
+        <button onClick={add} className="flex items-center gap-1 text-xs text-blue-600 font-medium hover:text-blue-800 mt-1">
+          <Plus size={13} /> Add cashflow entry
+        </button>
+      </div>
+    </SectionCard>
+  );
+
+  return (
+    <SectionCard title="Monthly Cashflow" trailing={<EditBar onEdit={startEdit} />}>
+      {entries.length === 0 ? (
+        <p className="text-sm text-gray-400 py-4 text-center">No cashflow entries yet. Click edit to add.</p>
+      ) : (
+        <>
+          <div className="grid grid-cols-3 gap-3 mb-3">
+            <div className="bg-green-50 rounded-xl p-3">
+              <p className="text-xs text-green-600 font-medium">Inflow</p>
+              <p className="text-base font-bold text-gray-900">{fmtD(thisMonth.inflow)}</p>
+            </div>
+            <div className="bg-red-50 rounded-xl p-3">
+              <p className="text-xs text-red-600 font-medium">Outflow</p>
+              <p className="text-base font-bold text-gray-900">{fmtD(thisMonth.outflow)}</p>
+            </div>
+            <div className={`rounded-xl p-3 ${thisNet >= 0 ? 'bg-blue-50' : 'bg-orange-50'}`}>
+              <p className="text-xs text-gray-600 font-medium">Net</p>
+              <p className="text-base font-bold text-gray-900">{fmtD(thisNet)}</p>
+            </div>
+          </div>
+          <ResponsiveContainer width="100%" height={200}>
+            <BarChart data={monthlySeries} margin={{ top: 4, right: 8, left: -20, bottom: 0 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#F3F4F6" vertical={false} />
+              <XAxis dataKey="name" tick={{ fontSize: 10, fill: '#9CA3AF' }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fontSize: 10, fill: '#9CA3AF' }} axisLine={false} tickLine={false} />
+              <Tooltip content={<CashflowTooltip />} />
+              <Bar dataKey="inflow" fill={GREEN} radius={[4, 4, 0, 0]} />
+              <Bar dataKey="outflow" fill={RED} radius={[4, 4, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </>
+      )}
+    </SectionCard>
+  );
+}
+
+function RecurringBillsSection({ rows, onSave }) {
+  const { fmtD, fxRates } = useCurrency();
+  const { editing, draft, setDraft, saving, setSaving, startEdit, cancel, setEditing } = useSection(rows);
+  const save = async () => { setSaving(true); await onSave(draft); setSaving(false); setEditing(false); };
+  const update = (i, f, v) => setDraft((d) => d.map((r, j) => (j === i ? { ...r, [f]: v } : r)));
+  const add = () => setDraft((d) => [...d, {
+    name: '', category: '', amount: 0, currency: 'USD', dueDay: 1, spendType: 'fixed', autopay: false,
+  }]);
+  const remove = (i) => setDraft((d) => d.filter((_, j) => j !== i));
+
+  const monthlyTotalUsd = rows.reduce((sum, b) => sum + toUsd(b.amount, b.currency || 'USD', fxRates), 0);
+  const fixedUsd = rows
+    .filter((b) => (b.spendType || 'fixed') === 'fixed')
+    .reduce((sum, b) => sum + toUsd(b.amount, b.currency || 'USD', fxRates), 0);
+
+  if (editing) return (
+    <SectionCard title="Recurring Bills" trailing={<EditBar editing saving={saving} onSave={save} onCancel={cancel} />}>
+      <div className="space-y-2">
+        <div className="grid grid-cols-8 gap-2 text-xs text-gray-500 font-medium px-1">
+          <span>Name</span><span>Category</span><span>Type</span><span>Due Day</span><span>Autopay</span><span>Currency</span><span>Amount</span><span />
+        </div>
+        {draft.map((b, i) => (
+          <div key={i} className="grid grid-cols-8 gap-2 items-center">
+            <Inp value={b.name} onChange={(v) => update(i, 'name', v)} placeholder="Rent" />
+            <Inp value={b.category} onChange={(v) => update(i, 'category', v)} placeholder="Housing" />
+            <select value={b.spendType || 'fixed'} onChange={(e) => update(i, 'spendType', e.target.value)}
+              className="border border-gray-200 rounded-lg px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-blue-400 bg-white">
+              {['fixed', 'variable'].map((t) => <option key={t}>{t}</option>)}
+            </select>
+            <Inp type="number" value={b.dueDay} onChange={(v) => update(i, 'dueDay', Math.min(31, Math.max(1, num(v))))} min="1" />
+            <label className="text-xs text-gray-600 flex items-center gap-2">
+              <input type="checkbox" checked={Boolean(b.autopay)} onChange={(e) => update(i, 'autopay', e.target.checked)} />
+              Auto
+            </label>
+            <CurrencySelect value={b.currency || 'USD'} onChange={(v) => update(i, 'currency', v)} />
+            <Inp type="number" value={b.amount} onChange={(v) => update(i, 'amount', v)} min="0" />
+            <button onClick={() => remove(i)} className="p-1 text-red-400 hover:text-red-600"><Trash2 size={14} /></button>
+          </div>
+        ))}
+        <button onClick={add} className="flex items-center gap-1 text-xs text-blue-600 font-medium hover:text-blue-800 mt-1">
+          <Plus size={13} /> Add recurring bill
+        </button>
+      </div>
+    </SectionCard>
+  );
+
+  return (
+    <SectionCard title="Recurring Bills" trailing={<EditBar onEdit={startEdit} />}>
+      {rows.length === 0 ? (
+        <p className="text-sm text-gray-400 py-4 text-center">No recurring bills yet. Click edit to add.</p>
+      ) : (
+        <>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {rows.map((b, i) => (
+              <div key={`${b.name}-${i}`} className="bg-gray-50 rounded-xl p-3">
+                <div className="flex items-center justify-between">
+                  <p className="text-sm font-semibold text-gray-900">{b.name || 'Bill'}</p>
+                  <span className={`text-[10px] font-medium ${b.autopay ? 'text-green-600' : 'text-amber-600'}`}>
+                    {b.autopay ? 'Autopay' : 'Manual'}
+                  </span>
+                </div>
+                <p className="text-xs text-gray-500 mt-0.5">{b.category || 'General'} · {b.spendType || 'fixed'}</p>
+                <div className="flex items-center justify-between mt-2">
+                  <p className="text-base font-bold text-gray-900">{fmt(b.amount, b.currency || 'USD')}</p>
+                  <p className="text-xs text-gray-400">Due day {Math.min(31, Math.max(1, num(b.dueDay) || 1))}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="mt-3 pt-3 border-t border-gray-100 flex items-center justify-between text-xs">
+            <span className="text-gray-500">Monthly recurring / fixed share</span>
+            <span className="font-bold text-gray-900">{fmtD(monthlyTotalUsd)} / {monthlyTotalUsd > 0 ? ((fixedUsd / monthlyTotalUsd) * 100).toFixed(1) : '0.0'}%</span>
+          </div>
+        </>
       )}
     </SectionCard>
   );
@@ -939,10 +1223,146 @@ export default function FinancialDashboard() {
   const expenseCategories = dashData?.expenseCategories ?? [];
   const recentExpenses = dashData?.recentExpenses ?? [];
   const goals = dashData?.goals ?? [];
+  const liabilities = dashData?.liabilities ?? [];
+  const cashflowEntries = dashData?.cashflowEntries ?? [];
+  const recurringBills = dashData?.recurringBills ?? [];
 
   const monthlyIncomeUsd = incomeSources.reduce(
     (s, i) => s + toUsd(i.amount, i.currency || 'USD', fxRates), 0,
   );
+
+  const monthKey = (dateValue) => {
+    const dt = new Date(dateValue);
+    if (Number.isNaN(dt.getTime())) return null;
+    return `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, '0')}`;
+  };
+
+  const cashflowByMonth = cashflowEntries.reduce((acc, entry) => {
+    const key = monthKey(entry.date);
+    if (!key) return acc;
+    const usd = toUsd(entry.amount, entry.currency || 'USD', fxRates);
+    if (!acc[key]) acc[key] = { inflow: 0, outflow: 0 };
+    if (entry.type === 'inflow') acc[key].inflow += usd;
+    if (entry.type === 'outflow') acc[key].outflow += usd;
+    return acc;
+  }, {});
+
+  const currentMonthKey = monthKey(new Date().toISOString());
+  const currentMonthData = cashflowByMonth[currentMonthKey] || { inflow: 0, outflow: 0 };
+  const monthlyOutflowUsd = currentMonthData.outflow;
+  const monthlyCashflowUsd = currentMonthData.inflow - currentMonthData.outflow;
+  const savingsRate = currentMonthData.inflow > 0 ? (monthlyCashflowUsd / currentMonthData.inflow) * 100 : 0;
+
+  const sortedMonthKeys = Object.keys(cashflowByMonth).sort();
+  const prevMonthData = sortedMonthKeys.length > 1 ? cashflowByMonth[sortedMonthKeys[sortedMonthKeys.length - 2]] : null;
+  const prevMonthNet = prevMonthData ? (prevMonthData.inflow - prevMonthData.outflow) : 0;
+  const cashflowChangePct = prevMonthNet !== 0 ? ((monthlyCashflowUsd - prevMonthNet) / Math.abs(prevMonthNet)) * 100 : 0;
+
+  const debtUsd = liabilities.reduce((sum, l) => sum + toUsd(l.balance, l.currency || 'USD', fxRates), 0);
+  const minDebtPaymentUsd = liabilities.reduce((sum, l) => sum + toUsd(l.minPayment, l.currency || 'USD', fxRates), 0);
+  const avgDebtApr = liabilities.length
+    ? liabilities.reduce((sum, l) => sum + num(l.apr), 0) / liabilities.length
+    : 0;
+
+  const isCurrentMonth = (dateValue) => monthKey(dateValue) === currentMonthKey;
+  const currentMonthOutflows = cashflowEntries
+    .filter((e) => e.type === 'outflow' && isCurrentMonth(e.date))
+    .map((e) => ({
+      ...e,
+      usd: toUsd(e.amount, e.currency || 'USD', fxRates),
+      spendType: e.spendType || 'variable',
+    }));
+
+  let fixedSpendUsd = currentMonthOutflows
+    .filter((e) => e.spendType === 'fixed')
+    .reduce((sum, e) => sum + e.usd, 0);
+  let variableSpendUsd = currentMonthOutflows
+    .filter((e) => e.spendType !== 'fixed')
+    .reduce((sum, e) => sum + e.usd, 0);
+
+  if (fixedSpendUsd + variableSpendUsd === 0) {
+    fixedSpendUsd = recurringBills
+      .filter((b) => (b.spendType || 'fixed') === 'fixed')
+      .reduce((sum, b) => sum + toUsd(b.amount, b.currency || 'USD', fxRates), 0);
+    variableSpendUsd = recurringBills
+      .filter((b) => (b.spendType || 'fixed') !== 'fixed')
+      .reduce((sum, b) => sum + toUsd(b.amount, b.currency || 'USD', fxRates), 0);
+  }
+
+  const totalSpendSplitUsd = fixedSpendUsd + variableSpendUsd;
+  const fixedSharePct = totalSpendSplitUsd > 0 ? (fixedSpendUsd / totalSpendSplitUsd) * 100 : 0;
+
+  const upcomingBills = recurringBills
+    .map((bill) => {
+      const now = new Date();
+      const dueDay = Math.min(31, Math.max(1, num(bill.dueDay) || 1));
+      const year = now.getFullYear();
+      const month = now.getMonth();
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      const firstDue = new Date(year, month, Math.min(dueDay, daysInMonth));
+      const nextDue = firstDue < now
+        ? new Date(year, month + 1, Math.min(dueDay, new Date(year, month + 2, 0).getDate()))
+        : firstDue;
+      const diffDays = Math.ceil((nextDue - now) / (1000 * 60 * 60 * 24));
+      return {
+        ...bill,
+        nextDue,
+        diffDays,
+        amountUsd: toUsd(bill.amount, bill.currency || 'USD', fxRates),
+      };
+    })
+    .filter((bill) => bill.diffDays >= 0 && bill.diffDays <= 30)
+    .sort((a, b) => a.diffDays - b.diffDays)
+    .slice(0, 6);
+
+  const overdueBills = recurringBills
+    .map((bill) => {
+      const now = new Date();
+      const dueDay = Math.min(31, Math.max(1, num(bill.dueDay) || 1));
+      const year = now.getFullYear();
+      const month = now.getMonth();
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      const dueThisMonth = new Date(year, month, Math.min(dueDay, daysInMonth));
+      const isOverdue = dueThisMonth < now && !bill.autopay;
+      return {
+        ...bill,
+        dueThisMonth,
+        isOverdue,
+        amountUsd: toUsd(bill.amount, bill.currency || 'USD', fxRates),
+      };
+    })
+    .filter((bill) => bill.isOverdue)
+    .sort((a, b) => b.dueThisMonth - a.dueThisMonth)
+    .slice(0, 5);
+
+  const manualDueSoonBills = recurringBills
+    .map((bill) => {
+      const now = new Date();
+      const dueDay = Math.min(31, Math.max(1, num(bill.dueDay) || 1));
+      const year = now.getFullYear();
+      const month = now.getMonth();
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      const firstDue = new Date(year, month, Math.min(dueDay, daysInMonth));
+      const nextDue = firstDue < now
+        ? new Date(year, month + 1, Math.min(dueDay, new Date(year, month + 2, 0).getDate()))
+        : firstDue;
+      const diffDays = Math.ceil((nextDue - now) / (1000 * 60 * 60 * 24));
+      return {
+        ...bill,
+        nextDue,
+        diffDays,
+        amountUsd: toUsd(bill.amount, bill.currency || 'USD', fxRates),
+      };
+    })
+    .filter((bill) => !bill.autopay && bill.diffDays >= 0 && bill.diffDays <= 5)
+    .sort((a, b) => a.diffDays - b.diffDays);
+
+  const manualRiskUsd = manualDueSoonBills.reduce((sum, bill) => sum + bill.amountUsd, 0);
+  const autopayRiskLevel = manualDueSoonBills.length === 0
+    ? 'low'
+    : manualDueSoonBills.length <= 2
+      ? 'medium'
+      : 'high';
 
   const wealthSnapshots = dashData?.wealthSnapshots ?? [];
   const wealthHistory = useMemo(() => {
@@ -971,7 +1391,14 @@ export default function FinancialDashboard() {
 
   const liquidUsd = (computed?.cashUsd ?? 0) + (computed?.cryptoUsd ?? 0) + (computed?.stocksUsd ?? 0);
   const illiquidUsd = computed?.goldUsd ?? 0;
-  const netWorth = liquidUsd + illiquidUsd;
+  const assetWorth = liquidUsd + illiquidUsd;
+  const netWorth = assetWorth - debtUsd;
+  const netWorthChangePct = wealthHistory.length > 1
+    ? ((wealthHistory[wealthHistory.length - 1].value - wealthHistory[wealthHistory.length - 2].value)
+      / Math.max(1, wealthHistory[wealthHistory.length - 2].value)) * 100
+    : 0;
+  const savingsTargetPct = 20;
+  const savingsRateDeltaPct = savingsRate - savingsTargetPct;
 
   return (
     <CurrencyCtx.Provider value={currencyCtx}>
@@ -1027,10 +1454,150 @@ export default function FinancialDashboard() {
 
           {/* KPI Cards */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-            <KpiCard title="Total Wealth" value={totalUsd} change={7.9} icon={Wallet} iconBg="bg-blue-500" />
-            <KpiCard title="Monthly Income" value={monthlyIncomeUsd} change={5.8} icon={DollarSign} iconBg="bg-green-500" />
-            <KpiCard title="Assets Under Management" value={(computed?.cryptoUsd ?? 0) + (computed?.stocksUsd ?? 0) + (computed?.goldUsd ?? 0)} change={9.2} icon={BarChart2} iconBg="bg-purple-500" />
-            <KpiCard title="Monthly Growth" value={totalUsd * 0.073} change={7.9} icon={TrendingUp} iconBg="bg-orange-500" />
+            <KpiCard title="Net Worth" value={netWorth} change={netWorthChangePct} icon={Wallet} iconBg="bg-blue-500" />
+            <KpiCard title="Monthly Income" value={currentMonthData.inflow || monthlyIncomeUsd} change={cashflowChangePct} icon={DollarSign} iconBg="bg-green-500" />
+            <KpiCard title="Net Cashflow" value={monthlyCashflowUsd} change={cashflowChangePct} icon={BarChart2} iconBg="bg-purple-500" />
+            <KpiCard title="Debt Outstanding" value={debtUsd} change={-avgDebtApr} icon={TrendingDown} iconBg="bg-orange-500" />
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
+            <SectionCard title="Savings Health">
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <p className="text-sm text-gray-500">Savings rate</p>
+                  <p className={`text-lg font-bold ${savingsRate >= savingsTargetPct ? 'text-green-600' : 'text-amber-600'}`}>
+                    {savingsRate.toFixed(1)}%
+                  </p>
+                </div>
+                <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                  <div className={`h-full rounded-full ${savingsRate >= savingsTargetPct ? 'bg-green-500' : 'bg-amber-500'}`}
+                    style={{ width: `${Math.min(Math.max(savingsRate, 0), 100)}%` }} />
+                </div>
+                <p className="text-xs text-gray-500">
+                  Target {savingsTargetPct}% · {savingsRateDeltaPct >= 0 ? '+' : ''}{savingsRateDeltaPct.toFixed(1)} pts
+                </p>
+              </div>
+            </SectionCard>
+            <SectionCard title="Debt Snapshot">
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between"><span className="text-gray-500">Total debt</span><span className="font-semibold text-gray-900">{currencyCtx.fmtD(debtUsd)}</span></div>
+                <div className="flex justify-between"><span className="text-gray-500">Avg APR</span><span className="font-semibold text-gray-900">{avgDebtApr.toFixed(1)}%</span></div>
+                <div className="flex justify-between"><span className="text-gray-500">Min monthly payments</span><span className="font-semibold text-gray-900">{currencyCtx.fmtD(minDebtPaymentUsd)}</span></div>
+              </div>
+            </SectionCard>
+            <SectionCard title="Runway Estimate">
+              <div className="space-y-2">
+                <p className="text-sm text-gray-500">Months covered by cash</p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {monthlyOutflowUsd > 0 ? ((computed?.cashUsd ?? 0) / monthlyOutflowUsd).toFixed(1) : '∞'}
+                </p>
+                <p className="text-xs text-gray-500">Based on cash only and current month outflows</p>
+              </div>
+            </SectionCard>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
+            <SectionCard title="Fixed vs Variable Spend">
+              <div className="space-y-3">
+                <div className="h-3 bg-gray-100 rounded-full overflow-hidden flex">
+                  <div className="bg-blue-500 h-full" style={{ width: `${fixedSharePct}%` }} />
+                  <div className="bg-orange-400 h-full" style={{ width: `${100 - fixedSharePct}%` }} />
+                </div>
+                <div className="grid grid-cols-2 gap-3 text-sm">
+                  <div className="bg-blue-50 rounded-xl p-3">
+                    <p className="text-xs text-blue-600 font-medium">Fixed</p>
+                    <p className="font-bold text-gray-900">{currencyCtx.fmtD(fixedSpendUsd)}</p>
+                  </div>
+                  <div className="bg-orange-50 rounded-xl p-3">
+                    <p className="text-xs text-orange-600 font-medium">Variable</p>
+                    <p className="font-bold text-gray-900">{currencyCtx.fmtD(variableSpendUsd)}</p>
+                  </div>
+                </div>
+                <p className="text-xs text-gray-500">Based on this month cashflow entries (falls back to recurring bills when empty).</p>
+              </div>
+            </SectionCard>
+            <SectionCard title="Upcoming Due Payments (30 days)">
+              {upcomingBills.length === 0 ? (
+                <p className="text-sm text-gray-400 py-4 text-center">No upcoming bills in next 30 days.</p>
+              ) : (
+                <div className="space-y-2">
+                  {upcomingBills.map((bill, i) => (
+                    <div key={`${bill.name}-${i}`} className="flex items-center justify-between bg-gray-50 rounded-lg px-3 py-2">
+                      <div>
+                        <p className="text-sm font-semibold text-gray-900">{bill.name || 'Bill'}</p>
+                        <p className="text-[11px] text-gray-500">
+                          {bill.nextDue.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })} · {bill.diffDays === 0 ? 'Due today' : `In ${bill.diffDays} days`}
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-sm font-bold text-gray-900">{fmt(bill.amount, bill.currency || 'USD')}</p>
+                        {bill.currency !== 'USD' && <p className="text-[10px] text-gray-400">≈ {currencyCtx.fmtD(bill.amountUsd)}</p>}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </SectionCard>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
+            <SectionCard title="Overdue Bills Alert">
+              {overdueBills.length === 0 ? (
+                <p className="text-sm text-green-600 py-4 text-center">No overdue manual bills this month.</p>
+              ) : (
+                <div className="space-y-2">
+                  <div className="bg-red-50 border border-red-100 rounded-xl px-3 py-2 text-xs text-red-700">
+                    {overdueBills.length} overdue bill{overdueBills.length > 1 ? 's' : ''} require attention.
+                  </div>
+                  {overdueBills.map((bill, i) => (
+                    <div key={`${bill.name}-overdue-${i}`} className="flex items-center justify-between bg-gray-50 rounded-lg px-3 py-2">
+                      <div>
+                        <p className="text-sm font-semibold text-gray-900">{bill.name || 'Bill'}</p>
+                        <p className="text-[11px] text-gray-500">
+                          Due {bill.dueThisMonth.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })} · Manual payment
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-sm font-bold text-red-600">{fmt(bill.amount, bill.currency || 'USD')}</p>
+                        {bill.currency !== 'USD' && <p className="text-[10px] text-gray-400">≈ {currencyCtx.fmtD(bill.amountUsd)}</p>}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </SectionCard>
+
+            <SectionCard title="Autopay Failure Risk">
+              {manualDueSoonBills.length === 0 ? (
+                <div className="space-y-2">
+                  <p className="text-sm text-green-600">Low risk: no manual bills due in the next 5 days.</p>
+                  <p className="text-xs text-gray-500">Your near-term recurring obligations are covered by autopay or have later due dates.</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  <div className={`rounded-xl px-3 py-2 text-xs font-semibold ${
+                    autopayRiskLevel === 'high'
+                      ? 'bg-red-50 text-red-700'
+                      : 'bg-amber-50 text-amber-700'
+                  }`}>
+                    {autopayRiskLevel === 'high' ? 'High' : 'Medium'} risk: {manualDueSoonBills.length} manual bill{manualDueSoonBills.length > 1 ? 's' : ''} due soon ({currencyCtx.fmtD(manualRiskUsd)}).
+                  </div>
+                  <div className="space-y-2">
+                    {manualDueSoonBills.slice(0, 4).map((bill, i) => (
+                      <div key={`${bill.name}-manual-risk-${i}`} className="flex items-center justify-between bg-gray-50 rounded-lg px-3 py-2">
+                        <div>
+                          <p className="text-sm font-semibold text-gray-900">{bill.name || 'Bill'}</p>
+                          <p className="text-[11px] text-gray-500">
+                            {bill.diffDays === 0 ? 'Due today' : `Due in ${bill.diffDays} day${bill.diffDays > 1 ? 's' : ''}`}
+                          </p>
+                        </div>
+                        <p className="text-sm font-bold text-gray-900">{fmt(bill.amount, bill.currency || 'USD')}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </SectionCard>
           </div>
 
           {/* Wealth History */}
@@ -1074,6 +1641,18 @@ export default function FinancialDashboard() {
             </div>
           )}
 
+          <div className="mb-6">
+            <LiabilitiesSection rows={liabilities} onSave={(v) => saveDash({ liabilities: v })} />
+          </div>
+
+          <div className="mb-6">
+            <RecurringBillsSection rows={recurringBills} onSave={(v) => saveDash({ recurringBills: v })} />
+          </div>
+
+          <div className="mb-6">
+            <CashflowSection entries={cashflowEntries} onSave={(v) => saveDash({ cashflowEntries: v })} />
+          </div>
+
           {/* Crypto */}
           {computed?.cryptoRows !== undefined && (
             <div className="mb-6">
@@ -1115,7 +1694,7 @@ export default function FinancialDashboard() {
                       <p className="text-xs font-semibold text-blue-700">Liquid Assets</p>
                     </div>
                     <p className="text-xl font-bold text-gray-900">{currencyCtx.fmtD(liquidUsd)}</p>
-                    <p className="text-xs text-blue-500">{netWorth > 0 ? ((liquidUsd / netWorth) * 100).toFixed(1) : 0}% of net worth</p>
+                    <p className="text-xs text-blue-500">{assetWorth > 0 ? ((liquidUsd / assetWorth) * 100).toFixed(1) : 0}% of total assets</p>
                   </div>
                   <div className="bg-purple-50 rounded-xl p-3">
                     <div className="flex items-center gap-1.5 mb-1">
@@ -1123,7 +1702,7 @@ export default function FinancialDashboard() {
                       <p className="text-xs font-semibold text-purple-700">Illiquid Assets</p>
                     </div>
                     <p className="text-xl font-bold text-gray-900">{currencyCtx.fmtD(illiquidUsd)}</p>
-                    <p className="text-xs text-purple-500">{netWorth > 0 ? ((illiquidUsd / netWorth) * 100).toFixed(1) : 0}% of net worth</p>
+                    <p className="text-xs text-purple-500">{assetWorth > 0 ? ((illiquidUsd / assetWorth) * 100).toFixed(1) : 0}% of total assets</p>
                   </div>
                 </div>
                 <div>
@@ -1143,6 +1722,22 @@ export default function FinancialDashboard() {
                 </div>
                 <div>
                   <p className="text-xs font-semibold text-gray-700 mb-2 flex items-center gap-1">
+                    <span className="w-2 h-2 bg-red-500 rounded-full inline-block" /> Liabilities
+                  </p>
+                  <div className="flex justify-between text-xs py-1.5 border-b border-gray-50">
+                    <span className="text-gray-600">Debt</span>
+                    <span className="font-semibold text-red-600">-{currencyCtx.fmtD(debtUsd)}</span>
+                  </div>
+                </div>
+                <div>
+                  <p className="text-xs font-semibold text-gray-700 mb-2">Net Worth</p>
+                  <div className="flex justify-between text-sm py-2 rounded-lg bg-gray-50 px-2">
+                    <span className="text-gray-700">Assets - Liabilities</span>
+                    <span className="font-bold text-gray-900">{currencyCtx.fmtD(netWorth)}</span>
+                  </div>
+                </div>
+                <div>
+                  <p className="text-xs font-semibold text-gray-700 mb-2 flex items-center gap-1">
                     <span className="w-2 h-2 bg-purple-500 rounded-full inline-block" /> Illiquid Assets
                   </p>
                   <div className="flex justify-between text-xs py-1.5 border-b border-gray-50">
@@ -1150,10 +1745,10 @@ export default function FinancialDashboard() {
                     <span className="font-semibold text-gray-900">{currencyCtx.fmtD(computed?.goldUsd ?? 0)}</span>
                   </div>
                 </div>
-                {netWorth > 0 && (
+                {assetWorth > 0 && (
                   <p className="text-[10px] text-gray-400 leading-relaxed">
-                    💡 Liquidity ratio of {((liquidUsd / netWorth) * 100).toFixed(1)}% indicates{' '}
-                    {liquidUsd / netWorth > 0.6 ? 'strong' : 'moderate'} access to cash.
+                    💡 Liquidity ratio of {((liquidUsd / assetWorth) * 100).toFixed(1)}% indicates{' '}
+                    {liquidUsd / assetWorth > 0.6 ? 'strong' : 'moderate'} access to liquid funds.
                   </p>
                 )}
               </div>

@@ -7,6 +7,9 @@ export const EMPTY_DASHBOARD = {
   expenseCategories: [],
   recentExpenses: [],
   goals: [],
+  liabilities: [],
+  cashflowEntries: [],
+  recurringBills: [],
   wealthSnapshots: [], // [{ month: 'Apr 2026', value: 72800 }]
 };
 
