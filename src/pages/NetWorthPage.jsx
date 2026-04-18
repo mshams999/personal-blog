@@ -8,7 +8,7 @@ import { format as formatDate, parseISO, isValid } from 'date-fns';
 import 'react-datepicker/dist/react-datepicker.css';
 import {
   TrendingUp, TrendingDown, RefreshCw, LogOut, DollarSign,
-  BarChart2, Target, Wallet, Pencil, Check, X, Plus, Trash2,
+  BarChart2, Target, Wallet, Pencil, Check, X, Plus, Trash2, Moon, Sun,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { getHoldings, saveHoldings } from '../services/networthService';
@@ -82,24 +82,24 @@ function MonthPicker({ value, onChange }) {
   return (
     <div className="relative">
       <button type="button" onClick={() => setOpen((o) => !o)}
-        className="w-36 border border-gray-200 rounded-lg px-2 py-1 text-sm text-left bg-white focus:outline-none focus:ring-1 focus:ring-blue-400 hover:border-gray-300">
-        {value || <span className="text-gray-400">Select month</span>}
+        className="w-36 border border-gray-200 dark:border-gray-600 rounded-lg px-2 py-1 text-sm text-left bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-1 focus:ring-blue-400 hover:border-gray-300 dark:hover:border-gray-500">
+        {value || <span className="text-gray-400 dark:text-gray-500">Select month</span>}
       </button>
       {open && (
         <>
           <div className="fixed inset-0 z-10" onClick={() => setOpen(false)} />
-          <div className="absolute z-20 mt-1 left-0 bg-white border border-gray-200 rounded-xl shadow-lg p-3 w-52">
+          <div className="absolute z-20 mt-1 left-0 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg p-3 w-52">
             <div className="flex items-center justify-between mb-2">
-              <button onClick={() => setPickerYear((y) => y - 1)} className="p-1 rounded-lg hover:bg-gray-100 text-gray-600 font-bold text-base leading-none">‹</button>
-              <span className="text-sm font-semibold text-gray-800">{pickerYear}</span>
-              <button onClick={() => setPickerYear((y) => y + 1)} className="p-1 rounded-lg hover:bg-gray-100 text-gray-600 font-bold text-base leading-none">›</button>
+              <button onClick={() => setPickerYear((y) => y - 1)} className="p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300 font-bold text-base leading-none">‹</button>
+              <span className="text-sm font-semibold text-gray-800 dark:text-gray-200">{pickerYear}</span>
+              <button onClick={() => setPickerYear((y) => y + 1)} className="p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300 font-bold text-base leading-none">›</button>
             </div>
             <div className="grid grid-cols-4 gap-1">
               {MONTH_NAMES.map((m) => {
                 const active = selMonth === m && selYear === pickerYear;
                 return (
                   <button key={m} onClick={() => select(m)}
-                    className={`py-1.5 text-xs rounded-lg font-medium transition-colors ${active ? 'bg-blue-600 text-white' : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600'}`}>
+                    className={`py-1.5 text-xs rounded-lg font-medium transition-colors ${active ? 'bg-blue-600 text-white' : 'text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-blue-900/30 hover:text-blue-600'}`}>
                     {m}
                   </button>
                 );
@@ -116,7 +116,7 @@ function MonthPicker({ value, onChange }) {
 function CurrencySelect({ value, onChange, className = '' }) {
   return (
     <select value={value || 'USD'} onChange={(e) => onChange(e.target.value)}
-      className={`border border-gray-200 rounded-lg px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-blue-400 bg-white ${className}`}>
+      className={`border border-gray-200 dark:border-gray-600 rounded-lg px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-blue-400 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 ${className}`}>
       {SUPPORTED_CURRENCIES.map((c) => <option key={c}>{c}</option>)}
     </select>
   );
@@ -127,7 +127,7 @@ function Inp({ value, onChange, type = 'text', placeholder, className = '', min 
   return (
     <input type={type} value={value ?? ''} min={min} placeholder={placeholder}
       onChange={(e) => onChange(type === 'number' ? num(e.target.value) : e.target.value)}
-      className={`border border-gray-200 rounded-lg px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-blue-400 bg-white ${className}`} />
+      className={`border border-gray-200 dark:border-gray-600 rounded-lg px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-blue-400 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 ${className}`} />
   );
 }
 
@@ -138,24 +138,24 @@ function EditBar({ editing, onEdit, onSave, onCancel, saving }) {
         className="flex items-center gap-1 text-xs font-semibold text-blue-600 hover:text-blue-800 disabled:opacity-50">
         <Check size={13} /> {saving ? 'Saving…' : 'Save'}
       </button>
-      <button onClick={onCancel} className="flex items-center gap-1 text-xs text-gray-400 hover:text-gray-600">
+      <button onClick={onCancel} className="flex items-center gap-1 text-xs text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300">
         <X size={13} /> Cancel
       </button>
     </div>
   );
   return (
-    <button onClick={onEdit} className="p-1 rounded-lg hover:bg-gray-100 transition-colors" title="Edit">
-      <Pencil size={13} className="text-gray-400" />
+    <button onClick={onEdit} className="p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" title="Edit">
+      <Pencil size={13} className="text-gray-400 dark:text-gray-500" />
     </button>
   );
 }
 
 function SectionCard({ title, children, trailing, className = '' }) {
   return (
-    <div className={`bg-white rounded-lg sm:rounded-2xl p-3 sm:p-5 shadow-sm border border-gray-100 ${className}`}>
+    <div className={`bg-white dark:bg-gray-800 rounded-lg sm:rounded-2xl p-3 sm:p-5 shadow-sm border border-gray-100 dark:border-gray-700 ${className}`}>
       {(title || trailing) && (
         <div className="flex items-start sm:items-center justify-between gap-2 mb-3 sm:mb-4 flex-wrap">
-          {title && <h2 className="text-sm sm:text-base font-bold text-gray-900">{title}</h2>}
+          {title && <h2 className="text-sm sm:text-base font-bold text-gray-900 dark:text-gray-100">{title}</h2>}
           {trailing && <div className="flex-shrink-0">{trailing}</div>}
         </div>
       )}
@@ -168,10 +168,10 @@ function KpiCard({ title, value, change, icon: Icon, iconBg }) {
   const { fmtD } = useCurrency();
   const pos = change >= 0;
   return (
-    <div className="bg-white rounded-lg sm:rounded-2xl p-3 sm:p-5 shadow-sm border border-gray-100 flex items-start justify-between gap-3">
+    <div className="bg-white dark:bg-gray-800 rounded-lg sm:rounded-2xl p-3 sm:p-5 shadow-sm border border-gray-100 dark:border-gray-700 flex items-start justify-between gap-3">
       <div className="min-w-0 flex-1">
-        <p className="text-[10px] sm:text-xs text-gray-500 font-medium mb-1">{title}</p>
-        <p className="text-lg sm:text-2xl font-bold text-gray-900 break-word">{fmtD(value)}</p>
+        <p className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 font-medium mb-1">{title}</p>
+        <p className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-gray-100 break-word">{fmtD(value)}</p>
         <div className={`flex items-center gap-1 mt-1 text-[9px] sm:text-xs font-semibold ${pos ? 'text-green-500' : 'text-red-500'}`}>
           {pos ? <TrendingUp size={10} /> : <TrendingDown size={10} />}
           {pos ? '+' : ''}{change.toFixed(1)}% vs last
@@ -185,7 +185,7 @@ function KpiCard({ title, value, change, icon: Icon, iconBg }) {
 function ChangeBadge({ pct }) {
   const pos = pct >= 0;
   return (
-    <span className={`text-[10px] sm:text-xs font-bold px-1.5 sm:px-2 py-0.5 rounded-full ${pos ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-500'}`}>
+    <span className={`text-[10px] sm:text-xs font-bold px-1.5 sm:px-2 py-0.5 rounded-full ${pos ? 'bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400' : 'bg-red-50 dark:bg-red-900/30 text-red-500 dark:text-red-400'}`}>
       {pos ? '+' : ''}{pct.toFixed(1)}%
     </span>
   );
@@ -194,22 +194,22 @@ function ChangeBadge({ pct }) {
 function HoldingCard({ name, symbol, iconBg, iconChar, holdingLabel, valueUsd, changePct }) {
   const { fmtD } = useCurrency();
   return (
-    <div className="bg-gray-50 rounded-lg sm:rounded-xl p-3 sm:p-4 flex flex-col gap-2">
+    <div className="bg-gray-50 dark:bg-gray-700 rounded-lg sm:rounded-xl p-3 sm:p-4 flex flex-col gap-2">
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-2 min-w-0 flex-1">
           <div className={`w-8 h-8 rounded-full ${iconBg} flex items-center justify-center text-sm font-bold flex-shrink-0`}>{iconChar}</div>
           <div className="min-w-0">
-            <p className="text-xs sm:text-sm font-bold text-gray-900 leading-tight truncate">{name}</p>
-            <p className="text-[9px] sm:text-xs text-gray-500">{symbol}</p>
+            <p className="text-xs sm:text-sm font-bold text-gray-900 dark:text-gray-100 leading-tight truncate">{name}</p>
+            <p className="text-[9px] sm:text-xs text-gray-500 dark:text-gray-400">{symbol}</p>
           </div>
         </div>
         <div className="flex-shrink-0"><ChangeBadge pct={changePct} /></div>
       </div>
       <div>
-        <p className="text-[9px] sm:text-xs text-gray-500">Holdings</p>
-        <p className="text-[10px] sm:text-xs font-medium text-gray-700">{holdingLabel}</p>
+        <p className="text-[9px] sm:text-xs text-gray-500 dark:text-gray-400">Holdings</p>
+        <p className="text-[10px] sm:text-xs font-medium text-gray-700 dark:text-gray-300">{holdingLabel}</p>
       </div>
-      <p className="text-base sm:text-lg font-bold text-gray-900 break-word">{fmtD(valueUsd)}</p>
+      <p className="text-base sm:text-lg font-bold text-gray-900 dark:text-gray-100 break-word">{fmtD(valueUsd)}</p>
     </div>
   );
 }
@@ -218,8 +218,8 @@ const WealthTooltip = ({ active, payload, label }) => {
   const { fmtD } = useCurrency();
   if (!active || !payload?.length) return null;
   return (
-    <div className="bg-white border border-gray-200 rounded-xl shadow-md px-3 py-2 text-sm">
-      <p className="font-semibold text-gray-600 mb-0.5">{label}</p>
+    <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-md px-3 py-2 text-sm">
+      <p className="font-semibold text-gray-600 dark:text-gray-300 mb-0.5">{label}</p>
       <p className="font-bold text-blue-600">{fmtD(payload[0]?.value)}</p>
     </div>
   );
@@ -229,8 +229,8 @@ const BudgetTooltip = ({ active, payload, label }) => {
   const { fmtD } = useCurrency();
   if (!active || !payload?.length) return null;
   return (
-    <div className="bg-white border border-gray-200 rounded-xl shadow-md px-3 py-2 text-sm">
-      <p className="font-semibold text-gray-700 mb-1">{label}</p>
+    <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-md px-3 py-2 text-sm">
+      <p className="font-semibold text-gray-700 dark:text-gray-300 mb-1">{label}</p>
       {payload.map((p) => (
         <p key={p.dataKey} style={{ color: p.fill }}>
           {p.dataKey === 'budget' ? 'Budget' : 'Actual'}: {fmtD(p.value)}
@@ -245,7 +245,7 @@ const BudgetTooltip = ({ active, payload, label }) => {
 // ─── Price Ticker Card ───────────────────────────────────────────────────────
 function PriceTickerCard({ prices, goldPerOunceUsd }) {
   const { fmtD } = useCurrency();
-  
+
   const priceData = [
     { symbol: 'BTC', name: 'Bitcoin', price: prices?.BTC, icon: '₿' },
     { symbol: 'SLV', name: 'Silver', price: prices?.SLV, icon: '🥈' },
@@ -256,15 +256,15 @@ function PriceTickerCard({ prices, goldPerOunceUsd }) {
     <SectionCard title="Live Prices" className="mb-6">
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3">
         {priceData.map((item) => (
-          <div key={item.symbol} className="bg-gradient-to-br from-white to-gray-50 rounded-lg sm:rounded-xl p-3 sm:p-4 border border-gray-200 hover:border-gray-300 transition-colors">
+          <div key={item.symbol} className="bg-gradient-to-br from-white to-gray-50 dark:from-gray-700 dark:to-gray-700 rounded-lg sm:rounded-xl p-3 sm:p-4 border border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500 transition-colors">
             <div className="flex items-start gap-2 mb-3">
               <span className="text-2xl sm:text-3xl flex-shrink-0">{item.icon}</span>
               <div className="flex-1 min-w-0">
-                <p className="text-[9px] sm:text-xs text-gray-500 font-medium truncate uppercase tracking-wide">{item.symbol}</p>
-                <p className="text-xs sm:text-sm text-gray-700 font-semibold leading-tight line-clamp-2">{item.name}</p>
+                <p className="text-[9px] sm:text-xs text-gray-500 dark:text-gray-400 font-medium truncate uppercase tracking-wide">{item.symbol}</p>
+                <p className="text-xs sm:text-sm text-gray-700 dark:text-gray-300 font-semibold leading-tight line-clamp-2">{item.name}</p>
               </div>
             </div>
-            <p className="text-base sm:text-xl font-bold text-gray-900 break-word">
+            <p className="text-base sm:text-xl font-bold text-gray-900 dark:text-gray-100 break-word">
               {item.price != null ? fmtD(item.price) : '—'}
             </p>
           </div>
@@ -302,7 +302,7 @@ function IncomeSourcesSection({ sources, onSave }) {
             <Inp value={src.label} onChange={(v) => update(i, 'label', v)} className="flex-1 min-w-[100px]" placeholder="Source name" />
             <Inp value={src.category} onChange={(v) => update(i, 'category', v)} className="w-24" placeholder="Category" />
             <select value={src.frequency} onChange={(e) => update(i, 'frequency', e.target.value)}
-              className="border border-gray-200 rounded-lg px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-blue-400">
+              className="border border-gray-200 dark:border-gray-600 rounded-lg px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-blue-400 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
               {['Monthly', 'Variable', 'Quarterly', 'Annual'].map((f) => <option key={f}>{f}</option>)}
             </select>
             <Inp type="number" value={src.amount} onChange={(v) => update(i, 'amount', v)} className="w-24" min="0" />
@@ -326,23 +326,23 @@ function IncomeSourcesSection({ sources, onSave }) {
           {sources.map((src) => {
             const usdAmount = toUsd(src.amount, src.currency || 'USD', fxRates);
             return (
-              <div key={src.label} className="bg-gray-50 rounded-xl p-3">
+              <div key={src.label} className="bg-gray-50 dark:bg-gray-700 rounded-xl p-3">
                 <div className="flex items-center justify-between mb-1">
                   <div className="flex items-center gap-1.5">
                     <span className="text-base">{src.icon}</span>
                     <div>
-                      <p className="text-xs font-bold text-gray-900 leading-tight">{src.label}</p>
-                      <p className="text-[10px] text-gray-400">{src.category}</p>
+                      <p className="text-xs font-bold text-gray-900 dark:text-gray-100 leading-tight">{src.label}</p>
+                      <p className="text-[10px] text-gray-400 dark:text-gray-500">{src.category}</p>
                     </div>
                   </div>
-                  <span className="text-[10px] text-gray-400 font-medium">{src.frequency}</span>
+                  <span className="text-[10px] text-gray-400 dark:text-gray-500 font-medium">{src.frequency}</span>
                 </div>
-                <p className="text-base font-bold text-gray-900 mt-2">
+                <p className="text-base font-bold text-gray-900 dark:text-gray-100 mt-2">
                   {fmt(src.amount, src.currency || 'USD')}
-                  <span className="text-xs text-gray-400 font-normal">/mo</span>
+                  <span className="text-xs text-gray-400 dark:text-gray-500 font-normal">/mo</span>
                 </p>
                 {src.currency && src.currency !== 'USD' && (
-                  <p className="text-[10px] text-gray-400 mt-0.5">≈ {fmtD(usdAmount)}</p>
+                  <p className="text-[10px] text-gray-400 dark:text-gray-500 mt-0.5">≈ {fmtD(usdAmount)}</p>
                 )}
               </div>
             );
@@ -381,7 +381,7 @@ function BudgetSection({ budget, onSave }) {
   if (editing) return (
     <SectionCard title="Budget vs Actual" trailing={<EditBar editing saving={saving} onSave={save} onCancel={cancel} />}>
       <div className="space-y-2">
-        <div className="flex gap-2 text-xs text-gray-500 font-medium px-1 mb-1">
+        <div className="flex gap-2 text-xs text-gray-500 dark:text-gray-400 font-medium px-1 mb-1">
           <span className="flex-1">Category</span><span className="w-20">Currency</span>
           <span className="w-20">Budget</span><span className="w-20">Actual</span>
         </div>
@@ -408,10 +408,10 @@ function BudgetSection({ budget, onSave }) {
       ) : (
         <>
           <div className="flex items-center justify-between mb-3">
-            <p className="text-xs text-gray-400">This month</p>
+            <p className="text-xs text-gray-400 dark:text-gray-500">This month</p>
             <div className={`text-sm font-bold ${diff > 0 ? 'text-red-500' : 'text-green-500'}`}>
               {diff > 0 ? '+' : ''}{fmtD(diff)}
-              <span className="text-xs font-normal text-gray-400 ml-1">{diff > 0 ? 'over' : 'under'} budget</span>
+              <span className="text-xs font-normal text-gray-400 dark:text-gray-500 ml-1">{diff > 0 ? 'over' : 'under'} budget</span>
             </div>
           </div>
           <ResponsiveContainer width="100%" height={180}>
@@ -424,7 +424,7 @@ function BudgetSection({ budget, onSave }) {
               <Bar dataKey="actual" fill={BLUE} radius={[3, 3, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
-          <div className="flex items-center gap-4 mt-2 justify-center text-xs text-gray-500">
+          <div className="flex items-center gap-4 mt-2 justify-center text-xs text-gray-500 dark:text-gray-400">
             <span className="flex items-center gap-1"><span className="w-3 h-2 rounded bg-blue-200 inline-block" />Budget</span>
             <span className="flex items-center gap-1"><span className="w-3 h-2 rounded bg-blue-500 inline-block" />Actual</span>
           </div>
@@ -451,7 +451,7 @@ function ExpenseSection({ categories, recentExpenses, onSave }) {
 
   if (editing) return (
     <SectionCard title="Expense Breakdown" trailing={<EditBar editing saving={saving} onSave={save} onCancel={cancel} />}>
-      <p className="text-xs font-semibold text-gray-600 mb-2">Categories</p>
+      <p className="text-xs font-semibold text-gray-600 dark:text-gray-300 mb-2">Categories</p>
       <div className="space-y-2 mb-4">
         {draft.categories.map((cat, i) => (
           <div key={i} className="flex items-center gap-2">
@@ -463,7 +463,7 @@ function ExpenseSection({ categories, recentExpenses, onSave }) {
         ))}
         <button onClick={addCat} className="flex items-center gap-1 text-xs text-blue-600 font-medium hover:text-blue-800"><Plus size={13} /> Add category</button>
       </div>
-      <p className="text-xs font-semibold text-gray-600 mb-2">Recent Expenses</p>
+      <p className="text-xs font-semibold text-gray-600 dark:text-gray-300 mb-2">Recent Expenses</p>
       <div className="space-y-2">
         {draft.recentExpenses.map((exp, i) => (
           <div key={i} className="flex items-center gap-2 flex-wrap">
@@ -487,8 +487,8 @@ function ExpenseSection({ categories, recentExpenses, onSave }) {
       ) : (
         <>
           <div className="flex items-center justify-between mb-1">
-            <p className="text-xs text-gray-400">This month</p>
-            <p className="text-xl font-bold text-gray-900">{fmtD(total)}</p>
+            <p className="text-xs text-gray-400 dark:text-gray-500">This month</p>
+            <p className="text-xl font-bold text-gray-900 dark:text-gray-100">{fmtD(total)}</p>
           </div>
           <div className="flex gap-4 items-start">
             <div className="flex-shrink-0">
@@ -500,32 +500,32 @@ function ExpenseSection({ categories, recentExpenses, onSave }) {
               </PieChart>
             </div>
             <div className="flex-1 space-y-1.5 pt-1">
-              <p className="text-xs font-semibold text-gray-700 mb-2">Category Details</p>
+              <p className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2">Category Details</p>
               {catUsd.map((e, i) => (
                 <div key={e.name} className="flex items-center justify-between text-xs">
                   <div className="flex items-center gap-1.5">
                     <div className="w-2 h-2 rounded-full" style={{ background: PIE_COLORS[i % PIE_COLORS.length] }} />
-                    <span className="text-gray-600">{e.name}</span>
+                    <span className="text-gray-600 dark:text-gray-400">{e.name}</span>
                   </div>
                   <div className="text-right">
-                    <span className="font-semibold text-gray-900">{fmt(e.value, e.currency || 'USD')}</span>
-                    {total > 0 && <span className="text-gray-400 ml-1">{((e.usdValue / total) * 100).toFixed(1)}%</span>}
+                    <span className="font-semibold text-gray-900 dark:text-gray-100">{fmt(e.value, e.currency || 'USD')}</span>
+                    {total > 0 && <span className="text-gray-400 dark:text-gray-500 ml-1">{((e.usdValue / total) * 100).toFixed(1)}%</span>}
                   </div>
                 </div>
               ))}
             </div>
           </div>
           {recentExpenses.length > 0 && (
-            <div className="mt-4 border-t border-gray-100 pt-3">
-              <p className="text-xs font-semibold text-gray-700 mb-2">Recent Large Expenses</p>
+            <div className="mt-4 border-t border-gray-100 dark:border-gray-700 pt-3">
+              <p className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2">Recent Large Expenses</p>
               <div className="grid grid-cols-2 gap-2">
                 {recentExpenses.map((e, i) => (
-                  <div key={i} className="flex items-center justify-between text-xs bg-gray-50 rounded-lg px-2.5 py-2">
+                  <div key={i} className="flex items-center justify-between text-xs bg-gray-50 dark:bg-gray-700 rounded-lg px-2.5 py-2">
                     <div>
-                      <p className="font-semibold text-gray-900">{e.name}</p>
-                      <p className="text-gray-400">{e.category}{e.date ? ` · ${e.date}` : ''}</p>
+                      <p className="font-semibold text-gray-900 dark:text-gray-100">{e.name}</p>
+                      <p className="text-gray-400 dark:text-gray-500">{e.category}{e.date ? ` · ${e.date}` : ''}</p>
                     </div>
-                    <span className="font-bold text-gray-900">{fmt(e.amount, e.currency || 'USD')}</span>
+                    <span className="font-bold text-gray-900 dark:text-gray-100">{fmt(e.amount, e.currency || 'USD')}</span>
                   </div>
                 ))}
               </div>
@@ -550,7 +550,7 @@ function GoalsSection({ goals, onSave }) {
     <SectionCard title="Financial Goals" trailing={<EditBar editing saving={saving} onSave={save} onCancel={cancel} />}>
       <div className="space-y-3">
         {draft.map((g, i) => (
-          <div key={i} className="space-y-1.5 p-3 bg-gray-50 rounded-xl">
+          <div key={i} className="space-y-1.5 p-3 bg-gray-50 dark:bg-gray-700 rounded-xl">
             <div className="flex items-center gap-2">
               <Inp value={g.icon} onChange={(v) => update(i, 'icon', v)} className="w-10 text-center" placeholder="🎯" />
               <Inp value={g.name} onChange={(v) => update(i, 'name', v)} className="flex-1" placeholder="Goal name" />
@@ -560,11 +560,11 @@ function GoalsSection({ goals, onSave }) {
             </div>
             <div className="flex items-center gap-2">
               <div className="flex-1">
-                <p className="text-[10px] text-gray-400 mb-0.5">Saved</p>
+                <p className="text-[10px] text-gray-400 dark:text-gray-500 mb-0.5">Saved</p>
                 <Inp type="number" value={g.saved} onChange={(v) => update(i, 'saved', v)} className="w-full" min="0" />
               </div>
               <div className="flex-1">
-                <p className="text-[10px] text-gray-400 mb-0.5">Target</p>
+                <p className="text-[10px] text-gray-400 dark:text-gray-500 mb-0.5">Target</p>
                 <Inp type="number" value={g.target} onChange={(v) => update(i, 'target', v)} className="w-full" min="0" />
               </div>
             </div>
@@ -592,18 +592,18 @@ function GoalsSection({ goals, onSave }) {
                   <div className="flex items-center gap-2">
                     <span className="text-base">{g.icon}</span>
                     <div>
-                      <p className="text-sm font-bold text-gray-900">{g.name}</p>
-                      {g.deadline && <p className="text-xs text-gray-400">Target {g.deadline}</p>}
+                      <p className="text-sm font-bold text-gray-900 dark:text-gray-100">{g.name}</p>
+                      {g.deadline && <p className="text-xs text-gray-400 dark:text-gray-500">Target {g.deadline}</p>}
                     </div>
                   </div>
-                  <span className="text-sm font-bold text-gray-700">{pct}%</span>
+                  <span className="text-sm font-bold text-gray-700 dark:text-gray-300">{pct}%</span>
                 </div>
-                <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                <div className="h-2 bg-gray-100 dark:bg-gray-600 rounded-full overflow-hidden">
                   <div className="h-full rounded-full transition-all" style={{ width: `${pct}%`, background: color }} />
                 </div>
-                <div className="flex justify-between text-xs text-gray-400">
+                <div className="flex justify-between text-xs text-gray-400 dark:text-gray-500">
                   <span>{fmt(g.saved, g.currency || 'USD')} saved{g.currency && g.currency !== 'USD' && ` · ${fmtD(savedUsd)}`}</span>
-                  <span className="text-gray-500 font-medium">{fmt(g.target, g.currency || 'USD')}</span>
+                  <span className="text-gray-500 dark:text-gray-400 font-medium">{fmt(g.target, g.currency || 'USD')}</span>
                 </div>
               </div>
             );
@@ -625,7 +625,7 @@ function CryptoSection({ rows, onSave }) {
   if (editing) return (
     <SectionCard title="Cryptocurrency Holdings" trailing={<EditBar editing saving={saving} onSave={save} onCancel={cancel} />}>
       <div className="space-y-2">
-        <div className="grid grid-cols-3 gap-2 text-xs text-gray-500 font-medium px-1">
+        <div className="grid grid-cols-3 gap-2 text-xs text-gray-500 dark:text-gray-400 font-medium px-1">
           <span>Symbol</span><span>Name</span><span>Quantity</span>
         </div>
         {draft.map((c, i) => (
@@ -670,7 +670,7 @@ function StocksSection({ rows, onSave }) {
   if (editing) return (
     <SectionCard title="Stocks & Shares" trailing={<EditBar editing saving={saving} onSave={save} onCancel={cancel} />}>
       <div className="space-y-2">
-        <div className="grid grid-cols-3 gap-2 text-xs text-gray-500 font-medium px-1">
+        <div className="grid grid-cols-3 gap-2 text-xs text-gray-500 dark:text-gray-400 font-medium px-1">
           <span>Symbol</span><span>Name</span><span>Shares</span>
         </div>
         {draft.map((s, i) => (
@@ -715,14 +715,14 @@ function GoldSection({ rows, onSave }) {
   if (editing) return (
     <SectionCard title="Precious Metals" trailing={<EditBar editing saving={saving} onSave={save} onCancel={cancel} />}>
       <div className="space-y-2">
-        <div className="flex gap-2 text-xs text-gray-500 font-medium px-1">
+        <div className="flex gap-2 text-xs text-gray-500 dark:text-gray-400 font-medium px-1">
           <span className="flex-1">Metal</span><span className="w-20">Karat</span><span className="w-28">Grams</span>
         </div>
         {draft.map((g, i) => (
           <div key={i} className="flex items-center gap-2">
             <Inp value={g.metal} onChange={(v) => update(i, 'metal', v)} className="flex-1" placeholder="Gold" />
             <select value={g.karat ?? 24} onChange={(e) => update(i, 'karat', Number(e.target.value))}
-              className="w-20 border border-gray-200 rounded-lg px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-blue-400">
+              className="w-20 border border-gray-200 dark:border-gray-600 rounded-lg px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-blue-400 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
               {[18, 21, 22, 24].map((k) => <option key={k} value={k}>{k}K</option>)}
             </select>
             <Inp type="number" value={g.grams} onChange={(v) => update(i, 'grams', v)} className="w-28" min="0" placeholder="0" />
@@ -766,7 +766,7 @@ function CashSection({ rows, fxRates, onSave }) {
   if (editing) return (
     <SectionCard title="Cash & Savings" trailing={<EditBar editing saving={saving} onSave={save} onCancel={cancel} />}>
       <div className="space-y-2">
-        <div className="flex gap-2 text-xs text-gray-500 font-medium px-1">
+        <div className="flex gap-2 text-xs text-gray-500 dark:text-gray-400 font-medium px-1">
           <span className="flex-1">Account / Label</span><span className="w-20">Currency</span><span className="w-28">Amount</span>
         </div>
         {draft.map((c, i) => (
@@ -792,25 +792,25 @@ function CashSection({ rows, fxRates, onSave }) {
           const currency = c.currency || 'USD';
           const usdVal = toUsd(native, currency, fxRates);
           return (
-            <div key={i} className="bg-gray-50 rounded-xl p-3 flex items-center justify-between">
+            <div key={i} className="bg-gray-50 dark:bg-gray-700 rounded-xl p-3 flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center text-sm">💵</div>
                 <div>
-                  <p className="text-sm font-semibold text-gray-800">{c.label || 'Cash'}</p>
-                  <p className="text-[10px] text-gray-400">{currency}</p>
+                  <p className="text-sm font-semibold text-gray-800 dark:text-gray-200">{c.label || 'Cash'}</p>
+                  <p className="text-[10px] text-gray-400 dark:text-gray-500">{currency}</p>
                 </div>
               </div>
               <div className="text-right">
-                <p className="text-sm font-bold text-gray-900">{fmt(native, currency)}</p>
-                {currency !== 'USD' && <p className="text-[10px] text-gray-400">≈ {fmtD(usdVal)}</p>}
+                <p className="text-sm font-bold text-gray-900 dark:text-gray-100">{fmt(native, currency)}</p>
+                {currency !== 'USD' && <p className="text-[10px] text-gray-400 dark:text-gray-500">≈ {fmtD(usdVal)}</p>}
               </div>
             </div>
           );
         })}
       </div>
-      <div className="mt-3 pt-3 border-t border-gray-100 flex justify-between items-center">
-        <span className="text-xs text-gray-500">Total</span>
-        <span className="text-sm font-bold text-gray-900">{fmtD(totalUsd)}</span>
+      <div className="mt-3 pt-3 border-t border-gray-100 dark:border-gray-700 flex justify-between items-center">
+        <span className="text-xs text-gray-500 dark:text-gray-400">Total</span>
+        <span className="text-sm font-bold text-gray-900 dark:text-gray-100">{fmtD(totalUsd)}</span>
       </div>
     </SectionCard>
   );
@@ -836,14 +836,14 @@ function WealthHistoryCard({ wealthHistory, snapshots, onSaveSnapshots, classNam
     }>
       {editing ? (
         <div className="space-y-2">
-          <div className="hidden sm:flex gap-2 text-xs text-gray-500 font-medium px-1 mb-2">
+          <div className="hidden sm:flex gap-2 text-xs text-gray-500 dark:text-gray-400 font-medium px-1 mb-2">
             <span className="flex-1 min-w-0">Month</span><span className="flex-1 min-w-0">Net Worth (USD)</span>
           </div>
           {draft.map((s, i) => (
             <div key={i} className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
-              <div className="sm:hidden text-xs text-gray-400 font-medium">Month</div>
+              <div className="sm:hidden text-xs text-gray-400 dark:text-gray-500 font-medium">Month</div>
               <MonthPicker value={s.month} onChange={(v) => update(i, 'month', v)} />
-              <div className="sm:hidden text-xs text-gray-400 font-medium">Net Worth (USD)</div>
+              <div className="sm:hidden text-xs text-gray-400 dark:text-gray-500 font-medium">Net Worth (USD)</div>
               <Inp type="number" value={s.value} onChange={(v) => update(i, 'value', v)} className="flex-1 min-w-0" min="0" />
               <button onClick={() => remove(i)} className="p-1.5 text-red-400 hover:text-red-600 self-start sm:self-center flex-shrink-0"><Trash2 size={14} /></button>
             </div>
@@ -867,7 +867,7 @@ function WealthHistoryCard({ wealthHistory, snapshots, onSaveSnapshots, classNam
               <Area type="monotone" dataKey="value" stroke={BLUE} strokeWidth={2} fill="url(#wealthGrad)" dot={false} activeDot={{ r: 3, fill: BLUE }} />
             </AreaChart>
           </ResponsiveContainer>
-          <div className="flex items-center justify-center gap-1 mt-2 sm:mt-3 text-[9px] sm:text-xs text-gray-500">
+          <div className="flex items-center justify-center gap-1 mt-2 sm:mt-3 text-[9px] sm:text-xs text-gray-500 dark:text-gray-400">
             <div className="w-3 h-0.5 bg-blue-500 rounded" />
             Total Wealth (USD)
           </div>
@@ -892,6 +892,7 @@ export default function FinancialDashboard() {
   const [priceError, setPriceError] = useState(null);
   const [timeRange, setTimeRange] = useState('6M');
   const [displayCurrency, setDisplayCurrency] = useState('USD');
+  const [darkMode, setDarkMode] = useState(false);
 
   const loadPrices = useCallback(async (h) => {
     const cryptoSymbols = [...new Set([(h.crypto || []).map((c) => c.symbol).filter(Boolean), ['BTC']].flat())];
@@ -1011,10 +1012,10 @@ export default function FinancialDashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className={`min-h-screen flex items-center justify-center ${darkMode ? 'dark bg-gray-900' : 'bg-gray-50'}`}>
         <div className="text-center">
           <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
-          <p className="text-gray-500 text-sm">Loading your dashboard…</p>
+          <p className="text-gray-500 dark:text-gray-400 text-sm">Loading your dashboard…</p>
         </div>
       </div>
     );
@@ -1031,7 +1032,7 @@ export default function FinancialDashboard() {
 
   return (
     <CurrencyCtx.Provider value={currencyCtx}>
-      <div className="min-h-screen bg-gray-50">
+      <div className={`min-h-screen ${darkMode ? 'dark bg-gray-900' : 'bg-gray-50'}`}>
         <div className="max-w-6xl mx-auto px-3 sm:px-4 py-4 sm:py-8">
 
           {/* Header */}
