@@ -1,4 +1,4 @@
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { db } from '../config/firebase';
 
 const EMPTY = { cash: [], crypto: [], stocks: [], gold: [], manual: [] };
@@ -15,4 +15,11 @@ export const getHoldings = async () => {
         manual: data.manual || [],
         updatedAt: data.updatedAt || null,
     };
+};
+
+export const saveHoldings = async (holdings) => {
+    await setDoc(doc(db, 'networth', 'holdings'), {
+        ...holdings,
+        updatedAt: new Date().toISOString(),
+    });
 };
