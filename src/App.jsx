@@ -15,6 +15,7 @@ import CVPage from './pages/CVPage'
 import AdminPage from './pages/AdminPage'
 import NetWorthPage from './pages/NetWorthPage'
 import ReadingLibrary from './pages/ReadingLibrary'
+import LoginPage from './pages/LoginPage'
 import ATLSCertificate from './pages/certificates/ATLSCertificate'
 import ACLSCertificate from './pages/certificates/ACLSCertificate'
 import BLSCertificate from './pages/certificates/BLSCertificate'
@@ -68,6 +69,7 @@ function App() {
                                 <Route path="/categories" element={<AllCategoriesPage />} />
                                 <Route path="/cv" element={<CVPage />} />
                                 <Route path="/reading" element={<ReadingLibrary />} />
+                                <Route path="/login" element={<LoginPage />} />
                                 <Route path="/admin" element={<ProtectedRoute><AdminPage /></ProtectedRoute>} />
                                 <Route path="/net-worth" element={<ProtectedRoute><NetWorthPage /></ProtectedRoute>} />
                                 {/* Certificate Routes */}

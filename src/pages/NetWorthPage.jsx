@@ -11,6 +11,7 @@ import {
   BarChart2, Target, Wallet, Pencil, Check, X, Plus, Trash2, Moon, Sun,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../contexts/ThemeContext';
 import { getHoldings, saveHoldings } from '../services/networthService';
 import { fetchPrices } from '../services/pricesService';
 import { getDashboardData, saveDashboardData } from '../services/dashboardService';
@@ -880,6 +881,7 @@ function WealthHistoryCard({ wealthHistory, snapshots, onSaveSnapshots, classNam
 // ─── Main dashboard ───────────────────────────────────────────────────────────
 export default function FinancialDashboard() {
   const { user, signOut } = useAuth();
+  const { theme } = useTheme();
 
   const [holdings, setHoldings] = useState(null);
   const [prices, setPrices] = useState({});
@@ -892,7 +894,6 @@ export default function FinancialDashboard() {
   const [priceError, setPriceError] = useState(null);
   const [timeRange, setTimeRange] = useState('6M');
   const [displayCurrency, setDisplayCurrency] = useState('USD');
-  const [darkMode, setDarkMode] = useState(false);
 
   const loadPrices = useCallback(async (h) => {
     const cryptoSymbols = [...new Set([(h.crypto || []).map((c) => c.symbol).filter(Boolean), ['BTC']].flat())];
@@ -1012,7 +1013,7 @@ export default function FinancialDashboard() {
 
   if (loading) {
     return (
-      <div className={`min-h-screen flex items-center justify-center ${darkMode ? 'dark bg-gray-900' : 'bg-gray-50'}`}>
+      <div className={`min-h-screen flex items-center justify-center ${theme === 'dark' ? 'dark bg-gray-900' : 'bg-gray-50'}`}>
         <div className="text-center">
           <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
           <p className="text-gray-500 dark:text-gray-400 text-sm">Loading your dashboard…</p>
@@ -1032,7 +1033,7 @@ export default function FinancialDashboard() {
 
   return (
     <CurrencyCtx.Provider value={currencyCtx}>
-      <div className={`min-h-screen ${darkMode ? 'dark bg-gray-900' : 'bg-gray-50'}`}>
+      <div className={`min-h-screen ${theme === 'dark' ? 'dark bg-gray-900' : 'bg-gray-50'}`}>
         <div className="max-w-6xl mx-auto px-3 sm:px-4 py-4 sm:py-8">
 
           {/* Header */}

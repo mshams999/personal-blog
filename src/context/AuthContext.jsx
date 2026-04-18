@@ -21,11 +21,12 @@ export const AuthProvider = ({ children }) => {
         return unsub;
     }, []);
 
-    const signIn = () => signInWithPopup(auth, new GoogleAuthProvider());
+    const signInWithGoogle = () => signInWithPopup(auth, new GoogleAuthProvider());
+    const signIn = signInWithGoogle;
     const signOut = () => firebaseSignOut(auth);
 
     return (
-        <AuthContext.Provider value={{ user, loading, signIn, signOut }}>
+        <AuthContext.Provider value={{ user, loading, signIn, signInWithGoogle, signOut }}>
             {children}
         </AuthContext.Provider>
     );

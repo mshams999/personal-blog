@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { Menu, X, Sun, Moon, Search } from 'lucide-react'
+import { Menu, X, Sun, Moon, Search, LogIn, LogOut, UserRound, ChevronDown } from 'lucide-react'
 import { useTheme } from '../contexts/ThemeContext'
 import { useHybridData } from '../contexts/HybridDataContext'
+import { useAuth } from '../context/AuthContext'
 import SearchBox from './SearchBox'
 
 /**
@@ -24,7 +25,10 @@ const Header = () => {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
     const [isSearchOpen, setIsSearchOpen] = useState(false)
     const [isScrolled, setIsScrolled] = useState(false)
+    const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
+    const userMenuRef = useRef(null)
     const { theme, toggleTheme } = useTheme()
+    const { user, loading, signOut } = useAuth()
     const { navigation = [] } = useHybridData() || {}
     const location = useLocation()
 
@@ -38,13 +42,33 @@ const Header = () => {
         // close menu on route change
         setIsMobileMenuOpen(false)
         setIsSearchOpen(false)
+        setIsUserMenuOpen(false)
     }, [location.pathname])
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
+                setIsUserMenuOpen(false)
+            }
+        }
+
+        document.addEventListener('mousedown', handleClickOutside)
+        return () => document.removeEventListener('mousedown', handleClickOutside)
+    }, [])
 
     const navItems = navigation && navigation.length > 0 ? navigation : navFallback
 
     const isActive = (path) => {
         if (path === '/') return location.pathname === '/'
         return location.pathname.startsWith(path)
+    }
+
+    const userInitial = user?.displayName?.[0] || user?.email?.[0] || 'U'
+
+    const handleSignOut = async () => {
+        await signOut()
+        setIsUserMenuOpen(false)
+        setIsMobileMenuOpen(false)
     }
 
     return (
@@ -89,6 +113,50 @@ const Header = () => {
 
                         {/* Right cluster */}
                         <div className="flex items-center gap-1">
+                            {!loading && !user && (
+                                <Link
+                                    to="/login"
+                                    className="inline-flex items-center gap-1.5 p-2 sm:px-3 sm:py-2 text-ink-muted hover:text-ink transition-colors"
+                                    aria-label="تسجيل الدخول"
+                                >
+                                    <LogIn className="w-4 h-4" />
+                                    <span className="hidden sm:inline font-display text-xs tracking-wide">تسجيل الدخول</span>
+                                </Link>
+                            )}
+
+                            {!loading && user && (
+                                <div className="relative" ref={userMenuRef}>
+                                    <button
+                                        onClick={() => setIsUserMenuOpen((v) => !v)}
+                                        className="inline-flex items-center gap-1.5 p-1.5 sm:px-2 sm:py-1.5 text-ink-muted hover:text-ink transition-colors"
+                                        aria-label="حساب المستخدم"
+                                        aria-expanded={isUserMenuOpen}
+                                    >
+                                        <span className="w-7 h-7 rounded-full bg-ink/10 text-ink flex items-center justify-center text-xs font-semibold">
+                                            {String(userInitial).toUpperCase()}
+                                        </span>
+                                        <span className="hidden sm:inline text-xs max-w-[7rem] truncate">{user.displayName || user.email}</span>
+                                        <ChevronDown className="w-3.5 h-3.5 hidden sm:block" />
+                                    </button>
+
+                                    {isUserMenuOpen && (
+                                        <div className="absolute right-0 mt-2 w-56 bg-paper border border-rule rounded-2xl shadow-lg p-2 z-50">
+                                            <div className="px-2.5 py-2 border-b border-rule">
+                                                <p className="text-xs text-ink-muted">Signed in as</p>
+                                                <p className="text-sm text-ink truncate">{user.email}</p>
+                                            </div>
+                                            <button
+                                                onClick={handleSignOut}
+                                                className="w-full mt-1 inline-flex items-center gap-2 px-2.5 py-2 rounded-xl text-sm text-ink hover:bg-ink/5 transition"
+                                            >
+                                                <LogOut className="w-4 h-4" />
+                                                <span>Sign out</span>
+                                            </button>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+
                             <button
                                 onClick={() => setIsSearchOpen((v) => !v)}
                                 className="p-2 text-ink-muted hover:text-ink transition-colors"
@@ -150,6 +218,32 @@ const Header = () => {
                             )}
                         </Link>
                     ))}
+
+                    {!loading && !user && (
+                        <Link
+                            to="/login"
+                            className="font-display text-display-lg text-ink reveal-up delay-4 inline-flex items-center gap-3"
+                        >
+                            <LogIn className="w-6 h-6" />
+                            <span>تسجيل الدخول</span>
+                        </Link>
+                    )}
+
+                    {!loading && user && (
+                        <div className="reveal-up delay-4 space-y-4">
+                            <div className="inline-flex items-center gap-3 text-ink">
+                                <UserRound className="w-6 h-6" />
+                                <span className="font-display text-2xl truncate max-w-full">{user.displayName || user.email}</span>
+                            </div>
+                            <button
+                                onClick={handleSignOut}
+                                className="font-display text-lg text-ink-muted hover:text-ink inline-flex items-center gap-2 transition-colors"
+                            >
+                                <LogOut className="w-5 h-5" />
+                                <span>تسجيل الخروج</span>
+                            </button>
+                        </div>
+                    )}
                 </nav>
             </div>
 
