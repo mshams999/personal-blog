@@ -62,15 +62,18 @@ const AboutPage = () => {
 
                 <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-14 md:pt-20 pb-20 md:pb-24 space-y-14">
                     <header className="reveal-up grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-12 items-start">
-                        <div className="lg:col-span-3">
-                            <Kicker className="mb-4">About</Kicker>
-                            <h1 className="font-display text-display-xl text-ink leading-[1.03] max-w-4xl">
-                                عن محمد شمس.. طبيب، مطوّر، وعاشق للنجوم <span aria-hidden="true">🩺💻✨</span>
+                        <div className="lg:col-span-3 space-y-6 md:space-y-7">
+                            <Kicker>About</Kicker>
+                            <h1 className="font-display text-display-xl text-ink leading-[1.2] max-w-4xl">
+                                عن محمد شمس.. طبيب، مطوّر، وعاشق للنجوم
                             </h1>
-                            <p className="font-serif text-xl md:text-2xl text-ink-muted mt-6 max-w-prose-editorial leading-relaxed">
+                            <p aria-hidden="true" className="text-3xl md:text-4xl leading-none tracking-[0.08em]">
+                                🩺💻✨
+                            </p>
+                            <p className="font-serif text-xl md:text-2xl text-ink-muted max-w-prose-editorial leading-relaxed">
                                 أهلاً بيك في مساحتي الخاصة..
                             </p>
-                            <p className="font-serif text-lg text-ink-muted mt-6 max-w-prose-editorial leading-relaxed">
+                            <p className="font-serif text-lg text-ink-muted max-w-prose-editorial leading-loose">
                                 أنا محمد شمس، طبيب مصري أعيش حالياً في المملكة العربية السعودية. رحلتي مش مجرد مسار مهني تقليدي، لكنها مزيج من حاجتين بحبهم جداً: الطب والتكنولوجيا.
                             </p>
                         </div>

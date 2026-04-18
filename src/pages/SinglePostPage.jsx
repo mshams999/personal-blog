@@ -70,8 +70,8 @@ const SinglePostPage = () => {
         () =>
             post
                 ? posts
-                      .filter((p) => p.id !== post.id && p.categoryId === post.categoryId)
-                      .slice(0, 3)
+                    .filter((p) => p.id !== post.id && p.categoryId === post.categoryId)
+                    .slice(0, 3)
                 : [],
         [post, posts]
     )

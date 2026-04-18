@@ -6,22 +6,33 @@
 @tailwind utilities;
 
 @layer base {
+
     /* Editorial semantic tokens — light mode */
     :root {
-        --color-paper: 249 245 239;        /* #F9F5EF warm off-white */
-        --color-ink: 26 25 23;             /* #1A1917 near-black */
-        --color-ink-muted: 85 80 74;       /* #55504A */
-        --color-rule: 230 223 212;         /* #E6DFD4 hairline paper */
-        --color-accent: 162 59 46;         /* #A23B2E deep editorial red */
+        --color-paper: 249 245 239;
+        /* #F9F5EF warm off-white */
+        --color-ink: 26 25 23;
+        /* #1A1917 near-black */
+        --color-ink-muted: 85 80 74;
+        /* #55504A */
+        --color-rule: 230 223 212;
+        /* #E6DFD4 hairline paper */
+        --color-accent: 162 59 46;
+        /* #A23B2E deep editorial red */
     }
 
     /* Dark mode overrides */
     .dark {
-        --color-paper: 20 18 15;           /* #14120F */
-        --color-ink: 239 234 224;          /* #EFEAE0 */
-        --color-ink-muted: 164 158 147;    /* #A49E93 */
-        --color-rule: 42 38 33;            /* #2A2621 */
-        --color-accent: 212 106 92;        /* #D46A5C */
+        --color-paper: 20 18 15;
+        /* #14120F */
+        --color-ink: 239 234 224;
+        /* #EFEAE0 */
+        --color-ink-muted: 164 158 147;
+        /* #A49E93 */
+        --color-rule: 42 38 33;
+        /* #2A2621 */
+        --color-accent: 212 106 92;
+        /* #D46A5C */
     }
 
     html {
@@ -688,7 +699,7 @@ img[loading="lazy"] {
 }
 
 /* Drop cap — applied to first paragraph of LTR articles only */
-.prose-editorial[data-has-dropcap="true"] > p:first-of-type::first-letter,
+.prose-editorial[data-has-dropcap="true"]>p:first-of-type::first-letter,
 .drop-cap::first-letter {
     font-family: 'Fraunces', Georgia, serif;
     font-weight: 700;
@@ -699,7 +710,7 @@ img[loading="lazy"] {
     color: rgb(var(--color-accent));
 }
 
-[dir="rtl"] .prose-editorial[data-has-dropcap="true"] > p:first-of-type::first-letter,
+[dir="rtl"] .prose-editorial[data-has-dropcap="true"]>p:first-of-type::first-letter,
 [dir="rtl"] .drop-cap::first-letter {
     float: none;
     font-size: inherit;
