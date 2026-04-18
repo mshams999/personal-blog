@@ -11,35 +11,52 @@ const storySections = [
         title: 'أنا مين؟ 👤',
         icon: Stethoscope,
         body: 'أنا طبيب بمارس مهنتي حالياً في قطاع التعدين كطبيب سلامة مهنية، لكن بعيداً عن السماعة والبالطو الأبيض، أنا شخص مؤمن إن التطور ملوش سقف. بدأت رحلتي من مصر، وحالياً ببنِي مستقبلي خطوة بخطوة في بلدي الثاني السعودية، وعيني دايماً على الحلم الجاي.',
+        image: {
+            src: '/pictures/me1.jpeg',
+            alt: 'صورة محمد شمس',
+        },
     },
     {
         title: 'رحلة الـ USMLE (الطريق إلى أمريكا) 🇺🇸',
         icon: Target,
         body: 'دلوقتي، تركيزي الأكبر ومنصبّ على التحضير لمعادلة الطب الأمريكية (USMLE Step 2). الطريق مش سهل، وبحتاج فيه لكل ذرة استمرارية ونفس طويل، عشان كدة هتلاقيني ملتزم بحل الـ Blocks اليومية وبناء "فورمة" ذهنية قوية للوصول لهدفي في يوليو 2026 بإذن الله.',
+        image: {
+            src: '/pictures/step1.jpg',
+            alt: 'صورة محمد شمس',
+        },
     },
     {
         title: 'الكود والبرمجة.. شغفي التاني 💻',
         icon: Code2,
         body: 'ليه دكتور مهتم بالبرمجة؟ لأن الكود بالنسبة لي زي الطب؛ فيه منطق، فيه حل للمشكلات، وفيه خلق لشيء من لا شيء. أنا بـهوى بناء المواقع وتجربة لغات جديدة، والموقع اللي إنت فيه دلوقتي هو نتاج تعلمي لـ React و Tailwind CSS. بحب أجمع بين دقة الطب وابتكار التقنية.',
+        image: {
+            src: '/pictures/programming.jpg',
+            alt: 'صورة محمد شمس',
+        },
     },
     {
         title: 'بعيداً عن المذاكرة والشغل 🌌🏋️‍♂️',
         icon: Rocket,
         body: 'لو مش براجع حالات طبية أو بكتب كود، فغالباً هتلاقيني في مكان من اتنين:',
+        image: {
+            src: '/pictures/me2.jpg',
+            alt: 'صورة محمد شمس',
+        },
     },
 ]
 
 const beyondWorkItems = [
+     {
+        title: 'تحت السما',
+        icon: Sparkles,
+        body: 'بعشق علم الفلك (Astronomy)، والنجوم دايمًا بتفكرني إن العالم ده واسع جداً وإن أحلامنا مهما كبرت فهي ممكنة.',
+    },
     {
         title: 'الجيم',
         icon: Dumbbell,
         body: 'بالنسبة لي التمرين مش بس عشان اللياقة، ده "Reset" لعقلي عشان أقدر أكمل يومي بطاقة وشغف.',
     },
-    {
-        title: 'تحت السما',
-        icon: Sparkles,
-        body: 'بعشق علم الفلك (Astronomy)، والنجوم دايمًا بتفكرني إن العالم ده واسع جداً وإن أحلامنا مهما كبرت فهي ممكنة.',
-    },
+   
 ]
 
 const AboutPage = () => {
@@ -91,8 +108,8 @@ const AboutPage = () => {
 
                     <Rule ornament="✦" />
 
-                    <section className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
-                        {storySections.map(({ title, body, icon: Icon }, index) => (
+                    <section className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 items-start">
+                        {storySections.map(({ title, body, icon: Icon, image }, index) => (
                             <article
                                 key={title}
                                 className={`rounded-3xl border border-rule bg-paper/90 p-6 md:p-7 reveal-up delay-${Math.min(index + 1, 4)} ${title.includes('بعيداً') ? 'md:col-span-2' : ''}`}
@@ -106,6 +123,17 @@ const AboutPage = () => {
                                 <p className="font-serif text-lg leading-relaxed text-ink-muted">
                                     {body}
                                 </p>
+
+                                {image && (
+                                    <figure className="mt-6 rounded-2xl overflow-hidden border border-rule bg-paper/70 p-2 sm:p-3 flex items-center justify-center">
+                                        <img
+                                            src={image.src}
+                                            alt={image.alt}
+                                            loading="lazy"
+                                            className="w-full h-auto object-contain rounded-xl"
+                                        />
+                                    </figure>
+                                )}
 
                                 {title.includes('بعيداً') && (
                                     <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
