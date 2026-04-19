@@ -16,6 +16,16 @@
     X-Frame-Options = "SAMEORIGIN"
     X-Content-Type-Options = "nosniff"
 
+# Headers for all routes - fix CORS and auth issues
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Cross-Origin-Opener-Policy = "same-origin-allow-popups"
+    Cross-Origin-Embedder-Policy = "require-corp"
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "SAMEORIGIN"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
 # Redirect all non-file requests to index.html for SPA routing
 # This allows React Router to handle the routing on the client side
 # The rule excludes actual files (with extensions) and only redirects HTML-like paths
