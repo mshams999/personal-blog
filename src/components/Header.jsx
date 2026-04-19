@@ -175,7 +175,9 @@ const Header = () => {
                                                         <span>Net Worth Dashboard</span>
                                                     </Link>
                                                     <a
-                                                        href="/admin/index.html"
+                                                        href="https://app.storyblok.com/#/me/spaces/291949279442822/stories/0/0/index/167608382889663?currentPage=1"
+                                                        target="_blank"
+                                                        rel="noreferrer"
                                                         className="w-full mt-1 inline-flex items-center gap-2 px-2.5 py-2 rounded-xl text-sm text-ink hover:bg-ink/5 transition"
                                                         onClick={() => {
                                                             setIsUserMenuOpen(false)
@@ -183,7 +185,7 @@ const Header = () => {
                                                         }}
                                                     >
                                                         <PenSquare className="w-4 h-4" />
-                                                        <span>Tina Admin</span>
+                                                        <span>Storyblok Admin</span>
                                                     </a>
                                                 </>
                                             )}
@@ -292,12 +294,14 @@ const Header = () => {
                                         <span>Net Worth Dashboard</span>
                                     </Link>
                                     <a
-                                        href="/admin/index.html"
+                                        href="https://app.storyblok.com/#/me/spaces/291949279442822/stories/0/0/index/167608382889663?currentPage=1"
+                                        target="_blank"
+                                        rel="noreferrer"
                                         className="font-display text-lg text-ink-muted hover:text-ink inline-flex items-center gap-2 transition-colors"
                                         onClick={() => setIsMobileMenuOpen(false)}
                                     >
                                         <PenSquare className="w-5 h-5" />
-                                        <span>Tina Admin</span>
+                                        <span>Storyblok Admin</span>
                                     </a>
                                 </>
                             )}

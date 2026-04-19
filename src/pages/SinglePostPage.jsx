@@ -1,9 +1,8 @@
 import React, { useEffect, useState, useMemo } from 'react'
 import { useParams, Navigate, Link } from 'react-router-dom'
-import { ArrowUp, ArrowRight, ArrowLeft } from 'lucide-react'
+import { ArrowUp, ArrowRight } from 'lucide-react'
 import ReactStars from 'react-stars'
 import { useHybridData } from '../contexts/HybridDataContext'
-import AuthorBio from '../components/AuthorBio'
 import DisqusComments from '../components/DisqusComments'
 import MetaTags from '../components/MetaTags'
 import ReadingProgress from '../components/ReadingProgress'
@@ -50,7 +49,6 @@ const SinglePostPage = () => {
         getPostBySlug,
         getAuthorById,
         getCategoryById,
-        getAllPosts,
         loading: dataLoading,
         posts,
     } = useHybridData()
@@ -69,13 +67,7 @@ const SinglePostPage = () => {
         (post?.slug || '') + '_' + ratingsRefreshKey
     )
 
-    useArticleViews(post?.slug, true, post?.date)
-
-    const allPosts = getAllPosts()
-    const currentIndex = allPosts.findIndex((p) => p.slug === slug)
-    const previousPost = currentIndex > 0 ? allPosts[currentIndex - 1] : null
-    const nextPost =
-        currentIndex >= 0 && currentIndex < allPosts.length - 1 ? allPosts[currentIndex + 1] : null
+    const { viewCount } = useArticleViews(post?.slug, true, post?.date)
 
     const relatedPosts = useMemo(
         () =>
@@ -211,6 +203,7 @@ const SinglePostPage = () => {
                         avatar={author?.avatar}
                         date={post.date}
                         readTime={post.readTime}
+                        viewCount={viewCount}
                     />
                 </header>
 
@@ -294,7 +287,7 @@ const SinglePostPage = () => {
                                 <Rule />
                             </div>
 
-                            <AuthorBio author={author} />
+                            <DisqusComments post={post} currentUrl={url} />
 
                             {post.tags?.length > 0 && (
                                 <div className="my-10">
@@ -312,43 +305,6 @@ const SinglePostPage = () => {
                                 </div>
                             )}
 
-                            {(previousPost || nextPost) && (
-                                <nav
-                                    className="my-16 grid grid-cols-1 md:grid-cols-2 gap-8 border-t border-rule pt-10"
-                                    aria-label="تصفح المقالات"
-                                >
-                                    {previousPost ? (
-                                        <Link to={`/post/${previousPost.slug}`} className="group block">
-                                            <p className="small-caps text-ink-muted mb-2 inline-flex items-center gap-1">
-                                                <ArrowRight className="w-3 h-3" />
-                                                السابق
-                                            </p>
-                                            <h4 className="font-display text-xl text-ink group-hover:text-accent transition-colors line-clamp-2">
-                                                {previousPost.title}
-                                            </h4>
-                                        </Link>
-                                    ) : (
-                                        <div />
-                                    )}
-                                    {nextPost ? (
-                                        <Link
-                                            to={`/post/${nextPost.slug}`}
-                                            className="group block md:text-end"
-                                        >
-                                            <p className="small-caps text-ink-muted mb-2 inline-flex items-center gap-1">
-                                                التالي
-                                                <ArrowLeft className="w-3 h-3" />
-                                            </p>
-                                            <h4 className="font-display text-xl text-ink group-hover:text-accent transition-colors line-clamp-2">
-                                                {nextPost.title}
-                                            </h4>
-                                        </Link>
-                                    ) : (
-                                        <div />
-                                    )}
-                                </nav>
-                            )}
-
                             {relatedPosts.length > 0 && (
                                 <section className="my-16">
                                     <SectionHeader kicker="المزيد" title="قد يعجبك أيضاً" />
@@ -364,8 +320,6 @@ const SinglePostPage = () => {
                                     </div>
                                 </section>
                             )}
-
-                            <DisqusComments post={post} currentUrl={url} />
                         </div>
 
                         <div className="hidden lg:block" />
