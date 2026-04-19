@@ -6,14 +6,16 @@ import { useAuth } from '../context/AuthContext';
 const LoginPage = () => {
     const navigate = useNavigate();
     const { user, loading, signInWithGoogle, signIn } = useAuth();
+    const ownerEmail = import.meta.env.VITE_OWNER_EMAIL;
     const [submitting, setSubmitting] = useState(false);
     const [error, setError] = useState('');
 
     useEffect(() => {
         if (!loading && user) {
-            navigate('/net-worth', { replace: true });
+            const isOwner = !ownerEmail || user.email === ownerEmail;
+            navigate(isOwner ? '/portal' : '/', { replace: true });
         }
-    }, [loading, user, navigate]);
+    }, [loading, user, navigate, ownerEmail]);
 
     const handleGoogleSignIn = async () => {
         setError('');

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { Menu, X, Sun, Moon, Search, LogIn, LogOut, UserRound, ChevronDown } from 'lucide-react'
+import { Menu, X, Sun, Moon, Search, LogIn, LogOut, UserRound, ChevronDown, PenSquare } from 'lucide-react'
 import { useTheme } from '../contexts/ThemeContext'
 import { useHybridData } from '../contexts/HybridDataContext'
 import { useAuth } from '../context/AuthContext'
@@ -77,6 +77,8 @@ const Header = () => {
     }
 
     const userInitial = user?.displayName?.[0] || user?.email?.[0] || 'U'
+    const ownerEmail = import.meta.env.VITE_OWNER_EMAIL
+    const isOwner = !!user && (!ownerEmail || user.email === ownerEmail)
 
     const handleSignOut = async () => {
         await signOut()
@@ -158,12 +160,33 @@ const Header = () => {
                                                 <p className="text-xs text-ink-muted">Signed in as</p>
                                                 <p className="text-sm text-ink truncate">{user.email}</p>
                                             </div>
-                                            <Link
-                                                to="/net-worth"
-                                                className="w-full mt-1 inline-flex items-center gap-2 px-2.5 py-2 rounded-xl text-sm text-ink hover:bg-ink/5 transition"
-                                            >
-                                                <span>Net Worth Dashboard</span>
-                                            </Link>
+                                            {isOwner && (
+                                                <>
+                                                    <Link
+                                                        to="/portal"
+                                                        className="w-full mt-1 inline-flex items-center gap-2 px-2.5 py-2 rounded-xl text-sm text-ink hover:bg-ink/5 transition"
+                                                    >
+                                                        <span>Admin Portal</span>
+                                                    </Link>
+                                                    <Link
+                                                        to="/net-worth"
+                                                        className="w-full mt-1 inline-flex items-center gap-2 px-2.5 py-2 rounded-xl text-sm text-ink hover:bg-ink/5 transition"
+                                                    >
+                                                        <span>Net Worth Dashboard</span>
+                                                    </Link>
+                                                    <a
+                                                        href="/admin/index.html"
+                                                        className="w-full mt-1 inline-flex items-center gap-2 px-2.5 py-2 rounded-xl text-sm text-ink hover:bg-ink/5 transition"
+                                                        onClick={() => {
+                                                            setIsUserMenuOpen(false)
+                                                            setIsMobileMenuOpen(false)
+                                                        }}
+                                                    >
+                                                        <PenSquare className="w-4 h-4" />
+                                                        <span>Tina Admin</span>
+                                                    </a>
+                                                </>
+                                            )}
                                             <button
                                                 onClick={handleSignOut}
                                                 className="w-full mt-1 inline-flex items-center gap-2 px-2.5 py-2 rounded-xl text-sm text-ink hover:bg-ink/5 transition"
@@ -254,12 +277,30 @@ const Header = () => {
                                 <UserRound className="w-6 h-6" />
                                 <span className="font-display text-2xl truncate max-w-full">{user.displayName || user.email}</span>
                             </div>
-                            <Link
-                                to="/net-worth"
-                                className="font-display text-lg text-ink-muted hover:text-ink inline-flex items-center gap-2 transition-colors"
-                            >
-                                <span>Net Worth Dashboard</span>
-                            </Link>
+                            {isOwner && (
+                                <>
+                                    <Link
+                                        to="/portal"
+                                        className="font-display text-lg text-ink-muted hover:text-ink inline-flex items-center gap-2 transition-colors"
+                                    >
+                                        <span>Admin Portal</span>
+                                    </Link>
+                                    <Link
+                                        to="/net-worth"
+                                        className="font-display text-lg text-ink-muted hover:text-ink inline-flex items-center gap-2 transition-colors"
+                                    >
+                                        <span>Net Worth Dashboard</span>
+                                    </Link>
+                                    <a
+                                        href="/admin/index.html"
+                                        className="font-display text-lg text-ink-muted hover:text-ink inline-flex items-center gap-2 transition-colors"
+                                        onClick={() => setIsMobileMenuOpen(false)}
+                                    >
+                                        <PenSquare className="w-5 h-5" />
+                                        <span>Tina Admin</span>
+                                    </a>
+                                </>
+                            )}
                             <button
                                 onClick={handleSignOut}
                                 className="font-display text-lg text-ink-muted hover:text-ink inline-flex items-center gap-2 transition-colors"
