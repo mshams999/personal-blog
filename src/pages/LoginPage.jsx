@@ -22,9 +22,10 @@ const LoginPage = () => {
         try {
             const signInAction = signInWithGoogle || signIn;
             await signInAction();
-            navigate('/net-worth', { replace: true });
         } catch (e) {
-            if (e?.code === 'auth/popup-closed-by-user') {
+            if (e?.code === 'auth/unauthorized-domain') {
+                setError('This domain is not authorized in Firebase Auth settings.');
+            } else if (e?.code === 'auth/popup-closed-by-user') {
                 setError('Google sign-in was canceled. Please try again.');
             } else {
                 setError('Unable to sign in right now. Please try again in a moment.');

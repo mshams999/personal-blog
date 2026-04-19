@@ -3,6 +3,7 @@ import {
     GoogleAuthProvider,
     onAuthStateChanged,
     signInWithPopup,
+    signInWithRedirect,
     signOut as firebaseSignOut,
 } from 'firebase/auth';
 import { auth } from '../config/firebase';
@@ -21,7 +22,28 @@ export const AuthProvider = ({ children }) => {
         return unsub;
     }, []);
 
-    const signInWithGoogle = () => signInWithPopup(auth, new GoogleAuthProvider());
+    const signInWithGoogle = async () => {
+        const provider = new GoogleAuthProvider();
+        provider.setCustomParameters({ prompt: 'select_account' });
+
+        try {
+            return await signInWithPopup(auth, provider);
+        } catch (error) {
+            const popupFallbackCodes = new Set([
+                'auth/popup-blocked',
+                'auth/popup-closed-by-user',
+                'auth/cancelled-popup-request',
+                'auth/operation-not-supported-in-this-environment',
+            ]);
+
+            if (popupFallbackCodes.has(error?.code)) {
+                await signInWithRedirect(auth, provider);
+                return null;
+            }
+
+            throw error;
+        }
+    };
     const signIn = signInWithGoogle;
     const signOut = () => firebaseSignOut(auth);
 
