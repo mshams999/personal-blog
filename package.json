@@ -5,25 +5,20 @@
     "type": "module",
     "scripts": {
         "dev": "vite",
-        "build": "tinacms build && vite build && node scripts/generate-sitemap.js",
+        "build": "vite build && node scripts/generate-sitemap.js",
         "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
         "preview": "vite preview",
-        "tina:dev": "tinacms dev -c \"npm run dev\"",
-        "tina:build": "tinacms build",
-        "tina:admin": "tinacms dev",
         "seo:setup": "node scripts/setup-seo.js",
         "seo:generate": "node scripts/generate-sitemap.js",
+        "storyblok:push": "storyblok components push --space $SB_SPACE_ID --path ./storyblok",
+        "storyblok:pull": "storyblok components pull --space $SB_SPACE_ID --path ./storyblok",
         "posts:rename": "node scripts/rename-posts-to-slugs.js",
         "networth:seed": "node scripts/seed-holdings.js",
         "networth:seed:client": "node scripts/seed-holdings-client.mjs"
     },
     "dependencies": {
         "@mailchimp/mailchimp_marketing": "^3.0.80",
-        "@mdx-js/rollup": "^3.0.0",
-        "@tinacms/auth": "^1.0.12",
-        "@tinacms/cli": "^1.9.9",
-        "@tinacms/mdx": "^1.7.0",
-        "@types/mdx": "^2.0.10",
+        "@storyblok/react": "^6.1.2",
         "axios": "^1.10.0",
         "concurrently": "^9.2.0",
         "date-fns": "^2.30.0",
@@ -44,7 +39,7 @@
         "recharts": "^3.8.1",
         "resend": "^4.6.0",
         "slick-carousel": "^1.8.1",
-        "tinacms": "^2.7.9"
+        "storyblok-rich-text-react-renderer": "^3.0.1"
     },
     "devDependencies": {
         "@tailwindcss/typography": "^0.5.10",
@@ -57,6 +52,7 @@
         "eslint-plugin-react-hooks": "^4.6.0",
         "eslint-plugin-react-refresh": "^0.4.4",
         "postcss": "^8.4.31",
+        "storyblok": "^4.16.8",
         "tailwindcss": "^3.3.5",
         "vite": "^4.5.0",
         "vite-plugin-sitemap": "^0.8.2"

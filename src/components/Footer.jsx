@@ -113,7 +113,7 @@ const Footer = () => {
                 {/* Colophon */}
                 <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 text-ink-muted">
                     <p className="font-serif italic text-sm leading-relaxed max-w-xl">
-                        Set in Fraunces, Amiri, and Inter. Built with React, Vite, and TinaCMS.
+                        Set in Fraunces, Amiri, and Inter. Built with React, Vite, and Storyblok.
                     </p>
                     <p className="small-caps">
                         © {currentYear} · جميع الحقوق محفوظة

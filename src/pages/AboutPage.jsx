@@ -1,10 +1,12 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Stethoscope, Code2, Target, Dumbbell, Rocket, Sparkles } from 'lucide-react'
 import MetaTags from '../components/MetaTags'
 import Rule from '../components/editorial/Rule'
 import Kicker from '../components/editorial/Kicker'
 import SectionHeader from '../components/editorial/SectionHeader'
+import StoryblokContent from '../components/StoryblokContent'
+import { fetchPage } from '../utils/storyblokDataLoader'
 
 const storySections = [
     {
@@ -60,6 +62,16 @@ const beyondWorkItems = [
 ]
 
 const AboutPage = () => {
+    const [storyblokPage, setStoryblokPage] = useState(null)
+
+    useEffect(() => {
+        let cancelled = false
+        fetchPage('about')
+            .then((p) => { if (!cancelled) setStoryblokPage(p) })
+            .catch(() => { /* fall through to hardcoded sections */ })
+        return () => { cancelled = true }
+    }, [])
+
     return (
         <>
             <MetaTags
@@ -107,6 +119,12 @@ const AboutPage = () => {
                     </header>
 
                     <Rule ornament="✦" />
+
+                    {storyblokPage?.body && (
+                        <section className="reveal-up">
+                            <StoryblokContent content={storyblokPage.body} />
+                        </section>
+                    )}
 
                     <section className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 items-start">
                         {storySections.map(({ title, body, icon: Icon, image }, index) => (

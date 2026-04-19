@@ -1,35 +1,39 @@
 import { defineConfig, loadEnv } from 'vite'
 import react from '@vitejs/plugin-react'
-import mdx from '@mdx-js/rollup'
 import VitePluginSitemap from 'vite-plugin-sitemap'
+import { existsSync, readFileSync } from 'fs'
+import { resolve } from 'path'
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
-    // Load env file based on `mode` in the current working directory.
     const env = loadEnv(mode, process.cwd(), '')
 
+    const certPath = resolve(process.cwd(), 'localhost.pem')
+    const keyPath = resolve(process.cwd(), 'localhost-key.pem')
+    const httpsConfig = existsSync(certPath) && existsSync(keyPath)
+        ? { cert: readFileSync(certPath), key: readFileSync(keyPath) }
+        : false
+
     return {
+        server: {
+            https: httpsConfig,
+            host: 'localhost',
+            port: 5173,
+        },
         plugins: [
             react(),
-            mdx({
-                // Configure MDX options here
-                remarkPlugins: [],
-                rehypePlugins: [],
-            }),
             VitePluginSitemap({
                 hostname: 'https://mohamedshams.com',
                 dynamicRoutes: [
                     '/',
                     '/blog',
                     '/about'
-                    // We'll handle dynamic routes differently
                 ],
                 exclude: ['/404'],
                 lastmod: new Date().toISOString(),
                 changefreq: 'daily',
                 priority: 0.7,
             }),
-            // Custom plugin to replace Google Analytics environment variables in HTML
             {
                 name: 'html-transform',
                 transformIndexHtml: {
@@ -46,16 +50,5 @@ export default defineConfig(({ mode }) => {
                 '@': '/src',
             },
         },
-        assetsInclude: ['**/*.mdx'],
-        define: {
-            // Make TinaCMS environment variables available to the client
-            'process.env.NEXT_PUBLIC_TINA_CLIENT_ID': JSON.stringify(env.NEXT_PUBLIC_TINA_CLIENT_ID || ''),
-            'process.env.TINA_TOKEN': JSON.stringify(env.TINA_TOKEN || ''),
-            'process.env.NEXT_PUBLIC_TINA_BRANCH': JSON.stringify(env.NEXT_PUBLIC_TINA_BRANCH || 'main'),
-            'process.env.TINA_SEARCH_TOKEN': JSON.stringify(env.TINA_SEARCH_TOKEN || ''),
-        },
-        optimizeDeps: {
-            include: ['tinacms']
-        }
     }
 })

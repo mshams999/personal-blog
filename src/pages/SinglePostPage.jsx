@@ -14,7 +14,18 @@ import Rule from '../components/editorial/Rule'
 import Kicker from '../components/editorial/Kicker'
 import Byline from '../components/editorial/Byline'
 import SectionHeader from '../components/editorial/SectionHeader'
-import { TinaCMSContent, StaticContent } from '../components/TinaCMSContent'
+import StoryblokContent from '../components/StoryblokContent'
+
+const ExcerptFallback = ({ content }) =>
+    content ? (
+        <div className="prose prose-lg max-w-none">
+            <div className="text-gray-700 dark:text-gray-300 leading-relaxed text-lg">
+                {content}
+            </div>
+        </div>
+    ) : (
+        <div className="text-gray-500 dark:text-gray-400 italic">No content available</div>
+    )
 import { useArticleViews, useBulkArticleViews } from '../hooks/useFirebaseViews'
 import { usePostRating } from '../hooks/useRatings'
 import { savePostRating } from '../utils/ratings'
@@ -111,35 +122,12 @@ const SinglePostPage = () => {
         try {
             setContentLoading(true)
             if (!post?.body) {
-                setMdxContent(<StaticContent content={post?.excerpt} />)
-                setContentLoading(false)
-                return
-            }
-            if (typeof post.body === 'string') {
-                let processed = post.body
-                    .replace(/!\[([^\]]*)\]\(\/public\/uploads\//g, '![$1](/uploads/')
-                    .replace(/\n\n+/g, '</p><p>')
-                    .replace(/\n/g, '<br/>')
-                processed = processed
-                    .replace(
-                        /\[([^\]]+)\]\(([^)]+)\)/g,
-                        '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>'
-                    )
-                    .replace(
-                        /!\[([^\]]*)\]\(([^)]+)\)/g,
-                        '<figure><img src="$2" alt="$1" loading="lazy" /><figcaption>$1</figcaption></figure>'
-                    )
-                setMdxContent(
-                    <div
-                        className="tinacms-content"
-                        dangerouslySetInnerHTML={{ __html: `<p>${processed}</p>` }}
-                    />
-                )
+                setMdxContent(<ExcerptFallback content={post?.excerpt} />)
             } else {
-                setMdxContent(<TinaCMSContent content={post.body} />)
+                setMdxContent(<StoryblokContent content={post.body} />)
             }
         } catch {
-            setMdxContent(<StaticContent content={post?.excerpt} />)
+            setMdxContent(<ExcerptFallback content={post?.excerpt} />)
         } finally {
             setContentLoading(false)
         }

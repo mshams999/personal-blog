@@ -69,7 +69,6 @@ export const seoConfig = {
             '/functions/',
             '/server/',
             '/scripts/',
-            '/tina/',
             '/*.config.js',
             '/*.config.cjs',
             '/setup-*.js',

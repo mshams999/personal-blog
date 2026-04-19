@@ -532,20 +532,6 @@ img[loading="lazy"] {
     margin-left: 1rem;
 }
 
-/* TinaCMS specific RTL support */
-[dir="rtl"] .tinacms-content {
-    direction: rtl;
-    text-align: right;
-}
-
-[dir="rtl"] .tinacms-content p,
-[dir="rtl"] .tinacms-content div,
-[dir="rtl"] .tinacms-content span {
-    direction: rtl;
-    text-align: right;
-    font-family: 'Noto Sans Arabic', 'Amiri', system-ui, -apple-system, sans-serif;
-}
-
 /* Arabic font optimization */
 .arabic-text {
     font-family: 'Amiri', 'Noto Sans Arabic', system-ui, -apple-system, sans-serif;

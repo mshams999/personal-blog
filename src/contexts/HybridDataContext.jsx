@@ -1,159 +1,173 @@
-import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react'
-import blogData from '../data/info.json'
-import { fetchTinaPosts, convertTinaPostToBlogFormat } from '../utils/tinaDataLoader'
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react'
+import fallbackData from '../data/info.json'
+import {
+    fetchPosts,
+    fetchAuthors,
+    fetchCategories,
+    fetchSiteConfig,
+    mapPost,
+} from '../utils/storyblokDataLoader'
+import { isStoryblokEditor } from '../lib/storyblok'
 
-const HybridDataContext = createContext()
+const DataContext = createContext()
 
-/**
- * Hybrid Data Provider that combines static JSON data with TinaCMS data
- * 
- * This provider merges:
- * - Static data from info.json (authors, categories, site metadata)
- * - Dynamic posts from TinaCMS MDX files
- * 
- * TinaCMS posts take precedence over static posts with the same slug
- */
+const FETCH_TIMEOUT_MS = 10000
+
+const withTimeout = (promise, ms) =>
+    Promise.race([
+        promise,
+        new Promise((_, reject) =>
+            setTimeout(() => reject(new Error('Storyblok fetch timeout')), ms)
+        ),
+    ])
+
 export const HybridDataProvider = ({ children }) => {
-    const [tinaPosts, setTinaPosts] = useState([])
+    const [posts, setPosts] = useState([])
+    const [authors, setAuthors] = useState(fallbackData.authors || [])
+    const [categories, setCategories] = useState(fallbackData.categories || [])
+    const [siteMetadata, setSiteMetadata] = useState(fallbackData.siteMetadata || {})
+    const [navigation, setNavigation] = useState(fallbackData.navigation || [])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
 
-    // Load TinaCMS posts on mount
-    useEffect(() => {
-        const loadTinaPosts = async () => {
-            try {
-                setLoading(true)
-                setError(null)
+    const loadAll = useCallback(async () => {
+        try {
+            setLoading(true)
+            setError(null)
 
-                // Add timeout to prevent infinite loading
-                const timeoutPromise = new Promise((_, reject) =>
-                    setTimeout(() => reject(new Error('TinaCMS loading timeout')), 10000)
+            const [postsRes, authorsRes, categoriesRes, siteConfigRes] =
+                await withTimeout(
+                    Promise.allSettled([
+                        fetchPosts(),
+                        fetchAuthors(),
+                        fetchCategories(),
+                        fetchSiteConfig(),
+                    ]),
+                    FETCH_TIMEOUT_MS
                 )
 
-                const fetchPromise = fetchTinaPosts()
-                const posts = await Promise.race([fetchPromise, timeoutPromise])
-
-                const convertedPosts = posts.map(convertTinaPostToBlogFormat)
-                setTinaPosts(convertedPosts)
-            } catch (err) {
-                setError(err)
-                setTinaPosts([]) // Fallback to static posts only
-            } finally {
-                setLoading(false)
+            if (postsRes.status === 'fulfilled') {
+                setPosts(
+                    postsRes.value.sort(
+                        (a, b) => new Date(b.date) - new Date(a.date)
+                    )
+                )
             }
+            if (authorsRes.status === 'fulfilled' && authorsRes.value.length > 0) {
+                setAuthors(authorsRes.value)
+            }
+            if (categoriesRes.status === 'fulfilled' && categoriesRes.value.length > 0) {
+                setCategories(categoriesRes.value)
+            }
+            if (siteConfigRes.status === 'fulfilled' && siteConfigRes.value) {
+                if (siteConfigRes.value.siteMetadata) {
+                    setSiteMetadata(siteConfigRes.value.siteMetadata)
+                }
+                if (siteConfigRes.value.navigation?.length) {
+                    setNavigation(siteConfigRes.value.navigation)
+                }
+            }
+        } catch (err) {
+            setError(err)
+        } finally {
+            setLoading(false)
         }
-
-        loadTinaPosts()
     }, [])
 
-    /**
-     * Get all posts (TinaCMS + static, with TinaCMS taking precedence)
-     */
-    const getAllPosts = useCallback(() => {
-        const staticPosts = blogData.posts || []
-        const allPosts = [...tinaPosts, ...staticPosts]
-            .sort((a, b) => new Date(b.date) - new Date(a.date))
+    useEffect(() => {
+        loadAll()
+    }, [loadAll])
 
-        return allPosts
-    }, [tinaPosts])
+    useEffect(() => {
+        if (!isStoryblokEditor() || typeof window === 'undefined') return
+        const patchFromStory = (story) => {
+            if (!story?.full_slug) return
+            if (story.full_slug.startsWith('posts/')) {
+                const mapped = mapPost(story)
+                setPosts((prev) => {
+                    const idx = prev.findIndex((p) => p.slug === mapped.slug)
+                    if (idx === -1) return [mapped, ...prev]
+                    const next = prev.slice()
+                    next[idx] = { ...next[idx], ...mapped }
+                    return next
+                })
+            }
+        }
+        let bridge = null
+        const attach = () => {
+            const Bridge = window.StoryblokBridge
+            if (!Bridge) return false
+            bridge = new Bridge({
+                accessToken: import.meta.env.VITE_STORYBLOK_TOKEN,
+            })
+            bridge.on('input', (event) => patchFromStory(event?.story))
+            bridge.on(['change', 'published'], () => loadAll())
+            return true
+        }
+        if (attach()) return
+        const id = setInterval(() => {
+            if (attach()) clearInterval(id)
+        }, 300)
+        return () => clearInterval(id)
+    }, [loadAll])
 
-    /**
-     * Get recent posts
-     */
-    const getRecentPosts = useCallback((limit = 10) => {
-        return getAllPosts().slice(0, limit)
-    }, [getAllPosts])
+    const getAllPosts = useCallback(() => posts, [posts])
+    const getRecentPosts = useCallback((limit = 10) => posts.slice(0, limit), [posts])
+    const getFeaturedPosts = useCallback(() => posts.slice(0, 3), [posts])
 
-    /**
-     * Find a post by its slug (TinaCMS posts take precedence)
-     */
-    const getPostBySlug = (slug) => {
-        // First check TinaCMS posts
-        const tinaPost = tinaPosts.find(post => post.slug === slug)
-        if (tinaPost) return tinaPost
-
-        // Fallback to static posts
-        return blogData.posts?.find(post => post.slug === slug) || null
-    }
-
-    /**
-     * Find an author by their ID
-     */
-    const getAuthorById = (id) => {
-        return blogData.authors?.find(author => author.id === id) || null
-    }
-
-    /**
-     * Find a category by its ID
-     */
-    const getCategoryById = (id) => {
-        return blogData.categories?.find(category => category.id === id) || null
-    }
-
-    /**
-     * Find a category by its slug
-     */
-    const getCategoryBySlug = (slug) => {
-        return blogData.categories?.find(category => category.slug === slug) || null
-    }
-
-    /**
-     * Get posts by category ID
-     */
-    const getPostsByCategory = (categoryId) => {
-        return getAllPosts().filter(post => post.categoryId === categoryId)
-    }
-
-    /**
-     * Get posts by author ID
-     */
-    const getPostsByAuthor = (authorId) => {
-        return getAllPosts().filter(post => post.authorId === authorId)
-    }
-
-    /**
-     * Get posts by tag
-     */
-    const getPostsByTag = (tag) => {
-        return getAllPosts().filter(post =>
-            post.tags && post.tags.some(postTag =>
-                postTag.toLowerCase() === tag.toLowerCase()
+    const getPostBySlug = useCallback(
+        (slug) => posts.find((p) => p.slug === slug) || null,
+        [posts]
+    )
+    const getAuthorById = useCallback(
+        (id) => authors.find((a) => a.id === id) || null,
+        [authors]
+    )
+    const getCategoryById = useCallback(
+        (id) => categories.find((c) => c.id === id) || null,
+        [categories]
+    )
+    const getCategoryBySlug = useCallback(
+        (slug) => categories.find((c) => c.slug === slug) || null,
+        [categories]
+    )
+    const getPostsByCategory = useCallback(
+        (categoryId) => posts.filter((p) => p.categoryId === categoryId),
+        [posts]
+    )
+    const getPostsByAuthor = useCallback(
+        (authorId) => posts.filter((p) => p.authorId === authorId),
+        [posts]
+    )
+    const getPostsByTag = useCallback(
+        (tag) =>
+            posts.filter(
+                (p) =>
+                    p.tags &&
+                    p.tags.some((t) => t.toLowerCase() === tag.toLowerCase())
+            ),
+        [posts]
+    )
+    const searchPosts = useCallback(
+        (query) => {
+            const q = query.toLowerCase()
+            return posts.filter(
+                (p) =>
+                    p.title?.toLowerCase().includes(q) ||
+                    p.excerpt?.toLowerCase().includes(q)
             )
-        )
-    }
+        },
+        [posts]
+    )
 
-    /**
-     * Search posts by title or excerpt
-     */
-    const searchPosts = (query) => {
-        const lowercaseQuery = query.toLowerCase()
-        return getAllPosts().filter(post =>
-            post.title.toLowerCase().includes(lowercaseQuery) ||
-            post.excerpt.toLowerCase().includes(lowercaseQuery)
-        )
-    }
-
-    /**
-     * Get featured posts (first 3 posts)
-     */
-    const getFeaturedPosts = () => {
-        return getRecentPosts(3)
-    }
-
-    const contextValue = {
-        // Static data from info.json
-        siteMetadata: blogData.siteMetadata,
-        navigation: blogData.navigation,
-        authors: blogData.authors,
-        categories: blogData.categories,
-
-        // Hybrid post data
-        posts: getAllPosts(),
-        tinaPosts,
+    const value = {
+        siteMetadata,
+        navigation,
+        authors,
+        categories,
+        posts,
         loading,
         error,
-
-        // Helper functions
         getAllPosts,
         getRecentPosts,
         getPostBySlug,
@@ -164,22 +178,18 @@ export const HybridDataProvider = ({ children }) => {
         getPostsByAuthor,
         getPostsByTag,
         searchPosts,
-        getFeaturedPosts
+        getFeaturedPosts,
     }
 
-    return (
-        <HybridDataContext.Provider value={contextValue}>
-            {children}
-        </HybridDataContext.Provider>
-    )
+    return <DataContext.Provider value={value}>{children}</DataContext.Provider>
 }
 
 export const useHybridData = () => {
-    const context = useContext(HybridDataContext)
-    if (!context) {
+    const ctx = useContext(DataContext)
+    if (!ctx) {
         throw new Error('useHybridData must be used within a HybridDataProvider')
     }
-    return context
+    return ctx
 }
 
-export default HybridDataContext
+export default DataContext

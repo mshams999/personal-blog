@@ -12,6 +12,11 @@ dist
 dist-ssr
 *.local
 
+# Local HTTPS certs (mkcert) for Storyblok Visual Editor
+localhost.pem
+localhost-key.pem
+*.pem
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

@@ -1,0 +1,221 @@
+{
+    "components": [
+        {
+            "name": "post",
+            "display_name": "Post",
+            "is_root": true,
+            "is_nestable": false,
+            "schema": {
+                "title": {
+                    "type": "text",
+                    "pos": 0,
+                    "required": true,
+                    "translatable": true
+                },
+                "slug": {
+                    "type": "text",
+                    "pos": 1,
+                    "description": "URL slug (e.g. 'the-must-have-casio-watch'). Defaults to the story slug if blank."
+                },
+                "excerpt": {
+                    "type": "textarea",
+                    "pos": 2,
+                    "translatable": true
+                },
+                "date": {
+                    "type": "datetime",
+                    "pos": 3,
+                    "required": true
+                },
+                "read_time": {
+                    "type": "number",
+                    "pos": 4,
+                    "default_value": "5"
+                },
+                "featured_image": {
+                    "type": "asset",
+                    "pos": 5,
+                    "filetypes": ["images"]
+                },
+                "author": {
+                    "type": "option",
+                    "pos": 6,
+                    "source": "internal_stories",
+                    "filter_content_type": ["author"],
+                    "use_uuid": true
+                },
+                "category": {
+                    "type": "option",
+                    "pos": 7,
+                    "source": "internal_stories",
+                    "filter_content_type": ["category"],
+                    "use_uuid": true
+                },
+                "tags": {
+                    "type": "text",
+                    "pos": 8,
+                    "description": "Comma-separated tags (e.g. 'casio, watches, nostalgia')"
+                },
+                "body": {
+                    "type": "richtext",
+                    "pos": 9,
+                    "translatable": true,
+                    "allow_target_blank": true,
+                    "customize_toolbar": false
+                },
+                "seo_tab": {
+                    "type": "tab",
+                    "pos": 10,
+                    "display_name": "SEO",
+                    "keys": ["seo_meta_title", "seo_meta_description"]
+                },
+                "seo_meta_title": {
+                    "type": "text",
+                    "pos": 11,
+                    "translatable": true
+                },
+                "seo_meta_description": {
+                    "type": "textarea",
+                    "pos": 12,
+                    "translatable": true
+                }
+            }
+        },
+        {
+            "name": "page",
+            "display_name": "Page",
+            "is_root": true,
+            "is_nestable": false,
+            "schema": {
+                "title": {
+                    "type": "text",
+                    "pos": 0,
+                    "required": true,
+                    "translatable": true
+                },
+                "body": {
+                    "type": "richtext",
+                    "pos": 1,
+                    "translatable": true,
+                    "allow_target_blank": true
+                },
+                "blocks": {
+                    "type": "bloks",
+                    "pos": 2,
+                    "description": "Optional flexible blocks for custom sections."
+                }
+            }
+        },
+        {
+            "name": "author",
+            "display_name": "Author",
+            "is_root": true,
+            "is_nestable": false,
+            "schema": {
+                "name": {
+                    "type": "text",
+                    "pos": 0,
+                    "required": true,
+                    "translatable": true
+                },
+                "avatar": {
+                    "type": "asset",
+                    "pos": 1,
+                    "filetypes": ["images"]
+                },
+                "bio": {
+                    "type": "textarea",
+                    "pos": 2,
+                    "translatable": true
+                },
+                "social_github": { "type": "text", "pos": 3 },
+                "social_linkedin": { "type": "text", "pos": 4 },
+                "social_twitter": { "type": "text", "pos": 5 },
+                "social_facebook": { "type": "text", "pos": 6 },
+                "email": { "type": "text", "pos": 7 }
+            }
+        },
+        {
+            "name": "category",
+            "display_name": "Category",
+            "is_root": true,
+            "is_nestable": false,
+            "schema": {
+                "name": {
+                    "type": "text",
+                    "pos": 0,
+                    "required": true,
+                    "translatable": true
+                },
+                "slug": {
+                    "type": "text",
+                    "pos": 1,
+                    "required": true,
+                    "description": "URL slug used in /category/<slug>"
+                },
+                "description": {
+                    "type": "textarea",
+                    "pos": 2,
+                    "translatable": true
+                }
+            }
+        },
+        {
+            "name": "nav_link",
+            "display_name": "Nav Link",
+            "is_root": false,
+            "is_nestable": true,
+            "schema": {
+                "name": {
+                    "type": "text",
+                    "pos": 0,
+                    "required": true,
+                    "translatable": true
+                },
+                "href": {
+                    "type": "text",
+                    "pos": 1,
+                    "required": true,
+                    "description": "Relative path (e.g. /about) or absolute URL."
+                }
+            }
+        },
+        {
+            "name": "site_config",
+            "display_name": "Site Config",
+            "is_root": true,
+            "is_nestable": false,
+            "schema": {
+                "site_title": {
+                    "type": "text",
+                    "pos": 0,
+                    "translatable": true
+                },
+                "site_description": {
+                    "type": "textarea",
+                    "pos": 1,
+                    "translatable": true
+                },
+                "author_name": {
+                    "type": "text",
+                    "pos": 2,
+                    "translatable": true
+                },
+                "author_summary": {
+                    "type": "textarea",
+                    "pos": 3,
+                    "translatable": true
+                },
+                "navigation": {
+                    "type": "bloks",
+                    "pos": 4,
+                    "restrict_components": true,
+                    "component_whitelist": ["nav_link"]
+                },
+                "social_twitter": { "type": "text", "pos": 5 },
+                "social_facebook": { "type": "text", "pos": 6 },
+                "social_github": { "type": "text", "pos": 7 }
+            }
+        }
+    ]
+}

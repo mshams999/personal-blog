@@ -1,6 +1,8 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Mail, Phone, MapPin, Globe, Calendar, Award, Briefcase, GraduationCap, Code, Star, User, Rocket, Play, ExternalLink } from 'lucide-react'
+import StoryblokContent from '../components/StoryblokContent'
+import { fetchPage } from '../utils/storyblokDataLoader'
 
 /**
  * CV/Resume Page component
@@ -15,9 +17,24 @@ import { Mail, Phone, MapPin, Globe, Calendar, Award, Briefcase, GraduationCap, 
  * - Modern, clean design with improved layout
  */
 const CVPage = () => {
+    const [storyblokPage, setStoryblokPage] = useState(null)
+
+    useEffect(() => {
+        let cancelled = false
+        fetchPage('cv')
+            .then((p) => { if (!cancelled) setStoryblokPage(p) })
+            .catch(() => { /* fall through to hardcoded resume */ })
+        return () => { cancelled = true }
+    }, [])
+
     return (
         <div className="min-h-screen bg-paper py-16 lg:py-20" dir="ltr" lang="en">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                {storyblokPage?.body && (
+                    <section className="mb-10 bg-paper border border-rule rounded-3xl p-6 sm:p-8 lg:p-10">
+                        <StoryblokContent content={storyblokPage.body} />
+                    </section>
+                )}
                 {/* Header Section */}
                 <div className="bg-paper border border-rule rounded-3xl  p-6 sm:p-8 lg:p-10 mb-10 border-l-8 border-accent  transition-all duration-500 relative overflow-hidden">
                     {/* Decorative gradient overlay */}
