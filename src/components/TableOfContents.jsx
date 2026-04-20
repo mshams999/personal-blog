@@ -71,11 +71,10 @@ const TableOfContents = ({ containerSelector = 'article .prose-editorial', deps 
                         <a
                             href={`#${h.id}`}
                             onClick={(e) => handleClick(e, h.id)}
-                            className={`block border-s pe-2 ps-3 py-1 font-serif leading-snug transition-colors ${
-                                isActive
+                            className={`block border-s pe-2 ps-3 py-1 font-serif leading-snug transition-colors ${isActive
                                     ? 'border-accent text-ink'
                                     : 'border-rule text-ink-muted hover:text-ink'
-                            }`}
+                                }`}
                         >
                             {h.text}
                         </a>
