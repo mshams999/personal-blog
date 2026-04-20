@@ -52,6 +52,89 @@ const CodeBlock = ({ language, code }) => (
     </div>
 )
 
+const getYouTubeId = (url) => {
+    const m = url?.match(
+        /(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/|v\/)|youtu\.be\/)([\w-]{11})/
+    )
+    return m?.[1] || null
+}
+
+const getVimeoId = (url) => url?.match(/vimeo\.com\/(?:video\/)?(\d+)/)?.[1] || null
+
+const isTwitterUrl = (url) => /(?:twitter\.com|x\.com)\/[^/]+\/status\/\d+/.test(url || '')
+
+const TwitterEmbed = ({ url }) => {
+    const ref = React.useRef(null)
+    React.useEffect(() => {
+        const scriptId = 'twitter-wjs'
+        const load = () => window.twttr?.widgets?.load?.(ref.current)
+        if (document.getElementById(scriptId)) {
+            load()
+        } else {
+            const s = document.createElement('script')
+            s.id = scriptId
+            s.src = 'https://platform.twitter.com/widgets.js'
+            s.async = true
+            s.onload = load
+            document.body.appendChild(s)
+        }
+    }, [url])
+    return (
+        <div ref={ref} className="my-8 flex justify-center" dir="ltr">
+            <blockquote className="twitter-tweet">
+                <a href={url}>{url}</a>
+            </blockquote>
+        </div>
+    )
+}
+
+const Embed = ({ url }) => {
+    if (!url) return null
+    const yt = getYouTubeId(url)
+    if (yt) {
+        return (
+            <div className="my-8 relative w-full aspect-video rounded-lg overflow-hidden shadow-lg">
+                <iframe
+                    src={`https://www.youtube.com/embed/${yt}`}
+                    title="YouTube video"
+                    loading="lazy"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    className="absolute inset-0 w-full h-full border-0"
+                />
+            </div>
+        )
+    }
+    const vm = getVimeoId(url)
+    if (vm) {
+        return (
+            <div className="my-8 relative w-full aspect-video rounded-lg overflow-hidden shadow-lg">
+                <iframe
+                    src={`https://player.vimeo.com/video/${vm}`}
+                    title="Vimeo video"
+                    loading="lazy"
+                    allow="autoplay; fullscreen; picture-in-picture"
+                    allowFullScreen
+                    className="absolute inset-0 w-full h-full border-0"
+                />
+            </div>
+        )
+    }
+    if (isTwitterUrl(url)) return <TwitterEmbed url={url} />
+    return (
+        <p className="my-6">
+            <a
+                href={url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 dark:text-blue-400 underline"
+            >
+                {url}
+            </a>
+        </p>
+    )
+}
+
 const ImageGallery = ({ images = [] }) => (
     <div className="image-gallery my-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -174,6 +257,8 @@ const renderOptions = {
         ),
         code_block: (props) => <CodeBlock language={props.language} code={props.code} />,
         image_gallery: (props) => <ImageGallery images={props.images} />,
+        embed: (props) => <Embed url={props.url} />,
+        url: (props) => <Embed url={props.url} />,
     },
     defaultBlokResolver: (name, props) => {
         // eslint-disable-next-line no-console

@@ -71,7 +71,7 @@ const PostCard = ({ post, variant = 'standard', showImage = true, viewCount = 0,
                     {category && <Kicker>{category.name}</Kicker>}
                     {isNew && <span className="inline-block w-1.5 h-1.5 rounded-full bg-accent" />}
                 </div>
-                <h3 className="font-display text-xl md:text-2xl leading-snug text-ink group-hover:text-accent transition-colors mb-2 line-clamp-3">
+                <h3 className="font-display text-xl md:text-2xl leading-snug text-ink group-hover:text-accent transition-colors mb-4 line-clamp-3">
                     {post.title}
                 </h3>
                 {post.excerpt && (
@@ -107,7 +107,7 @@ const PostCard = ({ post, variant = 'standard', showImage = true, viewCount = 0,
                     {category && <Kicker>{category.name}</Kicker>}
                     {isNew && <span className="inline-block w-1.5 h-1.5 rounded-full bg-accent" />}
                 </div>
-                <h3 className="font-display text-2xl md:text-3xl leading-tight text-ink group-hover:text-accent transition-colors mb-3">
+                <h3 className="font-display text-2xl md:text-3xl leading-tight text-ink group-hover:text-accent transition-colors mb-4">
                     {post.title}
                 </h3>
                 <p className="font-serif text-ink-muted leading-relaxed mb-4 line-clamp-3">

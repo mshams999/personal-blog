@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useMemo } from 'react'
 import { useParams, Navigate, Link } from 'react-router-dom'
 import { ArrowUp, ArrowRight } from 'lucide-react'
-import ReactStars from 'react-stars'
 import { useHybridData } from '../contexts/HybridDataContext'
 import DisqusComments from '../components/DisqusComments'
 import MetaTags from '../components/MetaTags'
@@ -9,7 +8,6 @@ import ReadingProgress from '../components/ReadingProgress'
 import TableOfContents from '../components/TableOfContents'
 import ShareRail from '../components/ShareRail'
 import PostCard from '../components/PostCard'
-import Rule from '../components/editorial/Rule'
 import Kicker from '../components/editorial/Kicker'
 import Byline from '../components/editorial/Byline'
 import SectionHeader from '../components/editorial/SectionHeader'
@@ -26,8 +24,6 @@ const ExcerptFallback = ({ content }) =>
         <div className="text-gray-500 dark:text-gray-400 italic">No content available</div>
     )
 import { useArticleViews, useBulkArticleViews } from '../hooks/useFirebaseViews'
-import { usePostRating } from '../hooks/useRatings'
-import { savePostRating } from '../utils/ratings'
 import {
     generateBlogPostingSchema,
     generateBreadcrumbSchema,
@@ -41,7 +37,7 @@ import {
  *   - Optional full-bleed cover figure
  *   - Sticky ShareRail + TableOfContents rails on lg+
  *   - Prose via .prose-editorial (Source Serif / Amiri)
- *   - Rating + AuthorBio + Related + Disqus below
+ *   - AuthorBio + Related + Disqus below
  */
 const SinglePostPage = () => {
     const { slug } = useParams()
@@ -56,16 +52,10 @@ const SinglePostPage = () => {
     const [mdxContent, setMdxContent] = useState(null)
     const [contentLoading, setContentLoading] = useState(true)
     const [showScrollTop, setShowScrollTop] = useState(false)
-    const [showRatingMessage, setShowRatingMessage] = useState(false)
-    const [ratingsRefreshKey, setRatingsRefreshKey] = useState(0)
 
     const post = getPostBySlug(slug)
     const author = post ? getAuthorById(post.authorId) : null
     const category = post ? getCategoryById(post.categoryId) : null
-
-    const { averageRating, totalRatings, userRating } = usePostRating(
-        (post?.slug || '') + '_' + ratingsRefreshKey
-    )
 
     const { viewCount } = useArticleViews(post?.slug, true, post?.date)
 
@@ -122,20 +112,6 @@ const SinglePostPage = () => {
             setMdxContent(<ExcerptFallback content={post?.excerpt} />)
         } finally {
             setContentLoading(false)
-        }
-    }
-
-    const handleRatingChange = async (newRating) => {
-        if (!post) return
-        try {
-            const result = await savePostRating(post.slug, newRating)
-            if (result.success) {
-                setShowRatingMessage(true)
-                setTimeout(() => setShowRatingMessage(false), 3000)
-                setRatingsRefreshKey((v) => v + 1)
-            }
-        } catch {
-            /* silent */
         }
     }
 
@@ -252,38 +228,6 @@ const SinglePostPage = () => {
                             {/* Inline share (mobile) */}
                             <div className="lg:hidden">
                                 <ShareRail url={url} title={post.title} inline />
-                            </div>
-
-                            {/* Rating */}
-                            <div className="my-12">
-                                <Rule />
-                                <div className="py-8 text-center">
-                                    <Kicker className="mb-2">تقييم</Kicker>
-                                    <h3 className="font-display text-2xl text-ink mb-4">
-                                        قيّم هذه المقالة
-                                    </h3>
-                                    <div className="flex items-center justify-center gap-3 mb-3">
-                                        <ReactStars
-                                            count={5}
-                                            value={userRating || 0}
-                                            size={28}
-                                            color1={'#D1CABD'}
-                                            color2={'#A23B2E'}
-                                            half={false}
-                                            edit={true}
-                                            onChange={handleRatingChange}
-                                        />
-                                    </div>
-                                    <p className="small-caps text-ink-muted">
-                                        {averageRating.toFixed(1)} / 5 · {totalRatings} تقييم
-                                    </p>
-                                    {showRatingMessage && (
-                                        <p className="mt-3 font-serif text-accent italic">
-                                            شكراً لك على التقييم.
-                                        </p>
-                                    )}
-                                </div>
-                                <Rule />
                             </div>
 
                             <DisqusComments post={post} currentUrl={url} />
