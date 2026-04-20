@@ -87,27 +87,32 @@ const TableOfContents = ({ containerSelector = 'article .prose-editorial', deps 
 
     return (
         <>
-            {/* Desktop side rail */}
+            {/* Desktop: keep anchors in-flow so they start with article body text. */}
             <aside
-                className="hidden lg:block lg:sticky lg:top-28 lg:self-start lg:w-60 xl:w-64 max-h-[70vh] overflow-auto"
+                className="hidden lg:block lg:sticky lg:top-28 lg:self-start w-56 max-h-[70vh] overflow-auto"
                 aria-label="جدول المحتويات"
             >
-                <p className="kicker mb-3">في هذه المقالة</p>
-                {List}
+                <div className="bg-paper/90 backdrop-blur-sm border border-rule rounded-xl p-4">
+                    <p className="kicker mb-3">في هذه المقالة</p>
+                    {List}
+                </div>
             </aside>
 
-            {/* Mobile collapsible */}
-            <div className="lg:hidden border-y border-rule my-6">
-                <button
-                    type="button"
-                    onClick={() => setOpen((v) => !v)}
-                    className="w-full flex items-center justify-between py-3 small-caps"
-                    aria-expanded={open}
-                >
-                    <span>جدول المحتويات</span>
-                    <span aria-hidden="true">{open ? '—' : '+'}</span>
-                </button>
-                {open && <div className="pb-4">{List}</div>}
+            {/* Mobile: fixed top anchor bar with expandable list. */}
+            <div className="lg:hidden">
+                <div className="fixed top-14 inset-x-0 z-30 border-y border-rule bg-paper/95 backdrop-blur-sm px-4">
+                    <button
+                        type="button"
+                        onClick={() => setOpen((v) => !v)}
+                        className="w-full flex items-center justify-between py-3 small-caps"
+                        aria-expanded={open}
+                    >
+                        <span>جدول المحتويات</span>
+                        <span aria-hidden="true">{open ? '—' : '+'}</span>
+                    </button>
+                    {open && <div className="pb-4 max-h-[45vh] overflow-auto">{List}</div>}
+                </div>
+                <div className="h-14" aria-hidden="true" />
             </div>
         </>
     )

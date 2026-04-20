@@ -188,7 +188,7 @@ const SinglePostPage = () => {
                         )}
                     </div>
 
-                    <h1 className="font-display text-display-xl md:text-display-2xl leading-[1.05] text-ink mb-6">
+                    <h1 className="font-display text-display-xl md:text-display-2xl leading-[1.15] text-ink mb-12 md:mb-16">
                         {post.title}
                     </h1>
 
@@ -224,17 +224,16 @@ const SinglePostPage = () => {
                 {/* Body with rails */}
                 <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="lg:grid lg:grid-cols-[1fr_minmax(0,44rem)_1fr] lg:gap-8 lg:items-start">
-                        {/* Share rail */}
-                        <aside className="hidden lg:flex lg:sticky lg:top-28 lg:self-start justify-end">
-                            <ShareRail url={url} title={post.title} />
-                        </aside>
-
-                        {/* Prose + TOC + end-of-article cluster */}
-                        <div className="min-w-0">
+                        {/* TOC rail (desktop) + mobile top bar */}
+                        <div className="lg:flex lg:justify-start lg:sticky lg:top-28 lg:self-start">
                             <TableOfContents
                                 containerSelector="article.post-article .prose-editorial"
                                 deps={[mdxContent]}
                             />
+                        </div>
+
+                        {/* Prose + TOC + end-of-article cluster */}
+                        <div className="min-w-0">
                             <div
                                 className="prose-editorial mx-auto"
                                 data-has-dropcap={isRTL ? 'false' : 'true'}
@@ -322,7 +321,10 @@ const SinglePostPage = () => {
                             )}
                         </div>
 
-                        <div className="hidden lg:block" />
+                        {/* Share rail */}
+                        <aside className="hidden lg:flex lg:sticky lg:top-28 lg:self-start justify-start">
+                            <ShareRail url={url} title={post.title} />
+                        </aside>
                     </div>
                 </div>
             </article>
