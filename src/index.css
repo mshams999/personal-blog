@@ -575,6 +575,29 @@ img[loading="lazy"] {
     margin-bottom: 1.35rem;
 }
 
+/* Keep list markers and list text on the same line for Storyblok rich text output. */
+.prose-editorial ul,
+.prose-editorial ol {
+    list-style-position: outside;
+    padding-inline-start: 1.5rem;
+    margin: 0 0 1.25rem;
+}
+
+.prose-editorial li {
+    margin-bottom: 0.5rem;
+}
+
+.prose-editorial li>p {
+    display: inline;
+    margin: 0;
+}
+
+[dir="rtl"] .prose-editorial ul,
+[dir="rtl"] .prose-editorial ol {
+    padding-inline-start: 0;
+    padding-inline-end: 1.5rem;
+}
+
 .prose-editorial h2,
 .prose-editorial h3,
 .prose-editorial h4 {
