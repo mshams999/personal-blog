@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react'
 import { Link } from 'react-router-dom'
-import { Github, Linkedin, Twitter, Facebook, Mail } from 'lucide-react'
+import { Github, Linkedin, Twitter, Facebook, Mail, Send } from 'lucide-react'
 import { useHybridData } from '../contexts/HybridDataContext'
 import { useBulkArticleViews, formatViewCount } from '../hooks/useFirebaseViews'
 import Rule from './editorial/Rule'
@@ -17,6 +17,7 @@ const socialLinks = [
     { name: 'LinkedIn', url: 'https://www.linkedin.com/in/mohamedshamsms/', icon: Linkedin },
     { name: 'Facebook', url: 'https://www.facebook.com/mosh936', icon: Facebook },
     { name: 'GitHub', url: 'https://github.com/mshams999/personal-blog', icon: Github },
+    { name: 'Telegram', url: 'https://t.me/shamsmohamed155', icon: Send },
     { name: 'Email', url: 'mailto:shamsmohamed155@gmail.com', icon: Mail },
 ]
 

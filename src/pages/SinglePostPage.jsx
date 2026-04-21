@@ -92,7 +92,7 @@ const SinglePostPage = () => {
             { name: 'الرئيسية', url: '/' },
             {
                 name: category?.name || 'المقالات',
-                url: category ? `/category/${category.slug}` : '/blog',
+                url: category ? `/blog?category=${category.id}` : '/blog',
             },
             { name: post.title, url: `/post/${post.slug}` },
         ])
@@ -157,7 +157,7 @@ const SinglePostPage = () => {
                         {category && (
                             <>
                                 <span className="text-ink-muted/40">·</span>
-                                <Link to={`/category/${category.slug}`}>
+                                <Link to={`/blog?category=${category.id}`}>
                                     <Kicker>{category.name}</Kicker>
                                 </Link>
                             </>

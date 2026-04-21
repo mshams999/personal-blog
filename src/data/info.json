@@ -19,19 +19,11 @@
   },
   "navigation": [
     {
-      "name": "الرئيسية",
-      "href": "/"
-    },
-    {
       "name": "المقالات",
       "href": "/blog"
     },
     {
-      "name": "التصنيفات",
-      "href": "/categories"
-    },
-    {
-      "name": "من أنا",
+      "name": "عن الدكتور محمد شمس",
       "href": "/about"
     },
     {

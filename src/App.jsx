@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { Routes, Route, useLocation } from 'react-router-dom'
+import { Routes, Route, useLocation, Navigate } from 'react-router-dom'
 import { ThemeProvider } from './contexts/ThemeContext'
 import { HybridDataProvider } from './contexts/HybridDataContext'
 import { AuthProvider } from './context/AuthContext'
@@ -10,7 +10,6 @@ import HomePage from './pages/HomePage'
 import BlogPage from './pages/BlogPage'
 import SinglePostPage from './pages/SinglePostPage'
 import CategoryPage from './pages/CategoryPage'
-import AllCategoriesPage from './pages/AllCategoriesPage'
 import CVPage from './pages/CVPage'
 import AboutPage from './pages/AboutPage'
 import AdminPage from './pages/AdminPage'
@@ -69,7 +68,7 @@ function App() {
                                     <Route path="/post/:slug" element={<SinglePostPage />} />
                                     <Route path="/posts/:slug" element={<SinglePostPage />} />
                                     <Route path="/category/:categorySlug" element={<CategoryPage />} />
-                                    <Route path="/categories" element={<AllCategoriesPage />} />
+                                    <Route path="/categories" element={<Navigate to="/blog" replace />} />
                                     <Route path="/about" element={<AboutPage />} />
                                     <Route path="/cv" element={<CVPage />} />
                                     <Route path="/reading" element={<ReadingLibrary />} />

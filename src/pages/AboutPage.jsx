@@ -6,6 +6,7 @@ import Rule from '../components/editorial/Rule'
 import Kicker from '../components/editorial/Kicker'
 import SectionHeader from '../components/editorial/SectionHeader'
 import StoryblokContent from '../components/StoryblokContent'
+import ContactInfoCard from '../components/ContactInfoCard'
 import { fetchPage } from '../utils/storyblokDataLoader'
 
 const storySections = [
@@ -202,6 +203,14 @@ const AboutPage = () => {
                                 <Dumbbell className="w-4 h-4" />
                                 القراءة والمكتبة
                             </Link>
+                        </div>
+                    </section>
+
+                    <Rule ornament="✦" />
+
+                    <section className="reveal-up w-full">
+                        <div dir="ltr" className="text-left">
+                            <ContactInfoCard className="w-full p-5 sm:p-6 md:p-8" />
                         </div>
                     </section>
                 </div>

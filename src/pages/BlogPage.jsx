@@ -14,12 +14,21 @@ const BlogPage = () => {
     const [searchParams, setSearchParams] = useSearchParams()
 
     const currentPage = parseInt(searchParams.get('page')) || 1
-    const selectedCategory = searchParams.get('category')
+    const selectedCategoryParam = searchParams.get('category')
+    const selectedCategory = useMemo(() => {
+        if (!selectedCategoryParam) return null
+        const match = (categories || []).find(
+            (c) => c.id === selectedCategoryParam || c.slug === selectedCategoryParam
+        )
+        return match?.id || null
+    }, [selectedCategoryParam, categories])
+    const allPostsBase = useMemo(() => getAllPosts(), [getAllPosts])
 
     const allPosts = useMemo(() => {
-        const posts = getAllPosts()
-        return selectedCategory ? posts.filter((p) => p.categoryId === selectedCategory) : posts
-    }, [selectedCategory, getAllPosts])
+        return selectedCategory
+            ? allPostsBase.filter((p) => p.categoryId === selectedCategory)
+            : allPostsBase
+    }, [selectedCategory, allPostsBase])
 
     const paginated = useMemo(() => {
         const start = (currentPage - 1) * POSTS_PER_PAGE
@@ -28,6 +37,13 @@ const BlogPage = () => {
 
     const totalPages = Math.max(1, Math.ceil(allPosts.length / POSTS_PER_PAGE))
     const { getViewCount } = useBulkArticleViews(paginated)
+
+    const categoryCounts = useMemo(() => {
+        return (categories || []).map((cat) => {
+            const count = allPostsBase.filter((p) => p.categoryId === cat.id).length
+            return { ...cat, count }
+        })
+    }, [categories, allPostsBase])
 
     const setCategory = (id) => {
         if (id) setSearchParams({ category: id, page: '1' })
@@ -69,34 +85,36 @@ const BlogPage = () => {
                 <Rule />
 
                 {/* Category filter rail */}
-                <nav
-                    className="flex flex-wrap gap-x-5 gap-y-3 my-8"
-                    aria-label="تصفية حسب التصنيف"
-                >
+                <div className="my-8 space-y-4" aria-label="تصفية حسب التصنيف">
+                    <p className="small-caps text-ink-muted">التصنيفات</p>
+                    <nav className="flex flex-wrap gap-2.5" aria-label="خيارات التصنيف">
                     <button
                         onClick={() => setCategory(null)}
-                        className={`small-caps pb-1 border-b transition-colors ${
+                        className={`inline-flex items-center gap-2 rounded-full px-4 py-2 border transition-colors ${
                             !selectedCategory
-                                ? 'border-accent text-ink'
-                                : 'border-transparent text-ink-muted hover:text-ink'
+                                ? 'border-accent text-ink bg-accent/10'
+                                : 'border-rule text-ink-muted hover:text-ink hover:border-accent/50'
                         }`}
                     >
-                        الكل
+                        <span className="small-caps">الكل</span>
+                        <span className="small-caps text-ink-muted">{allPostsBase.length}</span>
                     </button>
-                    {categories?.map((cat) => (
+                    {categoryCounts.map((cat) => (
                         <button
                             key={cat.id}
                             onClick={() => setCategory(cat.id)}
-                            className={`small-caps pb-1 border-b transition-colors ${
+                            className={`inline-flex items-center gap-2 rounded-full px-4 py-2 border transition-colors ${
                                 selectedCategory === cat.id
-                                    ? 'border-accent text-ink'
-                                    : 'border-transparent text-ink-muted hover:text-ink'
+                                    ? 'border-accent text-ink bg-accent/10'
+                                    : 'border-rule text-ink-muted hover:text-ink hover:border-accent/50'
                             }`}
                         >
-                            {cat.name}
+                            <span className="small-caps">{cat.name}</span>
+                            <span className="small-caps text-ink-muted">{cat.count}</span>
                         </button>
                     ))}
-                </nav>
+                    </nav>
+                </div>
 
                 <Rule />
 

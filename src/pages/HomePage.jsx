@@ -105,7 +105,7 @@ const HomePage = () => {
                                     <div className="flex items-end justify-between mb-6 gap-6">
                                         <SectionHeader kicker={cat.name} title={cat.description || cat.name} />
                                         <Link
-                                            to={`/category/${cat.slug}`}
+                                            to={`/blog?category=${cat.id}`}
                                             className="small-caps shrink-0 border-b border-rule hover:border-accent hover:text-accent transition-colors pb-0.5"
                                         >
                                             المزيد →

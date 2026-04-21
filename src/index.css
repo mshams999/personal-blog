@@ -23,16 +23,16 @@
 
     /* Dark mode overrides */
     .dark {
-        --color-paper: 20 18 15;
-        /* #14120F */
-        --color-ink: 239 234 224;
-        /* #EFEAE0 */
-        --color-ink-muted: 164 158 147;
-        /* #A49E93 */
-        --color-rule: 42 38 33;
-        /* #2A2621 */
-        --color-accent: 212 106 92;
-        /* #D46A5C */
+        --color-paper: 34 40 49;
+        /* #222831 */
+        --color-ink: 238 238 238;
+        /* #EEEEEE */
+        --color-ink-muted: 195 198 203;
+        /* soft cool gray for secondary text */
+        --color-rule: 57 62 70;
+        /* #393E46 */
+        --color-accent: 0 173 181;
+        /* #00ADB5 */
     }
 
     html {
@@ -184,11 +184,11 @@ img[loading="lazy"] {
 
     0%,
     100% {
-        box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+        box-shadow: 0 0 20px rgba(0, 173, 181, 0.25);
     }
 
     50% {
-        box-shadow: 0 0 30px rgba(139, 92, 246, 0.6);
+        box-shadow: 0 0 30px rgba(0, 173, 181, 0.45);
     }
 }
 

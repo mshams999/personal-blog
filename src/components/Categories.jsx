@@ -38,7 +38,7 @@ const Categories = ({
                     return (
                         <Link
                             key={category.id}
-                            to={`/category/${category.slug}`}
+                            to={`/blog?category=${category.id}`}
                             className="group p-6 bg-white dark:bg-dark-700 rounded-xl border border-gray-100 dark:border-dark-600 hover:shadow-lg transition-all duration-300 text-center hover:border-primary-200 dark:hover:border-primary-600"
                         >
                             <h3 className="font-semibold text-gray-900 dark:text-white group-hover:text-primary-500 transition-colors mb-2">

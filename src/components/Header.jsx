@@ -14,10 +14,8 @@ import SearchBox from './SearchBox'
  *   - Plain theme toggle + search + mobile slab menu
  */
 const navFallback = [
-    { path: '/', label: 'الرئيسية' },
     { path: '/blog', label: 'المقالات' },
-    { path: '/categories', label: 'الأقسام' },
-    { path: '/about', label: 'من أنا' },
+    { path: '/about', label: 'عن الدكتور محمد شمس' },
     { path: '/reading', label: 'المكتبة' },
     { path: '/cv', label: 'السيرة' },
 ]
@@ -68,7 +66,15 @@ const Header = () => {
             })
             .filter(Boolean)
 
-        return normalized.length > 0 ? normalized : navFallback
+        const curated = normalized
+            .filter((item) => item.path !== '/' && item.path !== '/categories')
+            .map((item) => (
+                item.path === '/about'
+                    ? { ...item, label: 'عن الدكتور محمد شمس' }
+                    : item
+            ))
+
+        return curated.length > 0 ? curated : navFallback
     }, [navigation])
 
     const isActive = (path) => {
