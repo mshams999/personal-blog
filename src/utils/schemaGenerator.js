@@ -78,11 +78,6 @@ export const generateBlogPostingSchema = (post, author, category, siteUrl = 'htt
         'inLanguage': 'ar'
     }
 
-    // Add social media interaction if available
-    if (post.commentCount !== undefined) {
-        schema.commentCount = post.commentCount
-    }
-
     return schema
 }
 
