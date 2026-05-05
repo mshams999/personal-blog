@@ -49,7 +49,7 @@ const storySections = [
 ]
 
 const beyondWorkItems = [
-     {
+    {
         title: 'تحت السما',
         icon: Sparkles,
         body: 'بعشق علم الفلك (Astronomy)، والنجوم دايمًا بتفكرني إن العالم ده واسع جداً وإن أحلامنا مهما كبرت فهي ممكنة.',
@@ -59,7 +59,7 @@ const beyondWorkItems = [
         icon: Dumbbell,
         body: 'بالنسبة لي التمرين مش بس عشان اللياقة، ده "Reset" لعقلي عشان أقدر أكمل يومي بطاقة وشغف.',
     },
-   
+
 ]
 
 const AboutPage = () => {
@@ -95,7 +95,7 @@ const AboutPage = () => {
                         <div className="lg:col-span-3 space-y-6 md:space-y-7">
                             <Kicker>About</Kicker>
                             <h1 className="font-display text-display-xl text-ink leading-[1.2] max-w-4xl">
-                                عن محمد شمس.. طبيب، مطوّر، وعاشق للنجوم
+                                عن الطبيب محمد شمس
                             </h1>
                             <p aria-hidden="true" className="text-3xl md:text-4xl leading-none tracking-[0.08em]">
                                 🩺💻✨
