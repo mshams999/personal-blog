@@ -20,6 +20,7 @@ import PortalPage from './pages/PortalPage'
 import ATLSCertificate from './pages/certificates/ATLSCertificate'
 import ACLSCertificate from './pages/certificates/ACLSCertificate'
 import BLSCertificate from './pages/certificates/BLSCertificate'
+import PHTLSCertificate from './pages/certificates/PHTLSCertificate'
 import MaadenCertificate from './pages/certificates/MaadenCertificate'
 import USMLEStep1Certificate from './pages/certificates/USMLEStep1Certificate'
 import { useAnalytics } from './hooks/useAnalytics'
@@ -80,6 +81,7 @@ function App() {
                                     <Route path="/certificates/atls" element={<ATLSCertificate />} />
                                     <Route path="/certificates/acls" element={<ACLSCertificate />} />
                                     <Route path="/certificates/bls" element={<BLSCertificate />} />
+                                    <Route path="/certificates/phtls" element={<PHTLSCertificate />} />
                                     <Route path="/certificates/maaden" element={<MaadenCertificate />} />
                                     <Route path="/certificates/usmle-step1" element={<USMLEStep1Certificate />} />
                                 </Routes>

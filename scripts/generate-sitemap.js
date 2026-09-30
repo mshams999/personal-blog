@@ -68,6 +68,7 @@ async function generateSitemap() {
             { url: '/certificates/atls', priority: '0.6', changefreq: 'monthly', lastmod: now },
             { url: '/certificates/acls', priority: '0.6', changefreq: 'monthly', lastmod: now },
             { url: '/certificates/bls', priority: '0.6', changefreq: 'monthly', lastmod: now },
+            { url: '/certificates/phtls', priority: '0.6', changefreq: 'monthly', lastmod: now },
             { url: '/certificates/maaden', priority: '0.6', changefreq: 'monthly', lastmod: now },
             { url: '/certificates/usmle-step1', priority: '0.6', changefreq: 'monthly', lastmod: now },
         ];

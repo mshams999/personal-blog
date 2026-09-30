@@ -66,9 +66,14 @@
         direction: rtl;
     }
 
-    [dir="ltr"] {
-        direction: ltr;
-    }
+[dir="ltr"] {
+    direction: ltr;
+}
+
+/* Keep the English CV aligned left inside the site's RTL shell. */
+.cv-page[dir="ltr"] {
+    text-align: left !important;
+}
 
     /* Fix flex-row-reverse for RTL */
     [dir="rtl"] .flex-row {

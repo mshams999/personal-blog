@@ -6,73 +6,103 @@
         xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
   <url>
     <loc>https://mohamedshams.com/</loc>
-    <lastmod>2026-04-19T13:17:47.078Z</lastmod>
+    <lastmod>2026-09-30T08:19:03.821Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://mohamedshams.com/blog</loc>
-    <lastmod>2026-04-19T13:17:47.078Z</lastmod>
+    <lastmod>2026-09-30T08:19:03.821Z</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.95</priority>
   </url>
   <url>
     <loc>https://mohamedshams.com/categories</loc>
-    <lastmod>2026-04-19T13:17:47.078Z</lastmod>
+    <lastmod>2026-09-30T08:19:03.821Z</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://mohamedshams.com/cv</loc>
-    <lastmod>2026-04-19T13:17:47.078Z</lastmod>
+    <lastmod>2026-09-30T08:19:03.821Z</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://mohamedshams.com/reading</loc>
-    <lastmod>2026-04-19T13:17:47.078Z</lastmod>
+    <lastmod>2026-09-30T08:19:03.821Z</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://mohamedshams.com/category/medical</loc>
-    <lastmod>2026-04-19T13:17:47.078Z</lastmod>
+    <lastmod>2026-09-30T08:19:03.821Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
     <loc>https://mohamedshams.com/category/social-articles</loc>
-    <lastmod>2026-04-19T13:17:47.078Z</lastmod>
+    <lastmod>2026-09-30T08:19:03.821Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
+    <loc>https://mohamedshams.com/post/tayyibat-diet-for-dr-diaa-alawady</loc>
+    <lastmod>2026-04-19T21:00:00.000Z</lastmod>
+    <changefreq>never</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://mohamedshams.com/post/sky-nebulas-and-astrology</loc>
+    <lastmod>2025-07-28T21:00:00.000Z</lastmod>
+    <changefreq>never</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://mohamedshams.com/post/horse-head-tea</loc>
+    <lastmod>2025-11-02T21:00:00.000Z</lastmod>
+    <changefreq>never</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://mohamedshams.com/post/the-must-have-casio-watch</loc>
+    <lastmod>2025-11-09T21:00:00.000Z</lastmod>
+    <changefreq>never</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://mohamedshams.com/certificates/atls</loc>
-    <lastmod>2026-04-19T13:17:47.078Z</lastmod>
+    <lastmod>2026-09-30T08:19:03.821Z</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://mohamedshams.com/certificates/acls</loc>
-    <lastmod>2026-04-19T13:17:47.078Z</lastmod>
+    <lastmod>2026-09-30T08:19:03.821Z</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://mohamedshams.com/certificates/bls</loc>
-    <lastmod>2026-04-19T13:17:47.078Z</lastmod>
+    <lastmod>2026-09-30T08:19:03.821Z</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://mohamedshams.com/certificates/phtls</loc>
+    <lastmod>2026-09-30T08:19:03.821Z</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://mohamedshams.com/certificates/maaden</loc>
-    <lastmod>2026-04-19T13:17:47.078Z</lastmod>
+    <lastmod>2026-09-30T08:19:03.821Z</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://mohamedshams.com/certificates/usmle-step1</loc>
-    <lastmod>2026-04-19T13:17:47.078Z</lastmod>
+    <lastmod>2026-09-30T08:19:03.821Z</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
