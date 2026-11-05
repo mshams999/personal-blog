@@ -9,15 +9,13 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-
-const STORYBLOK_URL =
-    'https://app.storyblok.com/#/me/spaces/291949279442822/stories/0/0/index/167608382889663?currentPage=1';
+import { storyblokAdminUrl } from '../lib/storyblok';
 
 const portalLinks = [
     {
         title: 'Storyblok Admin',
         description: 'Write and edit blog posts.',
-        to: STORYBLOK_URL,
+        to: storyblokAdminUrl,
         icon: PenSquare,
         external: true,
     },

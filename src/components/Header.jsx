@@ -4,6 +4,7 @@ import { Menu, X, Sun, Moon, Search, LogIn, LogOut, UserRound, ChevronDown, PenS
 import { useTheme } from '../contexts/ThemeContext'
 import { useHybridData } from '../contexts/HybridDataContext'
 import { useAuth } from '../context/AuthContext'
+import { storyblokAdminUrl } from '../lib/storyblok'
 import SearchBox from './SearchBox'
 
 /**
@@ -181,7 +182,7 @@ const Header = () => {
                                                         <span>Net Worth Dashboard</span>
                                                     </Link>
                                                     <a
-                                                        href="https://app.storyblok.com/#/me/spaces/291949279442822/stories/0/0/index/167608382889663?currentPage=1"
+                                                        href={storyblokAdminUrl}
                                                         target="_blank"
                                                         rel="noreferrer"
                                                         className="w-full mt-1 inline-flex items-center gap-2 px-2.5 py-2 rounded-xl text-sm text-ink hover:bg-ink/5 transition"
@@ -300,7 +301,7 @@ const Header = () => {
                                         <span>Net Worth Dashboard</span>
                                     </Link>
                                     <a
-                                        href="https://app.storyblok.com/#/me/spaces/291949279442822/stories/0/0/index/167608382889663?currentPage=1"
+                                        href={storyblokAdminUrl}
                                         target="_blank"
                                         rel="noreferrer"
                                         className="font-display text-lg text-ink-muted hover:text-ink inline-flex items-center gap-2 transition-colors"

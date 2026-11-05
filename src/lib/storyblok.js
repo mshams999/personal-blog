@@ -18,6 +18,12 @@ storyblokInit({
 
 export const storyblokVersion = import.meta.env.DEV ? 'draft' : 'published'
 
+export const storyblokSpaceId = import.meta.env.VITE_STORYBLOK_SPACE_ID || ''
+
+export const storyblokAdminUrl = storyblokSpaceId
+    ? `https://app.storyblok.com/#/me/spaces/${storyblokSpaceId}/stories/0/0/index/`
+    : 'https://app.storyblok.com'
+
 export const isStoryblokEditor = () => {
     if (typeof window === 'undefined') return false
     return new URLSearchParams(window.location.search).has('_storyblok')

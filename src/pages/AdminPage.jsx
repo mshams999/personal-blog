@@ -1,6 +1,5 @@
 import React from 'react'
-
-const STORYBLOK_APP_URL = 'https://app.storyblok.com'
+import { storyblokAdminUrl } from '../lib/storyblok'
 
 const AdminPage = () => {
     return (
@@ -15,7 +14,7 @@ const AdminPage = () => {
                 </p>
 
                 <a
-                    href={STORYBLOK_APP_URL}
+                    href={storyblokAdminUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-block w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200"
