@@ -132,7 +132,7 @@ const SectionHeading = ({ icon: Icon, children, id, note }) => (
             <Icon className="h-5 w-5" />
         </span>
         <div className="min-w-0">
-            <h2 id={id} className="text-xl font-semibold tracking-tight text-ink sm:text-2xl">{children}</h2>
+            <h2 id={id} className="scroll-mt-28 text-xl font-semibold tracking-tight text-ink sm:text-2xl">{children}</h2>
             {note && <p className="mt-1 text-sm text-ink-muted">{note}</p>}
         </div>
     </div>
@@ -144,8 +144,16 @@ const Card = ({ children, className = '' }) => (
     </section>
 )
 
+const cvSections = [
+    ['experience', 'Experience'],
+    ['education', 'Education'],
+    ['certifications', 'Certifications'],
+    ['courses', 'Courses'],
+]
+
 const CVPage = () => {
     const [storyblokPage, setStoryblokPage] = useState(null)
+    const [activeSection, setActiveSection] = useState('experience')
 
     useEffect(() => {
         let cancelled = false
@@ -153,6 +161,23 @@ const CVPage = () => {
             .then((page) => { if (!cancelled) setStoryblokPage(page) })
             .catch(() => { /* Keep the local CV available when Storyblok is unavailable. */ })
         return () => { cancelled = true }
+    }, [])
+
+    useEffect(() => {
+        const nodes = cvSections
+            .map(([id]) => document.getElementById(id))
+            .filter(Boolean)
+        if (!nodes.length) return undefined
+
+        const observer = new IntersectionObserver((entries) => {
+            const visible = entries
+                .filter((entry) => entry.isIntersecting)
+                .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0]
+            if (visible?.target?.id) setActiveSection(visible.target.id)
+        }, { rootMargin: '-20% 0px -60% 0px', threshold: [0.2, 0.6] })
+
+        nodes.forEach((node) => observer.observe(node))
+        return () => observer.disconnect()
     }, [])
 
     return (
@@ -171,7 +196,7 @@ const CVPage = () => {
                             <img
                                 src="/pictures/mohamed-profile.jpg"
                                 alt="Dr. Mohamed Shams"
-                                className="h-20 w-20 shrink-0 rounded-2xl object-cover object-center sm:h-28 sm:w-28"
+                                className="h-24 w-24 shrink-0 rounded-2xl object-cover object-center sm:h-36 sm:w-36"
                             />
                             <div className="min-w-0">
                                 <p className="mb-2 text-xs font-semibold uppercase tracking-[0.16em] text-accent">Curriculum vitae</p>
@@ -201,18 +226,25 @@ const CVPage = () => {
                             </a>
                         </div>
                     </div>
-                    <nav aria-label="On this page" className="border-t border-rule px-4 py-3 sm:px-8 lg:px-10">
-                        <div className="flex gap-2 overflow-x-auto pb-1 text-sm [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-                            {[
-                                ['experience', 'Experience'],
-                                ['education', 'Education'],
-                                ['certifications', 'Certifications'],
-                                ['courses', 'Courses'],
-                            ].map(([id, label]) => (
-                                <a key={id} href={`#${id}`} className="shrink-0 rounded-full border border-rule px-3.5 py-2 text-ink-muted transition-colors hover:border-accent/40 hover:text-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
-                                    {label}
-                                </a>
-                            ))}
+                    <nav aria-label="On this page" className="border-t border-rule">
+                        <div className="flex overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                            {cvSections.map(([id, label], index) => {
+                                const current = activeSection === id
+                                return (
+                                    <a
+                                        key={id}
+                                        href={`#${id}`}
+                                        aria-current={current ? 'true' : undefined}
+                                        onClick={() => setActiveSection(id)}
+                                        className={`flex shrink-0 items-center gap-2 border-b-2 px-4 py-3.5 text-sm transition-colors sm:flex-1 sm:justify-center ${current ? 'border-accent text-ink' : 'border-transparent text-ink-muted hover:text-ink'}`}
+                                    >
+                                        <span className={current ? 'text-accent' : 'text-ink-muted/60'}>
+                                            {String(index + 1).padStart(2, '0')}
+                                        </span>
+                                        {label}
+                                    </a>
+                                )
+                            })}
                         </div>
                     </nav>
                 </header>
@@ -232,16 +264,19 @@ const CVPage = () => {
                                 {experience.map((job, index) => (
                                     <li key={`${job.organization}-${job.dates}`} className="relative pb-7 pl-5 last:pb-0 sm:pl-7">
                                         <span className="absolute -left-[0.4rem] top-1.5 h-3 w-3 rounded-full border-2 border-paper bg-accent ring-1 ring-accent/30" aria-hidden="true" />
-                                        <article>
+                                        <article className="overflow-hidden rounded-xl">
+                                            {job.image && (
+                                                <img
+                                                    src={job.image}
+                                                    alt={job.imageAlt}
+                                                    loading="lazy"
+                                                    className="mb-4 h-28 w-full rounded-xl object-cover object-center sm:h-36"
+                                                />
+                                            )}
                                             <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
-                                                <div className="flex min-w-0 items-start gap-3">
-                                                    {job.image && (
-                                                        <img src={job.image} alt={job.imageAlt} loading="lazy" className="hidden h-11 w-11 shrink-0 rounded-xl object-cover sm:block" />
-                                                    )}
-                                                    <div className="min-w-0">
-                                                        <h3 className="font-semibold leading-snug text-ink">{job.role}</h3>
-                                                        <p className="mt-1 text-sm font-medium text-accent">{job.organization}</p>
-                                                    </div>
+                                                <div className="min-w-0">
+                                                    <h3 className="font-semibold leading-snug text-ink">{job.role}</h3>
+                                                    <p className="mt-1 text-sm font-medium text-accent">{job.organization}</p>
                                                 </div>
                                                 <span className="inline-flex w-fit shrink-0 items-center gap-1.5 rounded-full bg-accent/8 px-3 py-1.5 text-xs font-medium text-ink-muted">
                                                     <CalendarDays className="h-3.5 w-3.5 text-accent" aria-hidden="true" /> {job.dates}
@@ -415,6 +450,7 @@ const CVPage = () => {
                             <ul className="space-y-2.5 text-sm text-ink-muted">
                                 <li><Link to="/reading" className="hover:text-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">Reading</Link></li>
                                 <li>Freelancing</li>
+                                <li>Bodybuilding</li>
                                 <li>Continuing medical education</li>
                             </ul>
                         </Card>

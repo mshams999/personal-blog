@@ -10,7 +10,6 @@ import ShareRail from '../components/ShareRail'
 import PostCard from '../components/PostCard'
 import Kicker from '../components/editorial/Kicker'
 import Byline from '../components/editorial/Byline'
-import SectionHeader from '../components/editorial/SectionHeader'
 import StoryblokContent from '../components/StoryblokContent'
 
 const ExcerptFallback = ({ content }) =>
@@ -164,15 +163,9 @@ const SinglePostPage = () => {
                         )}
                     </div>
 
-                    <h1 className="font-display text-display-xl md:text-display-2xl leading-[1.15] text-ink mb-12 md:mb-16">
+                    <h1 className="font-display text-display-xl md:text-display-2xl leading-[1.15] text-ink mb-8">
                         {post.title}
                     </h1>
-
-                    {post.excerpt && (
-                        <p className="font-serif text-lg md:text-xl text-ink-muted leading-relaxed max-w-prose-editorial mb-8">
-                            {post.excerpt}
-                        </p>
-                    )}
 
                     <Byline
                         author={author?.name || 'د. محمد شمس'}
@@ -250,7 +243,18 @@ const SinglePostPage = () => {
 
                             {relatedPosts.length > 0 && (
                                 <section className="my-16">
-                                    <SectionHeader kicker="المزيد" title="قد يعجبك أيضاً" />
+                                    <header className="mb-8 border-b border-rule pb-3">
+                                        <Kicker className="mb-2">
+                                            {relatedPosts.length === 1
+                                                ? 'مقالة واحدة'
+                                                : relatedPosts.length === 2
+                                                    ? 'مقالان'
+                                                    : `${relatedPosts.length} مقالات`}
+                                        </Kicker>
+                                        <h2 className="font-display text-display-lg leading-[1.1] text-ink">
+                                            قد يعجبك أيضاً
+                                        </h2>
+                                    </header>
                                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                                         {relatedPosts.map((p) => (
                                             <PostCard

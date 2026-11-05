@@ -6,6 +6,7 @@ import { useHybridData } from '../contexts/HybridDataContext'
 import { useAuth } from '../context/AuthContext'
 import { storyblokAdminUrl } from '../lib/storyblok'
 import SearchBox from './SearchBox'
+import OwnerAvatar from './OwnerAvatar'
 
 /**
  * Editorial Header
@@ -104,16 +105,18 @@ const Header = () => {
                         {/* Wordmark */}
                         <Link
                             to="/"
-                            className="group flex items-baseline gap-1 font-display text-ink"
+                            className="group flex shrink-0 items-center gap-2.5 text-ink"
                             aria-label="الصفحة الرئيسية"
                         >
-                            <span className="text-xl md:text-2xl font-semibold tracking-tight leading-none">
-                                د. محمد شمس
+                            <OwnerAvatar className="h-10 w-10 shrink-0 rounded-full object-cover ring-2 ring-accent/80 transition-transform group-hover:scale-105" />
+                            <span className="flex flex-col items-start whitespace-nowrap leading-none">
+                                <span className="mb-1 text-[11px] font-medium text-accent">
+                                    مدونة
+                                </span>
+                                <span className="font-display text-lg font-semibold">
+                                    د. محمد شمس
+                                </span>
                             </span>
-                            <span
-                                className="inline-block w-1.5 h-1.5 rounded-full bg-accent transition-transform group-hover:scale-125"
-                                aria-hidden="true"
-                            />
                         </Link>
 
                         {/* Desktop nav */}

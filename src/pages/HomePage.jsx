@@ -24,6 +24,13 @@ import {
  *   3. By-category rail (horizontal scroll-snap per category)
  *   4. About strip + Newsletter
  */
+const articleCountLabel = (count) => {
+    if (count === 1) return 'مقالة واحدة'
+    if (count === 2) return 'مقالان'
+    if (count >= 3 && count <= 10) return `${count} مقالات`
+    return `${count} مقالاً`
+}
+
 const HomePage = () => {
     const { siteMetadata, getRecentPosts, categories = [], loading } = useHybridData()
 
@@ -102,15 +109,20 @@ const HomePage = () => {
                             const items = postsByCategory[cat.id] || []
                             return (
                                 <div key={cat.id} className={`reveal-up delay-${Math.min(idx + 1, 4)}`}>
-                                    <div className="flex items-end justify-between mb-6 gap-6">
-                                        <SectionHeader kicker={cat.name} title={cat.description || cat.name} />
+                                    <header className="mb-6 flex items-end gap-6 border-b border-rule pb-3">
+                                        <div>
+                                            <Kicker className="mb-2">{articleCountLabel(items.length)}</Kicker>
+                                            <h2 className="font-display text-display-lg text-ink leading-[1.1]">
+                                                {cat.name}
+                                            </h2>
+                                        </div>
                                         <Link
                                             to={`/blog?category=${cat.id}`}
-                                            className="small-caps shrink-0 border-b border-rule hover:border-accent hover:text-accent transition-colors pb-0.5"
+                                            className="small-caps mb-1 shrink-0 border-b border-rule pb-0.5 transition-colors hover:border-accent hover:text-accent"
                                         >
                                             المزيد →
                                         </Link>
-                                    </div>
+                                    </header>
                                     <div className="-mx-4 px-4 sm:mx-0 sm:px-0 overflow-x-auto snap-x snap-mandatory scroll-smooth">
                                         <ul className="flex gap-8 md:gap-10 min-w-max md:min-w-0 md:grid md:grid-cols-3 md:gap-10">
                                             {items.slice(0, 3).map((post) => (

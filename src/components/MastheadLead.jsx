@@ -20,7 +20,7 @@ const MastheadLead = ({ post }) => {
 
     return (
         <section className="reveal-up">
-            <Link to={`/post/${post.slug}`} className="group block smooth-card smooth-card-interactive p-6 md:p-8">
+            <Link to={`/post/${post.slug}`} className="group block smooth-card p-6 md:p-8 transition-colors duration-200 hover:border-ink/40">
                 <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-12 items-stretch">
                     {/* Text column */}
                     <div className="lg:col-span-3 flex flex-col justify-center order-2 lg:order-1">
@@ -28,7 +28,7 @@ const MastheadLead = ({ post }) => {
                             {category && <Kicker>{category.name}</Kicker>}
                             <span className="small-caps text-ink-muted">قصة الغلاف</span>
                         </div>
-                        <h1 className="font-display text-display-xl md:text-display-2xl leading-[1.18] text-ink group-hover:text-accent transition-colors mb-8 md:mb-9">
+                        <h1 className="font-display text-display-xl md:text-display-2xl leading-[1.18] text-ink underline-offset-[10px] decoration-accent/70 decoration-1 mb-8 md:mb-9 group-hover:underline">
                             {post.title}
                         </h1>
                         {post.excerpt && (
@@ -52,6 +52,9 @@ const MastheadLead = ({ post }) => {
                                     {post.readTime ? <><span className="mx-1.5">·</span>{post.readTime} دقيقة</> : null}
                                 </p>
                             </div>
+                            <span className="ms-auto text-sm text-ink-muted transition-colors group-hover:text-ink">
+                                اقرأ المقال
+                            </span>
                         </div>
                     </div>
 
@@ -63,7 +66,7 @@ const MastheadLead = ({ post }) => {
                                     src={post.featuredImage}
                                     alt={post.title}
                                     loading="eager"
-                                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.02]"
+                                    className="w-full h-full object-cover"
                                 />
                             </div>
                         ) : (

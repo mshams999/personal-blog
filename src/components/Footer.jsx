@@ -1,9 +1,10 @@
 import React, { useMemo } from 'react'
 import { Link } from 'react-router-dom'
-import { Github, Linkedin, Twitter, Facebook, Mail, Send } from 'lucide-react'
+import { Atom, Facebook, Github, Library, Linkedin, Mail, PenLine, Send, Twitter, Zap } from 'lucide-react'
 import { useHybridData } from '../contexts/HybridDataContext'
 import { useBulkArticleViews, formatViewCount } from '../hooks/useFirebaseViews'
 import Rule from './editorial/Rule'
+import OwnerAvatar from './OwnerAvatar'
 
 /**
  * Editorial Footer — magazine masthead style.
@@ -51,9 +52,12 @@ const Footer = () => {
                     {/* About */}
                     <section>
                         <p className="kicker mb-3">عن المدونة</p>
-                        <h3 className="font-display text-2xl leading-tight mb-4">
-                            د. محمد شمس
-                            <span className="inline-block ms-1 w-1.5 h-1.5 rounded-full bg-accent align-middle" />
+                        <h3 className="font-display text-2xl leading-tight mb-4 flex items-center gap-3">
+                            <OwnerAvatar className="h-11 w-11 shrink-0 rounded-full object-cover ring-2 ring-accent/80" />
+                            <span className="flex flex-col items-start whitespace-nowrap leading-none">
+                                <span className="mb-1.5 font-sans text-xs font-medium text-accent">مدونة</span>
+                                د. محمد شمس
+                            </span>
                         </h3>
                         <p className="font-serif text-ink-muted leading-relaxed max-w-sm">
                             طبيب طوارئ يكتب عن الطب والفضول والقراءة. أؤمن أن الفضول هو بداية كل معرفة.
@@ -113,9 +117,26 @@ const Footer = () => {
 
                 {/* Colophon */}
                 <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 text-ink-muted">
-                    <p className="font-serif italic text-sm leading-relaxed max-w-xl">
-                        Set in Fraunces, Amiri, and Inter. Built with React, Vite, and Storyblok.
-                    </p>
+                    <div className="flex flex-col gap-3">
+                        <p className="flex items-center gap-2 text-sm text-ink-muted">
+                            <PenLine className="h-4 w-4 shrink-0 text-accent" aria-hidden="true" />
+                            كُتب بهدوء، ونُشر حين اكتمل.
+                        </p>
+                        <ul className="flex flex-wrap items-center gap-4 text-xs text-ink-muted">
+                            <li className="inline-flex items-center gap-1.5">
+                                <Atom className="h-3.5 w-3.5" aria-hidden="true" />
+                                React
+                            </li>
+                            <li className="inline-flex items-center gap-1.5">
+                                <Zap className="h-3.5 w-3.5" aria-hidden="true" />
+                                Vite
+                            </li>
+                            <li className="inline-flex items-center gap-1.5">
+                                <Library className="h-3.5 w-3.5" aria-hidden="true" />
+                                Storyblok
+                            </li>
+                        </ul>
+                    </div>
                     <p className="small-caps">
                         © {currentYear} · جميع الحقوق محفوظة
                     </p>

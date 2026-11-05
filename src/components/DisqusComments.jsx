@@ -23,7 +23,6 @@ const DisqusComments = ({ post, currentUrl }) => {
     return (
         <section className="mt-16 pt-8 border-t border-rule" aria-label="التعليقات">
             <div className="mb-6">
-                <p className="kicker mb-2">حوار</p>
                 <h3 className="font-display text-display-lg text-ink leading-tight">التعليقات</h3>
             </div>
             <DiscussionEmbed {...disqusProps} />

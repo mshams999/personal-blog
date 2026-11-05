@@ -50,14 +50,8 @@ const Newsletter = ({ compact = false }) => {
                 <Kicker className="mb-2">النشرة</Kicker>
                 <p className="font-display text-xl text-ink flex items-center gap-2">
                     <Check className="w-4 h-4 text-accent" />
-                    شكراً لاشتراكك — أراك في أول نشرة.
+                    وصلت. أول مقالة جديدة هتوصلك على بريدك.
                 </p>
-                <button
-                    onClick={() => setIsSubscribed(false)}
-                    className="small-caps mt-3 border-b border-rule hover:border-accent hover:text-accent transition-colors pb-0.5"
-                >
-                    اشتراك آخر →
-                </button>
             </div>
         )
     }
@@ -65,34 +59,38 @@ const Newsletter = ({ compact = false }) => {
     return (
         <div className={compact ? '' : 'max-w-xl'}>
             <Kicker className="mb-2">النشرة</Kicker>
-            <h3 className="font-display text-2xl md:text-3xl leading-tight text-ink mb-3">
-                مقالة جديدة في بريدك، كل أسبوع.
+            <h3 className="font-display text-2xl md:text-3xl leading-tight text-ink">
+                مقالة جديدة، تصلك قبل ما تضيع.
             </h3>
-            <p className="font-serif text-ink-muted mb-5 leading-relaxed">
-                اشترك لتصلك المقالات الجديدة فور نشرها — بدون إزعاج، ويمكنك إلغاء الاشتراك في أي وقت.
-            </p>
-            <form onSubmit={handleSubmit} className="flex items-end gap-4">
-                <div className="flex-1">
-                    <label htmlFor="nl-email" className="sr-only">البريد الإلكتروني</label>
+            <form onSubmit={handleSubmit} className="mt-5">
+                <label htmlFor="nl-email" className="mb-2 block text-sm text-ink-muted">
+                    بريدك الإلكتروني
+                </label>
+                <div className="flex items-stretch border border-rule">
                     <input
                         id="nl-email"
                         type="email"
-                        placeholder="بريدك الإلكتروني"
+                        inputMode="email"
+                        autoComplete="email"
+                        placeholder="name@email.com"
                         value={email}
                         onChange={(e) => { setEmail(e.target.value); setError('') }}
                         required
-                        className="w-full bg-transparent border-0 border-b border-rule focus:border-accent outline-none py-2 font-serif text-ink placeholder:text-ink-muted/70 transition-colors"
+                        className="min-w-0 flex-1 bg-transparent px-4 py-3 font-serif text-ink outline-none placeholder:text-ink-muted/60"
                     />
+                    <button
+                        type="submit"
+                        disabled={isLoading}
+                        className="inline-flex shrink-0 items-center gap-2 bg-ink px-5 text-sm font-medium text-paper transition-opacity hover:opacity-80 disabled:opacity-50"
+                    >
+                        {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
+                        {isLoading ? 'جارٍ الإرسال' : 'اشترك'}
+                    </button>
                 </div>
-                <button
-                    type="submit"
-                    disabled={isLoading}
-                    className="small-caps inline-flex items-center gap-2 border-b border-ink hover:border-accent hover:text-accent transition-colors pb-0.5 disabled:opacity-50"
-                >
-                    {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
-                    {isLoading ? 'جارٍ الاشتراك' : 'اشتراك →'}
-                </button>
             </form>
+            <p className="mt-3 text-sm text-ink-muted">
+                رسالة واحدة في الأسبوع. ألغِ الاشتراك متى شئت.
+            </p>
             {error && (
                 <p className="mt-3 flex items-center gap-2 text-sm text-accent">
                     <AlertCircle className="w-4 h-4" />

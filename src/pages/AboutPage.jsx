@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom'
 import { Stethoscope, Code2, Target, Dumbbell, Rocket, Sparkles } from 'lucide-react'
 import MetaTags from '../components/MetaTags'
 import Rule from '../components/editorial/Rule'
-import Kicker from '../components/editorial/Kicker'
 import SectionHeader from '../components/editorial/SectionHeader'
 import StoryblokContent from '../components/StoryblokContent'
 import ContactInfoCard from '../components/ContactInfoCard'
@@ -93,7 +92,6 @@ const AboutPage = () => {
                 <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-14 md:pt-20 pb-20 md:pb-24 space-y-14">
                     <header className="reveal-up grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-12 items-start">
                         <div className="lg:col-span-3 space-y-6 md:space-y-7">
-                            <Kicker>About</Kicker>
                             <h1 className="font-display text-display-xl text-ink leading-[1.2] max-w-4xl">
                                 عن الطبيب محمد شمس
                             </h1>
@@ -110,7 +108,7 @@ const AboutPage = () => {
 
                         <figure className="lg:col-span-2 rounded-3xl overflow-hidden border border-rule bg-paper/60 max-w-md lg:max-w-none">
                             <img
-                                src="/pictures/about-me.jpg"
+                                src="/pictures/about-portrait.jpg"
                                 alt="محمد شمس"
                                 loading="lazy"
                                 className="w-full h-full object-cover aspect-[4/5]"
