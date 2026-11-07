@@ -1,0 +1,31 @@
+name: Upgrade Lucide React
+
+on:
+  push:
+    branches: [chore/upgrade-lucide-react]
+
+permissions:
+  contents: write
+
+jobs:
+  upgrade:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Upgrade Lucide React
+        run: npm install lucide-react@1.68.0
+      - name: Verify production build
+        run: npm run build
+      - name: Commit regenerated manifest and lockfile
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package.json package-lock.json
+          git diff --cached --quiet || git commit -m "chore: upgrade lucide-react"
+          git push
