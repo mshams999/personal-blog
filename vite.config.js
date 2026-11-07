@@ -37,8 +37,8 @@ export default defineConfig(({ mode }) => {
             {
                 name: 'html-transform',
                 transformIndexHtml: {
-                    enforce: 'pre',
-                    transform(html) {
+                    order: 'pre',
+                    handler(html) {
                         return html
                             .replace(/%VITE_GA_MEASUREMENT_ID%/g, env.VITE_GA_MEASUREMENT_ID || 'G-XXXXXXXXXX')
                     }
