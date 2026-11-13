@@ -19,7 +19,8 @@ import dotenv from 'dotenv';
 import { existsSync, readFileSync } from 'fs';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
-import admin from 'firebase-admin';
+import { cert, getApps, initializeApp } from 'firebase-admin/app';
+import { FieldValue, getFirestore } from 'firebase-admin/firestore';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = join(__dirname, '..');
@@ -41,27 +42,27 @@ function resolveProjectId() {
 }
 
 function initAdmin() {
-    if (admin.apps.length) return;
+    if (getApps().length) return;
 
     const projectId = resolveProjectId();
     const withProject = (opts) => (projectId ? { ...opts, projectId } : opts);
 
     if (process.env.FIREBASE_SERVICE_ACCOUNT_JSON) {
         const sa = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_JSON);
-        admin.initializeApp(withProject({ credential: admin.credential.cert(sa) }));
+        initializeApp(withProject({ credential: cert(sa) }));
         return;
     }
 
     const gac = process.env.GOOGLE_APPLICATION_CREDENTIALS;
     if (gac && existsSync(gac)) {
         const sa = JSON.parse(readFileSync(gac, 'utf8'));
-        admin.initializeApp(withProject({ credential: admin.credential.cert(sa) }));
+        initializeApp(withProject({ credential: cert(sa) }));
         return;
     }
 
     if (existsSync(defaultKeyPath)) {
         const sa = JSON.parse(readFileSync(defaultKeyPath, 'utf8'));
-        admin.initializeApp(withProject({ credential: admin.credential.cert(sa) }));
+        initializeApp(withProject({ credential: cert(sa) }));
         return;
     }
 
@@ -72,13 +73,13 @@ function initAdmin() {
 
 initAdmin();
 
-const db = admin.firestore();
+const db = getFirestore();
 
 async function seed() {
     const docRef = db.collection('networth').doc('holdings');
     const payload = {
         ...holdings,
-        updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+        updatedAt: FieldValue.serverTimestamp(),
     };
     await docRef.set(payload, { merge: false });
 
