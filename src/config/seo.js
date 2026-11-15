@@ -58,6 +58,7 @@ export const seoConfig = {
             '/certificates/',
             '/cv',
             '/reading',
+            '/library',
             '/categories',
             '/content/',
             '/public/'

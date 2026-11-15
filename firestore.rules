@@ -1,81 +1,372 @@
 rules_version = '2';
 
+// Exact keys are required. hasAll() requires every field; hasOnly() rejects
+// anything else. Empty optional values are stored as null and must be sent.
+//
+// books nullables: description, isbn13, isbn10, publisher, publishedYear,
+//   pageCount, coverUrl, currentPage, progressPercent, startedAt, finishedAt, rating
+// readingStatus: want | reading | finished
+// Private notes live only in privateNotes. They are not fields on books.
+// readingSessions: finishedAt is null unless status is finished.
+//   rating is null unless status is finished (then null or 0–5).
+// privateNotes nullables: sessionId, page
+// settings/currentReading: bookId and sessionId are both null when idle.
+//
+// Public clients cannot create settings/currentReading. Initialize it once
+// with scripts/init-current-reading.mjs before any homepage widget reads it.
+// Claim and rules-deploy sequence: scripts/set-admin-claim.mjs
+// This file does not deploy itself.
+
 service cloud.firestore {
   match /databases/{database}/documents {
-    
-    // Newsletter subscribers collection
-    match /newsletter_subscribers/{subscriberId} {
-      // Allow anyone to create a new subscription (public newsletter signup)
-      allow create: if isValidNewsletterSubscription(request.resource.data);
-      
-      // Allow reading for authenticated admin users only
-      allow read: if isAdmin();
-      
-      // Allow updating for admin users only (for unsubscribing)
-      allow update: if isAdmin() && 
-                    request.resource.data.keys().hasAll(['isActive', 'unsubscribedAt']) &&
-                    request.resource.data.isActive == false;
-      
-      // Never allow deleting (keep data for analytics)
-      allow delete: if false;
-    }
-    
-    // Helper functions
-    function isValidNewsletterSubscription(data) {
-      return data.keys().hasAll(['email', 'subscribedAt', 'isActive', 'source']) &&
-             data.email is string &&
-             data.email.size() > 0 &&
-             data.email.matches('.*@.*\\..*') &&  // Basic email validation
-             data.subscribedAt is timestamp &&
-             data.isActive == true &&
-             data.source is string;
-    }
-    
     function isAdmin() {
-      // Admin authentication - replace with your admin email
-      return request.auth != null && 
-             request.auth.token.email == 'mohamedshams3467@gmail.com';
+      return request.auth != null && request.auth.token.admin == true;
     }
-    
-    // Article views collection - allows public read and write
+
+    function isIsoString(value) {
+      return value is string
+        && value.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{3}Z$');
+    }
+
+    function pointerPath() {
+      return /databases/$(database)/documents/settings/currentReading;
+    }
+
+    function bookPath(bookId) {
+      return /databases/$(database)/documents/books/$(bookId);
+    }
+
+    function sessionPath(sessionId) {
+      return /databases/$(database)/documents/readingSessions/$(sessionId);
+    }
+
+    function validNewsletterCreate(data) {
+      return data.keys().hasAll([
+          'email', 'firstName', 'subscribedAt', 'isActive', 'source',
+          'ipAddress', 'userAgent', 'preferences'
+        ])
+        && data.keys().hasOnly([
+          'email', 'firstName', 'subscribedAt', 'isActive', 'source',
+          'ipAddress', 'userAgent', 'preferences'
+        ])
+        && data.email is string
+        && data.email.size() > 3
+        && data.email.size() < 320
+        && data.email.matches('.*@.*\\..*')
+        && data.firstName is string
+        && data.firstName.size() < 100
+        && data.subscribedAt is timestamp
+        && data.isActive == true
+        && data.source == 'website'
+        && data.ipAddress is string
+        && data.ipAddress.size() < 64
+        && data.userAgent is string
+        && data.userAgent.size() < 500
+        && data.preferences.keys().hasAll(['weeklyUpdate', 'newPosts', 'specialOffers'])
+        && data.preferences.keys().hasOnly(['weeklyUpdate', 'newPosts', 'specialOffers'])
+        && data.preferences.weeklyUpdate is bool
+        && data.preferences.newPosts is bool
+        && data.preferences.specialOffers is bool;
+    }
+
+    function validProgress(progress) {
+      return progress.keys().hasAll(['currentPage', 'pageCount', 'percent'])
+        && progress.keys().hasOnly(['currentPage', 'pageCount', 'percent'])
+        && progress.currentPage is int
+        && progress.currentPage >= 0
+        && progress.currentPage <= 20000
+        && progress.pageCount is int
+        && progress.pageCount >= 0
+        && progress.pageCount <= 20000
+        && (progress.pageCount == 0 || progress.currentPage <= progress.pageCount)
+        && progress.percent is number
+        && progress.percent >= 0
+        && progress.percent <= 100;
+    }
+
+    function validBookShape(bookId) {
+      let data = request.resource.data;
+      return data.keys().hasAll([
+          'slug', 'title', 'authors', 'sortAuthor', 'description', 'categories',
+          'language', 'isbn13', 'isbn10', 'publisher', 'publishedYear', 'pageCount',
+          'formats', 'coverUrl', 'visibility', 'readingStatus', 'currentPage',
+          'progressPercent', 'startedAt', 'finishedAt', 'rating', 'createdAt', 'updatedAt'
+        ])
+        && data.keys().hasOnly([
+          'slug', 'title', 'authors', 'sortAuthor', 'description', 'categories',
+          'language', 'isbn13', 'isbn10', 'publisher', 'publishedYear', 'pageCount',
+          'formats', 'coverUrl', 'visibility', 'readingStatus', 'currentPage',
+          'progressPercent', 'startedAt', 'finishedAt', 'rating', 'createdAt', 'updatedAt'
+        ])
+        && data.slug == bookId
+        && data.title is string
+        && data.title.size() > 0
+        && data.title.size() < 500
+        && data.authors is list
+        && data.authors.size() > 0
+        && data.authors.size() <= 20
+        && data.sortAuthor is string
+        && data.sortAuthor.size() < 500
+        && (data.description == null || (data.description is string && data.description.size() < 10000))
+        && data.categories is list
+        && data.categories.size() <= 30
+        && data.language is string
+        && data.language.size() < 16
+        && (data.isbn13 == null || (data.isbn13 is string && data.isbn13.size() < 32))
+        && (data.isbn10 == null || (data.isbn10 is string && data.isbn10.size() < 16))
+        && (data.publisher == null || (data.publisher is string && data.publisher.size() < 300))
+        && (data.publishedYear == null || (data.publishedYear is int && data.publishedYear >= 0 && data.publishedYear <= 2200))
+        && (data.pageCount == null || (data.pageCount is int && data.pageCount >= 0 && data.pageCount <= 20000))
+        && data.formats is list
+        && data.formats.size() <= 4
+        && (data.coverUrl == null || (data.coverUrl is string && data.coverUrl.size() < 2000))
+        && data.visibility in ['public', 'unlisted']
+        && data.readingStatus in ['want', 'reading', 'finished']
+        && (data.currentPage == null || (data.currentPage is int && data.currentPage >= 0 && data.currentPage <= 20000))
+        && (data.pageCount == null || data.currentPage == null || data.currentPage <= data.pageCount)
+        && (data.progressPercent == null || (data.progressPercent is number && data.progressPercent >= 0 && data.progressPercent <= 100))
+        && (data.startedAt == null || data.startedAt is timestamp)
+        && (data.finishedAt == null || data.finishedAt is timestamp)
+        && (data.rating == null || (data.rating is int && data.rating >= 0 && data.rating <= 5))
+        && data.createdAt is timestamp
+        && data.updatedAt is timestamp;
+    }
+
+    function bookIsNotCurrent(bookId) {
+      return !existsAfter(pointerPath())
+        || getAfter(pointerPath()).data.bookId != bookId;
+    }
+
+    function pointerAgrees(sessionId) {
+      let pointerExists = existsAfter(pointerPath());
+      let projected = pointerExists ? getAfter(pointerPath()) : null;
+
+      return request.resource.data.status == 'reading'
+        || !pointerExists
+        || projected.data.sessionId != sessionId;
+    }
+
+    function validRating(data) {
+      return data.rating == null
+        || (data.rating is int && data.rating >= 0 && data.rating <= 5);
+    }
+
+    function validSessionShape(sessionId) {
+      let data = request.resource.data;
+      return data.keys().hasAll([
+          'bookId', 'title', 'authors', 'bookVisibility', 'status', 'startedAt',
+          'finishedAt', 'progress', 'rating', 'format', 'createdAt', 'updatedAt'
+        ])
+        && data.keys().hasOnly([
+          'bookId', 'title', 'authors', 'bookVisibility', 'status', 'startedAt',
+          'finishedAt', 'progress', 'rating', 'format', 'createdAt', 'updatedAt'
+        ])
+        && data.bookId is string
+        && data.bookId.size() > 0
+        && data.bookId.size() < 200
+        && data.title is string
+        && data.title.size() > 0
+        && data.title.size() < 500
+        && data.authors is list
+        && data.authors.size() > 0
+        && data.authors.size() <= 20
+        && data.bookVisibility in ['public', 'unlisted']
+        && data.status in ['reading', 'paused', 'finished', 'abandoned']
+        && data.startedAt is timestamp
+        && (
+          (data.status == 'finished' && data.finishedAt is timestamp)
+          || (data.status != 'finished' && data.finishedAt == null)
+        )
+        && validProgress(data.progress)
+        && validRating(data)
+        && data.format in ['digital', 'physical', 'audio']
+        && data.createdAt is timestamp
+        && data.updatedAt is timestamp
+        && pointerAgrees(sessionId);
+    }
+
+    function snapshotMatchesBook() {
+      let book = getAfter(bookPath(request.resource.data.bookId));
+      return book != null
+        && book.data.slug == request.resource.data.bookId
+        && book.data.title == request.resource.data.title
+        && book.data.authors == request.resource.data.authors
+        && book.data.visibility == request.resource.data.bookVisibility;
+    }
+
+    function validPointerShape(data) {
+      return data.keys().hasAll(['bookId', 'sessionId', 'updatedAt'])
+        && data.keys().hasOnly(['bookId', 'sessionId', 'updatedAt'])
+        && data.updatedAt is timestamp
+        && (
+          (data.bookId == null && data.sessionId == null)
+          || (
+            data.bookId is string && data.bookId.size() > 0 && data.bookId.size() < 200
+            && data.sessionId is string && data.sessionId.size() > 0 && data.sessionId.size() < 200
+          )
+        );
+    }
+
+    function pointerTargetsReadingSession(data) {
+      let projected = data.sessionId == null ? null : getAfter(sessionPath(data.sessionId));
+      return data.sessionId == null
+        || (
+          projected != null
+          && projected.data.status == 'reading'
+          && projected.data.bookId == data.bookId
+        );
+    }
+
+    function previousSessionReleased() {
+      let previousId = resource.data.sessionId;
+      let projected = previousId == null ? null : getAfter(sessionPath(previousId));
+      return previousId == null
+        || previousId == request.resource.data.sessionId
+        || (projected != null && projected.data.status != 'reading');
+    }
+
+    function validPrivateNote() {
+      let data = request.resource.data;
+      return data.keys().hasAll(['bookId', 'sessionId', 'kind', 'body', 'page', 'createdAt', 'updatedAt'])
+        && data.keys().hasOnly(['bookId', 'sessionId', 'kind', 'body', 'page', 'createdAt', 'updatedAt'])
+        && data.bookId is string
+        && data.bookId.size() > 0
+        && data.bookId.size() < 200
+        && (data.sessionId == null || (data.sessionId is string && data.sessionId.size() < 200))
+        && data.kind in ['note', 'quotation']
+        && data.body is string
+        && data.body.size() > 0
+        && data.body.size() < 20000
+        && (data.page == null || (data.page is int && data.page >= 0 && data.page <= 20000))
+        && data.createdAt is timestamp
+        && data.updatedAt is timestamp;
+    }
+
+    function publicBook(bookId) {
+      let book = get(bookPath(bookId));
+      return book != null && book.data.visibility == 'public';
+    }
+
+    function publicReadingSession(sessionId, bookId) {
+      let session = get(sessionPath(sessionId));
+      return session != null
+        && session.data.status == 'reading'
+        && session.data.bookVisibility == 'public'
+        && session.data.bookId == bookId;
+    }
+
+    match /newsletter_subscribers/{subscriberId} {
+      allow read: if isAdmin();
+      allow create: if validNewsletterCreate(request.resource.data);
+      allow update: if isAdmin()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['isActive', 'unsubscribedAt'])
+        && request.resource.data.isActive == false
+        && request.resource.data.unsubscribedAt is timestamp;
+      allow delete: if false;
+    }
+
     match /articles/{articleSlug} {
-      // Allow anyone to read view counts
       allow read: if true;
-      
-      // Allow anyone to increment view counts
-      allow create, update: if true;
-      
-      // No deleting articles (keep data for analytics)
+      allow create: if request.resource.data.keys().hasAll(['views', 'firstViewed', 'lastViewed', 'slug'])
+        && request.resource.data.keys().hasOnly(['views', 'firstViewed', 'lastViewed', 'slug'])
+        && articleSlug.size() > 0
+        && articleSlug.size() < 200
+        && request.resource.data.slug == articleSlug
+        && request.resource.data.views == 1
+        && isIsoString(request.resource.data.firstViewed)
+        && isIsoString(request.resource.data.lastViewed);
+      allow update: if request.resource.data.diff(resource.data).affectedKeys().hasOnly(['views', 'lastViewed', 'slug'])
+        && resource.data.views is int
+        && request.resource.data.views == resource.data.views + 1
+        && request.resource.data.slug == articleSlug
+        && isIsoString(request.resource.data.lastViewed);
       allow delete: if false;
     }
-    
-    // Comment counts collection - allows public read, restricted write
+
     match /commentCounts/{postSlug} {
-      // Allow anyone to read comment counts
       allow read: if true;
-      
-      // Allow creating/updating comment counts (for sync operations)
-      // In production, you might want to restrict this to admin only
-      allow create, update: if true;
-      
-      // No deleting comment counts (keep data for analytics)
+      allow create, update: if isAdmin();
       allow delete: if false;
     }
-    
-    // Public presence for the site owner. The owner client writes lastSeen;
-    // everyone else can only read it.
+
     match /presence/owner {
       allow read: if true;
-      allow create, update: if request.auth != null
-        && request.auth.token.email == 'mohamedshams3467@gmail.com'
+      allow create, update: if isAdmin()
         && request.resource.data.keys().hasOnly(['lastSeen'])
         && request.resource.data.lastSeen is timestamp;
       allow delete: if false;
     }
 
-    // Allow all other operations for authenticated users (for your existing content)
-    match /{document=**} {
-      allow read, write: if request.auth != null;
+    match /networth/holdings {
+      allow read: if isAdmin();
+      allow create, update: if isAdmin();
+      allow delete: if false;
+    }
+
+    match /dashboard/main {
+      allow read: if isAdmin();
+      allow create, update: if isAdmin();
+      allow delete: if false;
+    }
+
+    match /books/{bookId} {
+      allow read: if isAdmin() || resource.data.visibility == 'public';
+      allow create: if isAdmin() && validBookShape(bookId);
+      allow update: if isAdmin()
+        && validBookShape(bookId)
+        && request.resource.data.createdAt == resource.data.createdAt
+        && request.resource.data.slug == bookId
+        && (
+          !resource.data.keys().hasAny(['slug'])
+          || resource.data.slug == request.resource.data.slug
+        );
+      allow delete: if isAdmin() && bookIsNotCurrent(bookId);
+    }
+
+    match /readingSessions/{sessionId} {
+      allow read: if isAdmin() || resource.data.bookVisibility == 'public';
+      allow create: if isAdmin() && validSessionShape(sessionId) && snapshotMatchesBook();
+      allow update: if isAdmin()
+        && validSessionShape(sessionId)
+        && request.resource.data.bookId == resource.data.bookId
+        && request.resource.data.createdAt == resource.data.createdAt;
+      allow delete: if isAdmin()
+        && (
+          !existsAfter(pointerPath())
+          || getAfter(pointerPath()).data.sessionId != sessionId
+        );
+    }
+
+    match /settings/currentReading {
+      allow get: if isAdmin()
+        || (
+          resource.data.bookId == null
+          && resource.data.sessionId == null
+        )
+        || (
+          resource.data.bookId is string
+          && resource.data.sessionId is string
+          && publicBook(resource.data.bookId)
+          && publicReadingSession(resource.data.sessionId, resource.data.bookId)
+        );
+      allow list: if false;
+      allow create: if isAdmin()
+        && validPointerShape(request.resource.data)
+        && pointerTargetsReadingSession(request.resource.data);
+      allow update: if isAdmin()
+        && validPointerShape(request.resource.data)
+        && previousSessionReleased()
+        && pointerTargetsReadingSession(request.resource.data);
+      allow delete: if false;
+    }
+
+    match /privateNotes/{noteId} {
+      allow read: if isAdmin();
+      allow create: if isAdmin() && validPrivateNote();
+      allow update: if isAdmin()
+        && validPrivateNote()
+        && request.resource.data.createdAt == resource.data.createdAt;
+      allow delete: if isAdmin();
     }
   }
 }

@@ -18,7 +18,8 @@ import OwnerAvatar from './OwnerAvatar'
 const navFallback = [
     { path: '/blog', label: 'المقالات' },
     { path: '/about', label: 'عن الدكتور محمد شمس' },
-    { path: '/reading', label: 'المكتبة' },
+    { path: '/library', label: 'المكتبة' },
+    { path: '/reading', label: 'سجل القراءة' },
     { path: '/cv', label: 'السيرة' },
 ]
 
@@ -76,7 +77,21 @@ const Header = () => {
                     : item
             ))
 
-        return curated.length > 0 ? curated : navFallback
+        if (curated.length === 0) return navFallback
+        if (curated.some((item) => item.path === '/library' || item.path.startsWith('/library/'))) {
+            return curated
+        }
+
+        const libraryItem = { path: '/library', label: 'المكتبة' }
+        const aboutIndex = curated.findIndex((item) => item.path === '/about')
+        if (aboutIndex >= 0) {
+            return [
+                ...curated.slice(0, aboutIndex + 1),
+                libraryItem,
+                ...curated.slice(aboutIndex + 1),
+            ]
+        }
+        return [...curated, libraryItem]
     }, [navigation])
 
     const isActive = (path) => {
