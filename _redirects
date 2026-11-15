@@ -4,6 +4,10 @@
 /blog /index.html 200
 /cv /index.html 200
 /reading /index.html 200
+/gallery /index.html 200
+/gallery/* /index.html 200
+/admin/gallery /index.html 200
+/admin/gallery/* /index.html 200
 /admin /index.html 200
 /certificates/* /index.html 200
 

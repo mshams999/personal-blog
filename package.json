@@ -15,7 +15,8 @@
         "posts:rename": "node scripts/rename-posts-to-slugs.js",
         "networth:seed": "node scripts/seed-holdings.js",
         "networth:seed:client": "node scripts/seed-holdings-client.mjs",
-        "test:rules": "firebase emulators:exec --only firestore,auth --project demo-reading-library \"node --test tests/firestore.rules.test.mjs\"",
+        "test:rules": "firebase emulators:exec --only firestore,auth --project demo-reading-library \"node --test --test-concurrency=1 tests/firestore.rules.test.mjs tests/gallery.rules.test.mjs\"",
+        "test:gallery": "node --test tests/galleryValidation.test.mjs tests/galleryFunctions.test.mjs",
         "test:library": "node --test tests/libraryGuard.test.mjs tests/readingPlan.test.mjs tests/bookSavePlan.test.mjs tests/goodreadsImport.test.mjs"
     },
     "dependencies": {

@@ -23,6 +23,32 @@ export default defineConfig(({ mode }) => {
         plugins: [
             react(),
             {
+                name: 'gallery-dev-functions',
+                configureServer(server) {
+                    const serverKeys = [
+                        'CLOUDINARY_CLOUD_NAME',
+                        'CLOUDINARY_API_KEY',
+                        'CLOUDINARY_API_SECRET',
+                        'CLOUDINARY_FOLDER_MODE',
+                        'GALLERY_OWNER_EMAIL',
+                        'FIREBASE_SERVICE_ACCOUNT_JSON',
+                        'GOOGLE_APPLICATION_CREDENTIALS',
+                    ]
+                    serverKeys.forEach((key) => {
+                        if (!process.env[key] && env[key]) process.env[key] = env[key]
+                    })
+                    server.middlewares.use(async (request, response, next) => {
+                        const path = (request.url || '').split('?')[0]
+                        if (!path.startsWith('/.netlify/functions/gallery-')) {
+                            next()
+                            return
+                        }
+                        const { galleryDevMiddleware } = await import('./netlify/functions/devMiddleware.js')
+                        return galleryDevMiddleware()(request, response, next)
+                    })
+                },
+            },
+            {
                 name: 'dev-admin-token',
                 configureServer(server) {
                     server.middlewares.use('/api/dev-admin-token', async (request, response) => {
@@ -55,6 +81,7 @@ export default defineConfig(({ mode }) => {
                     '/blog',
                     '/about',
                     '/library',
+                    '/gallery',
                     '/reading'
                 ],
                 exclude: ['/404'],

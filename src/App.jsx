@@ -4,6 +4,7 @@ import { ThemeProvider } from './contexts/ThemeContext'
 import { HybridDataProvider } from './contexts/HybridDataContext'
 import { AuthProvider } from './context/AuthContext'
 import ProtectedRoute from './components/ProtectedRoute'
+import GalleryOwnerRoute from './components/GalleryOwnerRoute'
 import Layout from './components/Layout'
 import AnalyticsProvider from './components/AnalyticsProvider'
 import HomePage from './pages/HomePage'
@@ -17,9 +18,14 @@ import NetWorthPage from './pages/NetWorthPage'
 import LibraryPage from './pages/LibraryPage'
 import BookPage from './pages/BookPage'
 import ReadingHistoryPage from './pages/ReadingHistoryPage'
+import GalleryPage from './pages/GalleryPage'
+import GalleryAlbumPage from './pages/GalleryAlbumPage'
 import AddBookPage from './pages/admin/AddBookPage'
 import LibraryAdminPage from './pages/admin/LibraryAdminPage'
 import ImportBooksPage from './pages/admin/ImportBooksPage'
+import GalleryAdminPage from './pages/admin/GalleryAdminPage'
+import GalleryUploadPage from './pages/admin/GalleryUploadPage'
+import GalleryAlbumsPage from './pages/admin/GalleryAlbumsPage'
 import LoginPage from './pages/LoginPage'
 import PortalPage from './pages/PortalPage'
 import ATLSCertificate from './pages/certificates/ATLSCertificate'
@@ -80,6 +86,8 @@ function App() {
                                     <Route path="/library" element={<LibraryPage />} />
                                     <Route path="/library/:slug" element={<BookPage />} />
                                     <Route path="/reading" element={<ReadingHistoryPage />} />
+                                    <Route path="/gallery" element={<GalleryPage />} />
+                                    <Route path="/gallery/:albumSlug" element={<GalleryAlbumPage />} />
                                     <Route path="/login" element={<LoginPage />} />
                                     <Route path="/portal" element={<ProtectedRoute><PortalPage /></ProtectedRoute>} />
                                     <Route path="/admin" element={<ProtectedRoute><AdminPage /></ProtectedRoute>} />
@@ -87,6 +95,9 @@ function App() {
                                     <Route path="/admin/books/new" element={<ProtectedRoute><AddBookPage /></ProtectedRoute>} />
                                     <Route path="/admin/books/import" element={<ProtectedRoute><ImportBooksPage /></ProtectedRoute>} />
                                     <Route path="/admin/books/:slug/edit" element={<ProtectedRoute><AddBookPage /></ProtectedRoute>} />
+                                    <Route path="/admin/gallery" element={<GalleryOwnerRoute><GalleryAdminPage /></GalleryOwnerRoute>} />
+                                    <Route path="/admin/gallery/upload" element={<GalleryOwnerRoute><GalleryUploadPage /></GalleryOwnerRoute>} />
+                                    <Route path="/admin/gallery/albums" element={<GalleryOwnerRoute><GalleryAlbumsPage /></GalleryOwnerRoute>} />
                                     <Route path="/net-worth" element={<ProtectedRoute><NetWorthPage /></ProtectedRoute>} />
                                     {/* Certificate Routes */}
                                     <Route path="/certificates/atls" element={<ATLSCertificate />} />
