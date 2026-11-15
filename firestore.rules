@@ -368,5 +368,212 @@ service cloud.firestore {
         && request.resource.data.createdAt == resource.data.createdAt;
       allow delete: if isAdmin();
     }
+
+    // Gallery. These blocks do not apply to books, readingSessions, or privateNotes.
+    // Public clients may read a photo or album only when its status is published.
+    // Photo binaries are not stored here. Deleting a photo document from the client
+    // is refused so Cloudinary cleanup stays on the signed server function.
+    // Library isAdmin() does not grant gallery access. The ID token must carry
+    // galleryOwner == true (boolean) and email_verified == true. Assign the claim
+    // with scripts/set-gallery-owner-claim.mjs, then sign out and in. This file
+    // does not deploy itself and does not write the claim.
+    function isGalleryOwner() {
+      return request.auth != null
+        && request.auth.token.galleryOwner == true
+        && request.auth.token.email_verified == true;
+    }
+
+    function galleryPhotoId(photoId) {
+      return photoId.matches('^[A-Za-z0-9]{20,32}$');
+    }
+
+    function galleryPublicId(photoId) {
+      return 'mohamedshams/gallery/' + photoId;
+    }
+
+    function optionalText(value, max) {
+      return value == null || (value is string && value.size() > 0 && value.size() <= max);
+    }
+
+    function validTag(value) {
+      return value is string && value.size() > 0 && value.size() <= 40;
+    }
+
+    function validTags(tags) {
+      return tags is list
+        && tags.size() <= 10
+        && (tags.size() < 1 || validTag(tags[0]))
+        && (tags.size() < 2 || validTag(tags[1]))
+        && (tags.size() < 3 || validTag(tags[2]))
+        && (tags.size() < 4 || validTag(tags[3]))
+        && (tags.size() < 5 || validTag(tags[4]))
+        && (tags.size() < 6 || validTag(tags[5]))
+        && (tags.size() < 7 || validTag(tags[6]))
+        && (tags.size() < 8 || validTag(tags[7]))
+        && (tags.size() < 9 || validTag(tags[8]))
+        && (tags.size() < 10 || validTag(tags[9]));
+    }
+
+    function validPhoto(photoId) {
+      let data = request.resource.data;
+      return galleryPhotoId(photoId)
+        && data.keys().hasAll([
+          'id', 'publicId', 'secureUrl', 'originalFormat', 'width', 'height', 'bytes',
+          'caption', 'description', 'albumId', 'tags', 'location', 'takenAt',
+          'uploadedAt', 'status', 'sortOrder'
+        ])
+        && data.keys().hasOnly([
+          'id', 'publicId', 'secureUrl', 'originalFormat', 'width', 'height', 'bytes',
+          'caption', 'description', 'albumId', 'tags', 'location', 'takenAt',
+          'uploadedAt', 'status', 'sortOrder'
+        ])
+        && data.id == photoId
+        && data.publicId == galleryPublicId(photoId)
+        && data.secureUrl is string
+        && data.secureUrl.size() < 500
+        && data.secureUrl.matches('^https://res\\.cloudinary\\.com/[a-z0-9-]+/image/upload/.+')
+        && data.originalFormat is string
+        && data.originalFormat.matches('^[a-z0-9]{3,5}$')
+        && data.width is int
+        && data.width > 0
+        && data.width <= 30000
+        && data.height is int
+        && data.height > 0
+        && data.height <= 30000
+        && data.bytes is int
+        && data.bytes > 0
+        && data.bytes <= 10485760
+        && optionalText(data.caption, 500)
+        && optionalText(data.description, 4000)
+        && (data.albumId == null || (data.albumId is string && data.albumId.matches('^[a-z0-9]+(-[a-z0-9]+)*$') && data.albumId.size() <= 80))
+        && validTags(data.tags)
+        && optionalText(data.location, 160)
+        && (data.takenAt == null || data.takenAt is timestamp)
+        && data.uploadedAt is timestamp
+        && data.status in ['draft', 'published', 'archived']
+        && data.sortOrder is int
+        && data.sortOrder >= 0;
+    }
+
+    function photoIdentityUnchanged() {
+      return request.resource.data.id == resource.data.id
+        && request.resource.data.publicId == resource.data.publicId
+        && request.resource.data.secureUrl == resource.data.secureUrl
+        && request.resource.data.originalFormat == resource.data.originalFormat
+        && request.resource.data.width == resource.data.width
+        && request.resource.data.height == resource.data.height
+        && request.resource.data.bytes == resource.data.bytes
+        && request.resource.data.uploadedAt == resource.data.uploadedAt;
+    }
+
+    function photoStatusStep() {
+      return request.resource.data.status == resource.data.status
+        || (resource.data.status == 'draft' && request.resource.data.status in ['published', 'archived'])
+        || (resource.data.status == 'published' && request.resource.data.status in ['draft', 'archived'])
+        || (resource.data.status == 'archived' && request.resource.data.status == 'draft');
+    }
+
+    function validAlbum(albumId) {
+      let data = request.resource.data;
+      return albumId.matches('^[a-z0-9]+(-[a-z0-9]+)*$')
+        && albumId.size() >= 2
+        && albumId.size() <= 80
+        && data.keys().hasAll([
+          'id', 'title', 'slug', 'description', 'coverPhotoId',
+          'createdAt', 'updatedAt', 'status', 'sortOrder'
+        ])
+        && data.keys().hasOnly([
+          'id', 'title', 'slug', 'description', 'coverPhotoId',
+          'createdAt', 'updatedAt', 'status', 'sortOrder'
+        ])
+        && data.id == albumId
+        && data.slug == albumId
+        && data.title is string
+        && data.title.size() > 0
+        && data.title.size() <= 160
+        && optionalText(data.description, 4000)
+        && (data.coverPhotoId == null || (data.coverPhotoId is string && galleryPhotoId(data.coverPhotoId)))
+        && data.createdAt is timestamp
+        && data.updatedAt is timestamp
+        && data.status in ['draft', 'published', 'archived']
+        && data.sortOrder is int
+        && data.sortOrder >= 0;
+    }
+
+    function albumIdentityUnchanged() {
+      return request.resource.data.id == resource.data.id
+        && request.resource.data.slug == resource.data.slug
+        && request.resource.data.createdAt == resource.data.createdAt;
+    }
+
+    function albumStatusStep() {
+      return request.resource.data.status == resource.data.status
+        || (resource.data.status == 'draft' && request.resource.data.status in ['published', 'archived'])
+        || (resource.data.status == 'published' && request.resource.data.status in ['draft', 'archived'])
+        || (resource.data.status == 'archived' && request.resource.data.status == 'draft');
+    }
+
+    function validCleanup(cleanupId) {
+      let data = request.resource.data;
+      return galleryPhotoId(cleanupId)
+        && data.keys().hasAll([
+          'photoId', 'publicId', 'secureUrl', 'originalFormat', 'width', 'height',
+          'bytes', 'reason', 'createdAt'
+        ])
+        && data.keys().hasOnly([
+          'photoId', 'publicId', 'secureUrl', 'originalFormat', 'width', 'height',
+          'bytes', 'reason', 'createdAt'
+        ])
+        && data.photoId == cleanupId
+        && data.publicId == galleryPublicId(cleanupId)
+        && data.secureUrl is string
+        && data.secureUrl.size() < 500
+        && data.originalFormat is string
+        && data.originalFormat.size() <= 8
+        && data.width is int
+        && data.width >= 0
+        && data.width <= 30000
+        && data.height is int
+        && data.height >= 0
+        && data.height <= 30000
+        && data.bytes is int
+        && data.bytes >= 0
+        // Photo documents stay capped at 10 MB. Cleanup may record a larger
+        // Cloudinary-reported size so an oversized upload can be deleted later.
+        && data.bytes <= 209715200
+        && data.reason in ['firestore-write-failed', 'rejected-after-upload']
+        && data.createdAt is timestamp;
+    }
+
+    match /photos/{photoId} {
+      allow read: if isGalleryOwner() || resource.data.status == 'published';
+      allow create: if isGalleryOwner()
+        && validPhoto(photoId)
+        && request.resource.data.status == 'draft';
+      allow update: if isGalleryOwner()
+        && validPhoto(photoId)
+        && photoIdentityUnchanged()
+        && photoStatusStep();
+      allow delete: if false;
+    }
+
+    match /albums/{albumId} {
+      allow read: if isGalleryOwner() || resource.data.status == 'published';
+      allow create: if isGalleryOwner()
+        && validAlbum(albumId)
+        && request.resource.data.status in ['draft', 'published'];
+      allow update: if isGalleryOwner()
+        && validAlbum(albumId)
+        && albumIdentityUnchanged()
+        && albumStatusStep();
+      allow delete: if isGalleryOwner() && resource.data.status == 'archived';
+    }
+
+    match /photoCleanup/{cleanupId} {
+      allow read: if isGalleryOwner();
+      allow create: if isGalleryOwner() && validCleanup(cleanupId);
+      allow update: if false;
+      allow delete: if isGalleryOwner();
+    }
   }
 }

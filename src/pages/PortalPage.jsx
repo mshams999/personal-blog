@@ -3,6 +3,7 @@ import {
     PenSquare,
     BookOpen,
     LibraryBig,
+    Image,
     Plus,
     UserRound,
     Home,
@@ -43,6 +44,12 @@ const portalLinks = [
         description: 'تصفح الكتب المتاحة للقراءة العامة.',
         to: '/library',
         icon: LibraryBig,
+    },
+    {
+        title: 'المعرض',
+        description: 'ارفع الصور وأدر الألبومات.',
+        to: '/admin/gallery',
+        icon: Image,
     },
     {
         title: 'About Page',

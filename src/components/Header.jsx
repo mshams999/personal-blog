@@ -19,9 +19,22 @@ const navFallback = [
     { path: '/blog', label: 'المقالات' },
     { path: '/about', label: 'عن الدكتور محمد شمس' },
     { path: '/library', label: 'المكتبة' },
+    { path: '/gallery', label: 'المعرض' },
     { path: '/reading', label: 'سجل القراءة' },
     { path: '/cv', label: 'السيرة' },
 ]
+
+function insertGallery(items) {
+    if (items.some((item) => item.path === '/gallery' || item.path.startsWith('/gallery/'))) return items
+    const galleryItem = { path: '/gallery', label: 'المعرض' }
+    const libraryIndex = items.findIndex((item) => item.path === '/library')
+    if (libraryIndex === -1) return [...items, galleryItem]
+    return [
+        ...items.slice(0, libraryIndex + 1),
+        galleryItem,
+        ...items.slice(libraryIndex + 1),
+    ]
+}
 
 const Header = () => {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
@@ -77,21 +90,21 @@ const Header = () => {
                     : item
             ))
 
-        if (curated.length === 0) return navFallback
+        if (curated.length === 0) return insertGallery(navFallback)
         if (curated.some((item) => item.path === '/library' || item.path.startsWith('/library/'))) {
-            return curated
+            return insertGallery(curated)
         }
 
         const libraryItem = { path: '/library', label: 'المكتبة' }
         const aboutIndex = curated.findIndex((item) => item.path === '/about')
         if (aboutIndex >= 0) {
-            return [
+            return insertGallery([
                 ...curated.slice(0, aboutIndex + 1),
                 libraryItem,
                 ...curated.slice(aboutIndex + 1),
-            ]
+            ])
         }
-        return [...curated, libraryItem]
+        return insertGallery([...curated, libraryItem])
     }, [navigation])
 
     const isActive = (path) => {
