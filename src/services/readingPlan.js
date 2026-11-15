@@ -2,7 +2,7 @@ import { normalizeSlug } from './bookSavePlan.js'
 
 export const FORMAT_OPTIONS = ['Paperback', 'Hardcover', 'Kindle', 'EPUB', 'PDF', 'Audiobook']
 export const LEGACY_FORMATS = ['physical', 'digital', 'audio']
-export const READING_STATUSES = ['want', 'reading', 'paused', 'finished', 'abandoned']
+export const READING_STATUSES = ['want', 'reading', 'finished']
 
 const SESSION_FORMAT = {
     Paperback: 'physical',
@@ -19,9 +19,7 @@ const SESSION_FORMAT = {
 export const STATUS_LABELS = {
     want: 'أريد قراءته',
     reading: 'أقرأ الآن',
-    paused: 'متوقف',
     finished: 'أنهيتُه',
-    abandoned: 'متروك',
 }
 
 function cleanList(value) {
@@ -78,7 +76,7 @@ export function deriveReadingStatus(book, sessions = []) {
     if (READING_STATUSES.includes(book?.readingStatus)) return book.readingStatus
     const mine = sessions.filter((session) => session.bookId === (book?.id || book?.slug))
     if (mine.some((session) => session.status === 'reading')) return 'reading'
-    return mine[0]?.status || 'want'
+    return 'want'
 }
 
 export function displayProgress(book, session) {
@@ -197,17 +195,15 @@ export function buildLibraryEntry(draft, now = new Date()) {
 }
 
 export function planCurrentReading({ bookId, sessionId, status, pointer }) {
-    const namesThis = pointer?.bookId === bookId
+    const namesThis = pointer?.bookId === bookId && Boolean(pointer?.sessionId)
     const namesOther = Boolean(pointer?.bookId && pointer.bookId !== bookId && pointer.sessionId)
     if (status === 'reading') {
         return {
-            pauseOther: namesOther ? { bookId: pointer.bookId, sessionId: pointer.sessionId } : null,
-            pointer: { bookId, sessionId },
+            pointer: namesOther ? null : { bookId, sessionId },
             clearPointer: false,
         }
     }
     return {
-        pauseOther: null,
         pointer: null,
         clearPointer: namesThis,
     }

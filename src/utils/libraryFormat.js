@@ -15,9 +15,7 @@ export const formatLabels = {
 export const statusLabels = {
     want: 'أريد قراءته',
     reading: 'أقرأ الآن',
-    paused: 'متوقف',
     finished: 'أنهيتُه',
-    abandoned: 'متروك',
 }
 
 export const languageLabels = {

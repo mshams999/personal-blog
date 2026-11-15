@@ -1,16 +1,17 @@
 /**
- * Decides where library Firestore calls are allowed to go.
- * The library service calls this before it builds a query or touches Firestore.
+ * Decides where library Firestore calls go.
  *
- * Production builds use the normal Firebase project.
- * Development talks only to the local emulator, and only when
- * VITE_FIRESTORE_EMULATOR is exactly "true". Any other development
- * configuration is blocked, so a missing flag cannot fall through
- * to the live project.
+ * Reads and writes use the Firebase project configured for the site
+ * (the same app as the rest of the blog). Data survives an editor restart
+ * because it lives in that project.
+ *
+ * Set VITE_FIRESTORE_EMULATOR to exactly "true" only when a test should
+ * talk to the local emulator instead. Production builds ignore that flag.
+ * `npm run dev` does not set it, so local development uses the live project.
  */
 
 const BLOCKED_MESSAGE =
-    'تعذّر الاتصال بمكتبة القراءة أثناء التطوير. اضبط VITE_FIRESTORE_EMULATOR=true حتى تذهب طلبات المكتبة إلى المحاكي المحلي فقط. بدون هذا الإعداد لا يُرسل أي طلب مكتبة إلى مشروع Firebase الحي.'
+    'منفذ محاكي Firestore غير صالح. عطّل VITE_FIRESTORE_EMULATOR لاستخدام مشروع Firebase الحي، أو اضبط VITE_FIRESTORE_EMULATOR_PORT على رقم من 1 إلى 65535.'
 
 export function libraryBlockedError(message = BLOCKED_MESSAGE) {
     return Object.assign(new Error(message), { code: 'library/emulator-required' })
@@ -41,7 +42,7 @@ export function resolveLibraryTarget(env) {
         return { mode: 'production' }
     }
 
-    if (source.DEV === true && source.VITE_FIRESTORE_EMULATOR === 'true') {
+    if (source.VITE_FIRESTORE_EMULATOR === 'true') {
         const endpoint = emulatorEndpoint(source)
         if (endpoint.error) return { mode: 'blocked', error: endpoint.error }
         return {
@@ -52,7 +53,7 @@ export function resolveLibraryTarget(env) {
         }
     }
 
-    return { mode: 'blocked', error: libraryBlockedError() }
+    return { mode: 'production' }
 }
 
 export function withLibraryAccess(env, operation) {

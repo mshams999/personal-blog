@@ -74,18 +74,16 @@ test('an existing title and author is skipped instead of overwritten', () => {
     assert.equal(entries.some((entry) => entry.draft.title.startsWith('The Psychology of Money')), false)
 })
 
-test('the two currently-reading books need an explicit choice and only one may stay current', () => {
+test('the two currently-reading books need an explicit choice and both may stay current', () => {
     const report = analyzeGoodreadsImport(csv)
     const current = report.records.filter((record) => record.needsChoice)
     const selected = new Set(current.map((record) => record.rowNumber))
     assert.equal(selectionIssues(report.records, selected, {}).length, 1)
     const bothReading = Object.fromEntries(current.map((record) => [record.rowNumber, 'reading']))
-    assert.match(selectionIssues(report.records, selected, bothReading)[0], /كتاب واحد/)
-    const choices = { [current[0].rowNumber]: 'reading', [current[1].rowNumber]: 'paused' }
-    assert.deepEqual(selectionIssues(report.records, selected, choices), [])
-    const entries = entriesToImport(report.records, selected, choices)
-    assert.deepEqual(entries.map((entry) => entry.draft.readingStatus).sort(), ['paused', 'reading'])
-    assert.equal(goodreadsBookDocument(entries.find((entry) => entry.draft.readingStatus === 'reading')).startedAt, null)
+    assert.deepEqual(selectionIssues(report.records, selected, bothReading), [])
+    const entries = entriesToImport(report.records, selected, bothReading)
+    assert.deepEqual(entries.map((entry) => entry.draft.readingStatus), ['reading', 'reading'])
+    assert.equal(goodreadsBookDocument(entries[0]).startedAt, null)
 })
 
 test('quoted commas, empty ISBN cells, and Arabic text survive parsing', () => {

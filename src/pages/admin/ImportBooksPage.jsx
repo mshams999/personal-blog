@@ -23,7 +23,6 @@ const FILTERS = [
 
 const CHOICES = [
     ['reading', 'أقرأ الآن'],
-    ['paused', 'متوقف'],
     ['want', 'أريد قراءته'],
 ]
 

@@ -6,11 +6,10 @@ import {
     getDoc,
     getDocs,
     getFirestore,
-    orderBy,
     query,
     where,
 } from 'firebase/firestore'
-import { db, firebaseConfig } from '../config/firebase'
+import { auth, db, firebaseConfig } from '../config/firebase'
 import { resolveLibraryTarget } from './libraryGuard'
 
 const LIBRARY_APP = 'library'
@@ -18,6 +17,9 @@ const bookReads = new Map()
 let emulatorFirestore = null
 let libraryApp = null
 let adminAuthPromise = null
+
+const ADMIN_SIGN_IN_MESSAGE =
+    'حفظ الكتب يتم في مشروع Firebase الحي. ادخل من صفحة تسجيل الدخول بحساب جوجل الذي يحمل مطالبة المشرف admin. إذا مُنحت المطالبة للتو، سجّل الخروج ثم ادخل مرة أخرى حتى يتجدد الرمز.'
 
 function isDenied(error) {
     return error?.code === 'permission-denied'
@@ -34,24 +36,36 @@ function libraryAppFor(target) {
     return libraryApp
 }
 
+function adminRequired(message = ADMIN_SIGN_IN_MESSAGE) {
+    return Object.assign(new Error(message), { code: 'book/admin-required' })
+}
+
 /**
- * Local development signs the library app into the Auth emulator as an admin.
- * Production keeps using the signed-in user's real custom claim.
+ * Emulator tests sign the separate library app into the Auth emulator.
+ * The live project uses the Google account already signed in on the site.
+ * Firestore rules require that account's ID token to carry admin: true.
  */
 export function ensureLibraryAuth() {
     const target = resolveLibraryTarget(import.meta.env)
-    if (target.mode !== 'emulator') return Promise.resolve()
+    if (target.mode === 'blocked') return Promise.reject(target.error)
+    if (target.mode !== 'emulator') {
+        const user = auth.currentUser
+        if (!user) return Promise.reject(adminRequired())
+        return user.getIdTokenResult(true).then((token) => {
+            if (token.claims.admin !== true) throw adminRequired()
+        })
+    }
     if (!adminAuthPromise) {
         adminAuthPromise = (async () => {
             const { connectAuthEmulator, getAuth, signInWithCustomToken } = await import('firebase/auth')
-            const auth = getAuth(libraryAppFor(target))
-            connectAuthEmulator(auth, 'http://127.0.0.1:9099', { disableWarnings: true })
+            const emulatorAuth = getAuth(libraryAppFor(target))
+            connectAuthEmulator(emulatorAuth, 'http://127.0.0.1:9099', { disableWarnings: true })
             const response = await fetch('/api/dev-admin-token')
             const payload = await response.json().catch(() => ({}))
             if (!response.ok || !payload.token) {
                 throw new Error(payload.error || 'Local admin sign-in is unavailable. Start the Auth emulator.')
             }
-            await signInWithCustomToken(auth, payload.token)
+            await signInWithCustomToken(emulatorAuth, payload.token)
         })().catch((error) => {
             adminAuthPromise = null
             throw error
@@ -62,9 +76,9 @@ export function ensureLibraryAuth() {
 
 /**
  * Returns the Firestore instance library calls may use.
- * In development this connects the emulator before the instance is returned,
- * so the first library operation cannot race ahead of connectFirestoreEmulator.
- * The site's other Firestore services keep using the default `db`.
+ * The live project is the site's default `db`. The emulator connection is
+ * only for an explicit VITE_FIRESTORE_EMULATOR=true opt-in, and it happens
+ * before the instance is returned so the first call cannot race it.
  */
 export function getLibraryFirestore() {
     const target = resolveLibraryTarget(import.meta.env)
@@ -81,6 +95,13 @@ export function getLibraryFirestore() {
 
 function toBook(snapshot) {
     return { id: snapshot.id, ...snapshot.data() }
+}
+
+function millis(value) {
+    if (!value) return 0
+    if (typeof value.toMillis === 'function') return value.toMillis()
+    if (value instanceof Date) return value.getTime()
+    return 0
 }
 
 async function fetchPublicBook(bookId) {
@@ -126,10 +147,11 @@ export async function listPublicSessions(bookId) {
             collection(getLibraryFirestore(), 'readingSessions'),
             where('bookId', '==', bookId),
             where('bookVisibility', '==', 'public'),
-            orderBy('startedAt', 'desc'),
         ),
     )
-    return snapshot.docs.map((item) => ({ key: item.id, ...item.data() }))
+    return snapshot.docs
+        .map((item) => ({ key: item.id, ...item.data() }))
+        .sort((a, b) => millis(b.startedAt) - millis(a.startedAt))
 }
 
 /**
@@ -143,10 +165,11 @@ export async function listPublicHistory() {
             collection(getLibraryFirestore(), 'readingSessions'),
             where('bookVisibility', '==', 'public'),
             where('status', '==', 'finished'),
-            orderBy('finishedAt', 'desc'),
         ),
     )
-    const sessions = snapshot.docs.map((item) => ({ key: item.id, ...item.data() }))
+    const sessions = snapshot.docs
+        .map((item) => ({ key: item.id, ...item.data() }))
+        .sort((a, b) => millis(b.finishedAt) - millis(a.finishedAt))
     const bookIds = [...new Set(sessions.map((session) => session.bookId).filter(Boolean))]
     const books = await Promise.all(bookIds.map((bookId) => readPublicBook(bookId)))
     const byId = new Map(bookIds.map((bookId, index) => [bookId, books[index]]))

@@ -51,15 +51,15 @@ test('a manual book keeps private notes off the book and does not invent a sessi
     assert.equal(result.book.isbn13, null)
 })
 
-test('currently reading replaces the previous current book', () => {
+test('currently reading leaves another current book in progress', () => {
     const plan = planCurrentReading({
         bookId: 'deep-work',
         sessionId: 'deep-work',
         status: 'reading',
         pointer: { bookId: 'atomic-habits', sessionId: 'atomic-habits' },
     })
-    assert.deepEqual(plan.pauseOther, { bookId: 'atomic-habits', sessionId: 'atomic-habits' })
-    assert.deepEqual(plan.pointer, { bookId: 'deep-work', sessionId: 'deep-work' })
+    assert.equal(plan.pointer, null)
+    assert.equal(plan.clearPointer, false)
 })
 
 test('finishing the current book clears the pointer and records the session', () => {

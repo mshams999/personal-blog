@@ -5,7 +5,7 @@ rules_version = '2';
 //
 // books nullables: description, isbn13, isbn10, publisher, publishedYear,
 //   pageCount, coverUrl, currentPage, progressPercent, startedAt, finishedAt, rating
-// readingStatus: want | reading | paused | finished | abandoned
+// readingStatus: want | reading | finished
 // Private notes live only in privateNotes. They are not fields on books.
 // readingSessions: finishedAt is null unless status is finished.
 //   rating is null unless status is finished (then null or 0–5).
@@ -121,7 +121,7 @@ service cloud.firestore {
         && data.formats.size() <= 4
         && (data.coverUrl == null || (data.coverUrl is string && data.coverUrl.size() < 2000))
         && data.visibility in ['public', 'unlisted']
-        && data.readingStatus in ['want', 'reading', 'paused', 'finished', 'abandoned']
+        && data.readingStatus in ['want', 'reading', 'finished']
         && (data.currentPage == null || (data.currentPage is int && data.currentPage >= 0 && data.currentPage <= 20000))
         && (data.pageCount == null || data.currentPage == null || data.currentPage <= data.pageCount)
         && (data.progressPercent == null || (data.progressPercent is number && data.progressPercent >= 0 && data.progressPercent <= 100))
@@ -140,13 +140,10 @@ service cloud.firestore {
     function pointerAgrees(sessionId) {
       let pointerExists = existsAfter(pointerPath());
       let projected = pointerExists ? getAfter(pointerPath()) : null;
-      let namesThis = projected != null
-        && projected.data.sessionId == sessionId
-        && projected.data.bookId == request.resource.data.bookId;
 
-      return (request.resource.data.status == 'reading' && namesThis)
-        || (request.resource.data.status != 'reading'
-            && (!pointerExists || projected.data.sessionId != sessionId));
+      return request.resource.data.status == 'reading'
+        || !pointerExists
+        || projected.data.sessionId != sessionId;
     }
 
     function validRating(data) {
@@ -318,7 +315,11 @@ service cloud.firestore {
       allow update: if isAdmin()
         && validBookShape(bookId)
         && request.resource.data.createdAt == resource.data.createdAt
-        && request.resource.data.slug == resource.data.slug;
+        && request.resource.data.slug == bookId
+        && (
+          !resource.data.keys().hasAny(['slug'])
+          || resource.data.slug == request.resource.data.slug
+        );
       allow delete: if isAdmin() && bookIsNotCurrent(bookId);
     }
 

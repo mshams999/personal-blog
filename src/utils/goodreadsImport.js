@@ -300,12 +300,8 @@ export function analyzeGoodreadsImport(text, existingBooks = []) {
 export function selectionIssues(records, selectedIds, choices) {
     const selected = records.filter((record) => selectedIds.has(record.rowNumber) && record.valid && !record.duplicate)
     const pending = selected.filter((record) => record.needsChoice && !choices[record.rowNumber])
-    const reading = selected.filter((record) => (
-        record.needsChoice ? choices[record.rowNumber] : record.draft.readingStatus
-    ) === 'reading')
     const issues = []
     if (pending.length) issues.push('اختر حالة كل كتاب محدد ما زال قيد القراءة.')
-    if (reading.length > 1) issues.push('يمكن أن يبقى كتاب واحد فقط قيد القراءة.')
     return issues
 }
 
@@ -320,7 +316,7 @@ export function entriesToImport(records, selectedIds, choices) {
                 readingStatus: record.needsChoice ? choices[record.rowNumber] : record.draft.readingStatus,
             },
         }))
-        .filter((record) => ['want', 'reading', 'paused', 'finished', 'abandoned'].includes(record.draft.readingStatus))
+        .filter((record) => ['want', 'reading', 'finished'].includes(record.draft.readingStatus))
 }
 
 export function goodreadsBookDocument(entry, now = new Date()) {

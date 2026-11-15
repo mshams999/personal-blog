@@ -2,25 +2,22 @@ import assert from 'node:assert/strict'
 import test from 'node:test'
 import { resolveLibraryTarget, withLibraryAccess } from '../src/services/libraryGuard.js'
 
-test('development without the emulator flag never runs a library operation', () => {
-    let called = false
-    assert.throws(
-        () => withLibraryAccess({ DEV: true }, () => {
-            called = true
-        }),
-        (error) => error.code === 'library/emulator-required',
-    )
-    assert.equal(called, false)
+test('development without the emulator flag uses the live Firebase project', () => {
+    let target = null
+    withLibraryAccess({ DEV: true }, (resolved) => {
+        target = resolved
+    })
+    assert.deepEqual(target, { mode: 'production' })
 })
 
-test('a false or missing emulator flag stays blocked', () => {
+test('a false or missing emulator flag uses the live project', () => {
     for (const flag of [undefined, '', 'false', '1', 'TRUE']) {
         const target = resolveLibraryTarget({ DEV: true, VITE_FIRESTORE_EMULATOR: flag })
-        assert.equal(target.mode, 'blocked', `flag ${String(flag)}`)
+        assert.equal(target.mode, 'production', `flag ${String(flag)}`)
     }
 })
 
-test('development with the flag targets the emulator and defaults the host to localhost', () => {
+test('the emulator flag is an explicit opt-in and defaults the host to localhost', () => {
     const target = resolveLibraryTarget({ DEV: true, VITE_FIRESTORE_EMULATOR: 'true' })
     assert.deepEqual(target, {
         mode: 'emulator',
@@ -70,7 +67,7 @@ test('production uses the normal Firebase project and ignores the emulator flag'
     assert.deepEqual(target, { mode: 'production' })
 })
 
-test('an empty environment is blocked instead of reaching production', () => {
-    assert.equal(resolveLibraryTarget({}).mode, 'blocked')
-    assert.equal(resolveLibraryTarget(undefined).mode, 'blocked')
+test('an empty environment uses the live project', () => {
+    assert.equal(resolveLibraryTarget({}).mode, 'production')
+    assert.equal(resolveLibraryTarget(undefined).mode, 'production')
 })

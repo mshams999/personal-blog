@@ -180,6 +180,22 @@ describe('books', () => {
         await assertSucceeds(setDoc(doc(adminDb, 'books', 'atomic-habits'), book('atomic-habits')))
     })
 
+    it('lets an admin replace a legacy book that has no slug', async () => {
+        await testEnv.withSecurityRulesDisabled(async (context) => {
+            await setDoc(doc(context.firestore(), 'books', '6238263'), {
+                title: 'Old title',
+                author: 'Old author',
+                createdAt: ts,
+                updatedAt: ts,
+                rating: 5,
+            })
+        })
+        await assertSucceeds(setDoc(doc(adminDb, 'books', '6238263'), book('6238263', {
+            title: 'بروتوكولات حكماء صهيون',
+        })))
+        await assertFails(setDoc(doc(strangerDb, 'books', '6238263'), book('6238263')))
+    })
+
     it('lets the public read a public book and hides an unlisted book', async () => {
         await setDoc(doc(adminDb, 'books', 'atomic-habits'), book('atomic-habits'))
         await setDoc(doc(adminDb, 'books', 'secret'), book('secret', { visibility: 'unlisted', title: 'Secret' }))
@@ -243,9 +259,9 @@ describe('reading sessions', () => {
         assert.equal(snap.data().status, 'reading')
     })
 
-    it('denies creating a reading session without the pointer', async () => {
+    it('allows a reading session while the pointer is empty', async () => {
         await setDoc(doc(adminDb, 'settings', 'currentReading'), emptyPointer())
-        await assertFails(setDoc(doc(adminDb, 'readingSessions', 's1'), session('atomic-habits', { status: 'reading' })))
+        await assertSucceeds(setDoc(doc(adminDb, 'readingSessions', 's1'), session('atomic-habits', { status: 'reading' })))
     })
 
     it('records six finished sessions for one book', async () => {
@@ -303,14 +319,10 @@ describe('reading sessions', () => {
         }
     })
 
-    it('resumes a paused session only together with the pointer', async () => {
+    it('resumes a paused session without taking the pointer from another book', async () => {
         await setDoc(doc(adminDb, 'settings', 'currentReading'), emptyPointer())
         await setDoc(doc(adminDb, 'readingSessions', 's1'), session('atomic-habits', { status: 'paused' }))
-        await assertFails(updateDoc(doc(adminDb, 'readingSessions', 's1'), { status: 'reading', updatedAt: ts }))
-        await assertSucceeds(runTransaction(adminDb, async (tx) => {
-            tx.update(doc(adminDb, 'readingSessions', 's1'), { status: 'reading', updatedAt: ts })
-            tx.set(doc(adminDb, 'settings', 'currentReading'), pointer('atomic-habits', 's1'))
-        }))
+        await assertSucceeds(updateDoc(doc(adminDb, 'readingSessions', 's1'), { status: 'reading', updatedAt: ts }))
     })
 
     it('switches books atomically and rejects a switch that leaves the old session reading', async () => {
@@ -342,6 +354,21 @@ describe('reading sessions', () => {
         assert.equal((await raw(['readingSessions', 'a'])).data().status, 'paused')
         assert.equal((await raw(['readingSessions', 'b'])).data().status, 'reading')
         assert.equal((await raw(['settings', 'currentReading'])).data().sessionId, 'b')
+    })
+
+    it('allows a second book to stay reading beside the current one', async () => {
+        await runTransaction(adminDb, async (tx) => {
+            tx.set(doc(adminDb, 'readingSessions', 'a'), session('atomic-habits', { status: 'reading' }))
+            tx.set(doc(adminDb, 'settings', 'currentReading'), pointer('atomic-habits', 'a'))
+        })
+        await assertSucceeds(setDoc(doc(adminDb, 'readingSessions', 'b'), session('deep-work', {
+            status: 'reading',
+            title: 'Deep Work',
+            authors: ['Cal Newport'],
+        })))
+        assert.equal((await raw(['readingSessions', 'a'])).data().status, 'reading')
+        assert.equal((await raw(['readingSessions', 'b'])).data().status, 'reading')
+        assert.equal((await raw(['settings', 'currentReading'])).data().sessionId, 'a')
     })
 
     it('rejects two reading sessions and a pointer aimed at a non-reading session', async () => {

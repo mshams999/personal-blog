@@ -21,7 +21,7 @@ import {
 
 function permissionError(error) {
     if (error?.code !== 'permission-denied') return null
-    const denied = new Error('حفظ الكتاب يتطلب صلاحية المشرف.')
+    const denied = new Error('رفضت قواعد المكتبة هذا الحفظ. إذا مُنحت صلاحية المشرف للتو، سجّل الخروج ثم ادخل مرة أخرى وأعد المحاولة.')
     denied.code = 'book/admin-required'
     return denied
 }
@@ -121,12 +121,6 @@ export async function saveBook(draft, { existingId } = {}) {
             const sessionId = (pointer.bookId === id && pointer.sessionId) || priorSessions.docs[0]?.id || id
             const sessionRef = doc(firestore, 'readingSessions', sessionId)
             const sessionSnap = await transaction.get(sessionRef)
-            const otherSessionSnap = pointer.bookId && pointer.bookId !== id && pointer.sessionId
-                ? await transaction.get(doc(firestore, 'readingSessions', pointer.sessionId))
-                : null
-            const otherBookSnap = pointer.bookId && pointer.bookId !== id
-                ? await transaction.get(doc(firestore, 'books', pointer.bookId))
-                : null
 
             if (!existingId && snapshotExists(bookSnap)) {
                 throw Object.assign(new Error('هذا المعرّف مستخدم بالفعل.'), { code: 'book/duplicate' })
@@ -148,13 +142,6 @@ export async function saveBook(draft, { existingId } = {}) {
                 createdAt,
                 updatedAt: now,
             })
-
-            if (plan.pauseOther && otherSessionSnap?.exists() && otherSessionSnap.data().status === 'reading') {
-                transaction.update(otherSessionSnap.ref, { status: 'paused', updatedAt: now })
-            }
-            if (plan.pauseOther && otherBookSnap?.exists() && otherBookSnap.data().readingStatus === 'reading') {
-                transaction.update(otherBookSnap.ref, { readingStatus: 'paused', updatedAt: now })
-            }
 
             if (built.session) {
                 transaction.set(sessionRef, {

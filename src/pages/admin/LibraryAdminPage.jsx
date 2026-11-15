@@ -64,7 +64,7 @@ export default function LibraryAdminPage() {
                     <Link to="/admin/books/new" className="small-caps border border-ink px-4 py-2 text-ink hover:bg-ink hover:text-paper">أضف كتابًا</Link>
                 </div>
             </div>
-            <p className="mt-4 max-w-2xl font-serif text-lg text-ink-muted">يمكن أن يكون كتاب واحد فقط قيد القراءة. اختيار كتاب آخر يوقف الكتاب السابق.</p>
+            <p className="mt-4 max-w-2xl font-serif text-lg text-ink-muted">يمكن قراءة أكثر من كتاب في الوقت نفسه.</p>
 
             <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center">
                 <input
