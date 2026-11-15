@@ -24,6 +24,11 @@ export const storyblokAdminUrl = storyblokSpaceId
     ? `https://app.storyblok.com/#/me/spaces/${storyblokSpaceId}/stories/0/0/index/`
     : 'https://app.storyblok.com'
 
+export const storyblokStoryUrl = (storyId) => {
+    if (!storyblokSpaceId || storyId == null || storyId === '') return storyblokAdminUrl
+    return `https://app.storyblok.com/#/me/spaces/${storyblokSpaceId}/stories/0/0/${storyId}`
+}
+
 export const isStoryblokEditor = () => {
     if (typeof window === 'undefined') return false
     return new URLSearchParams(window.location.search).has('_storyblok')

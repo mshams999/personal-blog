@@ -6,6 +6,7 @@ Allow: /blog
 Allow: /certificates/
 Allow: /cv
 Allow: /reading
+Allow: /library
 Allow: /categories
 Allow: /content/
 Allow: /public/

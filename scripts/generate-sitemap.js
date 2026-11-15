@@ -46,6 +46,7 @@ async function generateSitemap() {
             { url: '/categories', priority: '0.9', changefreq: 'monthly', lastmod: now },
             { url: '/cv', priority: '0.8', changefreq: 'monthly', lastmod: now },
             { url: '/reading', priority: '0.7', changefreq: 'monthly', lastmod: now },
+            { url: '/library', priority: '0.7', changefreq: 'weekly', lastmod: now },
         ];
 
         const categoryRoutes = [

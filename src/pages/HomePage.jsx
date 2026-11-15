@@ -2,6 +2,7 @@ import React, { useEffect, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { useHybridData } from '../contexts/HybridDataContext'
 import MastheadLead from '../components/MastheadLead'
+import ReadingJourney from '../components/library/ReadingJourney'
 import BentoGrid from '../components/BentoGrid'
 import Newsletter from '../components/Newsletter'
 import PostCard from '../components/PostCard'
@@ -81,6 +82,7 @@ const HomePage = () => {
             />
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <ReadingJourney />
                 {/* 1 — Masthead Lead */}
                 <div className="pt-12 md:pt-20 pb-16 md:pb-20">
                     {leadPost && <MastheadLead post={leadPost} />}

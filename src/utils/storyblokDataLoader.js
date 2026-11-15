@@ -1,4 +1,5 @@
 import { getStoryblokApi, storyblokVersion } from '../lib/storyblok'
+import { bookReviewSlug, mapBookReview } from './bookReview'
 
 const api = () => getStoryblokApi()
 
@@ -161,5 +162,17 @@ export const fetchPage = async (slug) => {
         body: c.body || null,
         blocks: Array.isArray(c.blocks) ? c.blocks : [],
         raw: data.story,
+    }
+}
+
+export const fetchBookReview = async (slug) => {
+    if (!slug) return null
+    try {
+        const { data } = await api().get(`cdn/stories/${bookReviewSlug(slug)}`, {
+            version: storyblokVersion,
+        })
+        return mapBookReview(data?.story)
+    } catch {
+        return null
     }
 }

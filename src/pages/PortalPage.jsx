@@ -3,6 +3,7 @@ import {
     PenSquare,
     BookOpen,
     LibraryBig,
+    Plus,
     UserRound,
     Home,
     ExternalLink,
@@ -32,9 +33,15 @@ const portalLinks = [
         icon: BookOpen,
     },
     {
-        title: 'Reading Library',
-        description: 'Go to your books and notes.',
-        to: '/reading',
+        title: 'مكتبة القراءة',
+        description: 'أضف الكتب التي تقرأها وحدّثها.',
+        to: '/admin/books',
+        icon: Plus,
+    },
+    {
+        title: 'المكتبة',
+        description: 'تصفح الكتب المتاحة للقراءة العامة.',
+        to: '/library',
         icon: LibraryBig,
     },
     {

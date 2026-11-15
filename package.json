@@ -14,7 +14,9 @@
         "storyblok:pull": "storyblok components pull --space $SB_SPACE_ID --path ./storyblok",
         "posts:rename": "node scripts/rename-posts-to-slugs.js",
         "networth:seed": "node scripts/seed-holdings.js",
-        "networth:seed:client": "node scripts/seed-holdings-client.mjs"
+        "networth:seed:client": "node scripts/seed-holdings-client.mjs",
+        "test:rules": "firebase emulators:exec --only firestore,auth --project demo-reading-library \"node --test tests/firestore.rules.test.mjs\"",
+        "test:library": "node --test tests/libraryGuard.test.mjs tests/readingPlan.test.mjs tests/bookSavePlan.test.mjs tests/goodreadsImport.test.mjs"
     },
     "dependencies": {
         "@mailchimp/mailchimp_marketing": "^3.0.80",
@@ -41,6 +43,7 @@
         "storyblok-rich-text-react-renderer": "^3.0.1"
     },
     "devDependencies": {
+        "@firebase/rules-unit-testing": "^6.0.0",
         "@tailwindcss/typography": "^0.5.20",
         "@types/react": "^18.2.37",
         "@types/react-dom": "^18.2.15",
