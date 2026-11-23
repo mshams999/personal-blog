@@ -4,12 +4,10 @@ import {
     doc,
     getDoc,
     getDocs,
-    limit,
     orderBy,
     query,
     serverTimestamp,
     setDoc,
-    startAfter,
     Timestamp,
     updateDoc,
     where,
@@ -70,44 +68,46 @@ export async function saveCleanup(record) {
     })
 }
 
-export async function listPublishedPhotos(cursor) {
-    const constraints = [
-        where('status', '==', 'published'),
-        orderBy('uploadedAt', 'desc'),
-        limit(GALLERY_PAGE_SIZE),
-    ]
-    if (cursor) constraints.push(startAfter(cursor))
-    const snap = await getDocs(query(collection(db, 'photos'), ...constraints))
+function timeMillis(value) {
+    if (!value) return 0
+    if (typeof value.toMillis === 'function') return value.toMillis()
+    if (typeof value.seconds === 'number') return value.seconds * 1000
+    return 0
+}
+
+function pageById(items, cursor) {
+    const found = cursor ? items.findIndex((item) => item.id === cursor) : -1
+    const start = found >= 0 ? found + 1 : 0
+    const page = items.slice(start, start + GALLERY_PAGE_SIZE)
     return {
-        photos: snap.docs.map(mapSnap),
-        cursor: snap.docs.at(-1) || null,
-        hasMore: snap.docs.length === GALLERY_PAGE_SIZE,
+        photos: page,
+        cursor: page.at(-1)?.id || null,
+        hasMore: start + page.length < items.length,
     }
+}
+
+export async function listPublishedPhotos(cursor) {
+    // Equality on status uses the automatic single-field index. Sorting here
+    // avoids a composite index that is not deployed.
+    const snap = await getDocs(query(collection(db, 'photos'), where('status', '==', 'published')))
+    const photos = snap.docs.map(mapSnap).sort((left, right) => timeMillis(right.uploadedAt) - timeMillis(left.uploadedAt))
+    return pageById(photos, cursor)
 }
 
 export async function listAlbumPhotos(albumId, cursor) {
-    const constraints = [
-        where('albumId', '==', albumId),
-        where('status', '==', 'published'),
-        orderBy('sortOrder', 'asc'),
-        limit(GALLERY_PAGE_SIZE),
-    ]
-    if (cursor) constraints.push(startAfter(cursor))
-    const snap = await getDocs(query(collection(db, 'photos'), ...constraints))
-    return {
-        photos: snap.docs.map(mapSnap),
-        cursor: snap.docs.at(-1) || null,
-        hasMore: snap.docs.length === GALLERY_PAGE_SIZE,
-    }
+    const snap = await getDocs(query(collection(db, 'photos'), where('status', '==', 'published')))
+    const photos = snap.docs
+        .map(mapSnap)
+        .filter((photo) => photo.albumId === albumId)
+        .sort((left, right) => (left.sortOrder || 0) - (right.sortOrder || 0))
+    return pageById(photos, cursor)
 }
 
 export async function listPublishedAlbums() {
-    const snap = await getDocs(query(
-        collection(db, 'albums'),
-        where('status', '==', 'published'),
-        orderBy('sortOrder', 'asc'),
-    ))
-    return snap.docs.map(mapSnap)
+    const snap = await getDocs(query(collection(db, 'albums'), where('status', '==', 'published')))
+    return snap.docs
+        .map(mapSnap)
+        .sort((left, right) => (left.sortOrder || 0) - (right.sortOrder || 0))
 }
 
 export async function getPublishedAlbum(slug) {

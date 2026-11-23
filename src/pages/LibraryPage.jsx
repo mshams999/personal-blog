@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import MetaTags from '../components/MetaTags'
 import SectionHeader from '../components/editorial/SectionHeader'
 import BookCard from '../components/library/BookCard'
+import LibraryStats from '../components/library/LibraryStats'
 import { LibraryEmpty, LibraryError, LibraryLoading } from '../components/library/LibraryStatus'
 import { useLibraryCatalog } from '../hooks/useLibraryCatalog'
 import { formatLabels, languageLabels } from '../utils/libraryFormat'
@@ -28,6 +29,7 @@ export default function LibraryPage() {
     const [category, setCategory] = useState('')
     const [language, setLanguage] = useState('')
     const [format, setFormat] = useState('')
+    const [readingStatus, setReadingStatus] = useState('')
 
     const categories = useMemo(() => {
         const values = new Set()
@@ -53,9 +55,10 @@ export default function LibraryPage() {
             .filter((book) => !category || (book.categories || []).includes(category))
             .filter((book) => !language || book.language === language)
             .filter((book) => !format || (book.formats || []).includes(format))
+            .filter((book) => !readingStatus || book.readingStatus === readingStatus)
             .slice()
             .sort((a, b) => (a.sortAuthor || a.title || '').localeCompare(b.sortAuthor || b.title || '', 'ar'))
-    }, [books, search, category, language, format])
+    }, [books, search, category, language, format, readingStatus])
 
     return (
         <div className="mx-auto max-w-7xl px-4 pb-24 pt-10 sm:px-6 lg:px-8 md:pt-14">
@@ -78,6 +81,7 @@ export default function LibraryPage() {
 
             {status === 'ready' && (
                 <>
+                    <LibraryStats books={books} active={readingStatus} onChange={setReadingStatus} />
                     <div className="mb-10 grid gap-3 md:grid-cols-[1.4fr_repeat(3,minmax(0,1fr))]">
                         <input
                             type="search"
@@ -121,7 +125,7 @@ export default function LibraryPage() {
                     </div>
 
                     {visible.length === 0 ? (
-                        <LibraryEmpty>لا توجد كتب تطابق البحث.</LibraryEmpty>
+                        <LibraryEmpty>{readingStatus ? 'لا توجد كتب في هذه القائمة.' : 'لا توجد كتب تطابق البحث.'}</LibraryEmpty>
                     ) : (
                         <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 md:gap-6">
                             {visible.map((book) => <BookCard key={book.id} book={book} />)}
